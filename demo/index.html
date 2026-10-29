@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DeepTip Demo</title>
+    <link rel="stylesheet" href="../web/deeptip.css" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: light-dark(#f4f5f7, #111318);
+        --panel: light-dark(#ffffff, #1a1d23);
+        --line: light-dark(#d8dce2, #2c313b);
+        --text: light-dark(#1f2328, #e6e8ec);
+        --muted: light-dark(#5b6370, #9aa3b0);
+        --accent: light-dark(#0b69d4, #58a6ff);
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
+      }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font: 15px/1.55 system-ui, "Segoe UI", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      header h1 {
+        margin: 0 12px 0 0;
+        font-size: 17px;
+      }
+      header .spacer {
+        flex: 1;
+      }
+      button.hud,
+      select,
+      input[type="range"] {
+        font: inherit;
+      }
+      button.hud {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 11px;
+        color: inherit;
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      button.hud:hover {
+        border-color: var(--accent);
+      }
+      /* the "arming" hook: a thin bar fills while the pointer rests on a control */
+      button.hud {
+        background-image: linear-gradient(var(--accent), var(--accent));
+        background-repeat: no-repeat;
+        background-position: left bottom;
+        background-size: 0 2px;
+      }
+      button.hud[data-dt-arming] {
+        background-size: 100% 2px;
+        transition: background-size var(--dt-delay) linear;
+      }
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 24px 16px 120px;
+      }
+      section {
+        margin: 0 0 20px;
+        padding: 16px 18px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 10px 18px;
+      }
+      label {
+        display: grid;
+        gap: 3px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      label.check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text);
+      }
+      .corner {
+        position: fixed;
+        z-index: 4;
+      }
+      .corner.tl {
+        left: 12px;
+        top: 64px;
+      }
+      .corner.tr {
+        right: 12px;
+        top: 64px;
+      }
+      .corner.bl {
+        left: 12px;
+        bottom: 12px;
+      }
+      .corner.br {
+        right: 12px;
+        bottom: 12px;
+      }
+      #log {
+        max-height: 120px;
+        overflow: auto;
+        margin: 0;
+        font: 12px ui-monospace, Consolas, monospace;
+        color: var(--muted);
+      }
+      @media (max-width: 720px) {
+        .corner.tl,
+        .corner.tr {
+          top: auto;
+          bottom: 56px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>DeepTip</h1>
+      <button class="hud" data-deeptip="demo.realm" data-i18n="realm"></button>
+      <button class="hud" data-deeptip="demo.stability" id="stab"></button>
+      <button class="hud" data-deeptip="demo.taxes" id="tax"></button>
+      <button class="hud" data-deeptip="demo.nobles" data-i18n="nobles"></button>
+      <button class="hud" data-deeptip="demo.gold" id="gold"></button>
+      <span class="spacer"></span>
+      <button class="hud" data-deeptip="deeptip.about" data-deeptip-delay="0" aria-label="Hilfe">?</button>
+      <select id="lang" aria-label="Sprache / language">
+        <option value="de">Deutsch</option>
+        <option value="en">English</option>
+      </select>
+      <select id="theme" aria-label="Theme">
+        <option value="">auto</option>
+        <option value="light">light</option>
+        <option value="dark">dark</option>
+      </select>
+    </header>
+
+    <button class="hud corner tl" data-deeptip="demo.province" data-i18n="province"></button>
+    <button class="hud corner tr" data-deeptip="demo.prestige" data-i18n="prestige"></button>
+    <button class="hud corner bl" data-deeptip="demo.revolt" data-i18n="revolt"></button>
+    <button class="hud corner br" data-deeptip="demo.unrest" data-i18n="unrest"></button>
+
+    <main>
+      <section>
+        <h2 data-i18n="tryTitle"></h2>
+        <p id="intro"></p>
+        <p id="controls" class="muted"></p>
+      </section>
+
+      <section>
+        <h2 data-i18n="settings"></h2>
+        <div class="grid">
+          <label><span data-i18n="delay"></span> <output id="delayOut"></output>
+            <input id="delay" type="range" min="0" max="3000" step="100" value="1000" />
+          </label>
+          <label><span data-i18n="lock"></span>
+            <select id="lock">
+              <option value="0" data-i18n="off"></option>
+              <option value="1500">1,5 s</option>
+              <option value="3000">3 s</option>
+            </select>
+          </label>
+          <label><span data-i18n="engine"></span>
+            <select id="engine">
+              <option value="auto">auto (CSS)</option>
+              <option value="js">JS</option>
+            </select>
+          </label>
+          <label><span data-i18n="outside"></span>
+            <select id="outside">
+              <option value="touch">touch</option>
+              <option value="always">always</option>
+              <option value="never">never</option>
+            </select>
+          </label>
+          <label class="check"><input id="closeButtons" type="checkbox" checked /> <span data-i18n="closeButtons"></span></label>
+          <label class="check"><input id="pinButton" type="checkbox" checked /> <span data-i18n="pinButton"></span></label>
+          <label class="check"><input id="hints" type="checkbox" checked /> <span data-i18n="hints"></span></label>
+        </div>
+      </section>
+
+      <section>
+        <h2 data-i18n="index"></h2>
+        <div id="index"></div>
+      </section>
+
+      <section>
+        <h2 data-i18n="events"></h2>
+        <pre id="log"></pre>
+      </section>
+    </main>
+
+    <script type="module">
+      import { DeepTip, VERSION } from "../web/deeptip.js";
+
+      const T = {
+        de: {
+          realm: "Reich", nobles: "Adel", province: "↖ Provinz", prestige: "Prestige ↗", revolt: "↙ Aufstand", unrest: "Unruhe ↘",
+          stab: (v) => `Stabilität ${v > 0 ? "+" : ""}${v}`, tax: (v) => `Steuern: ${v}`, gold: (v) => `Gold ${v}`,
+          taxLevels: ["niedrig", "normal", "hoch"],
+          tryTitle: "Ausprobieren", settings: "Einstellungen", index: "Enzyklopädie (alle Begriffe)", events: "Ereignisse",
+          delay: "Verzögerung erstes Fenster", lock: "Einrasten nach Ruhezeit", off: "aus", engine: "Platzierung",
+          outside: "Klick daneben schließt", closeButtons: "X-Knöpfe", pinButton: "Nadel-Knopf", hints: "Hinweiszeile",
+          intro: "Lass die Maus auf einem Knopf oben **ruhen**. Im Fenster sind [[deeptip.term|markierte Begriffe]]: drüberfahren zeigt sie, ein Klick [[deeptip.pin|hält sie fest]]. Kreislauf zum Testen: [[demo.stability]] → [[demo.unrest]] → [[demo.revolt]] → [[demo.stability]]. Die Knöpfe in den Ecken prüfen die Platzierung am Bildschirmrand.",
+          controls: "Steuerung: [[deeptip.mouse|Maus]] · [[deeptip.touch|Touch]] (lange drücken) · [[deeptip.keyboard|Tastatur]] (`F1`, `Esc`, `F6`) · [[deeptip.gamepad|Controller]] (Y, A, B, LB/RB). *Prestige* und *Gold* gibt es nur auf Deutsch – auf Englisch zeigen sie die Rückfallsprache.",
+        },
+        en: {
+          realm: "Realm", nobles: "Nobles", province: "↖ Province", prestige: "Prestige ↗", revolt: "↙ Revolt", unrest: "Unrest ↘",
+          stab: (v) => `Stability ${v > 0 ? "+" : ""}${v}`, tax: (v) => `Taxes: ${v}`, gold: (v) => `Gold ${v}`,
+          taxLevels: ["low", "normal", "high"],
+          tryTitle: "Try it", settings: "Settings", index: "Encyclopedia (every term)", events: "Events",
+          delay: "Delay of the first window", lock: "Pin after resting", off: "off", engine: "Placement",
+          outside: "Click outside closes", closeButtons: "X buttons", pinButton: "Pin button", hints: "Hint line",
+          intro: "**Rest** the pointer on a button at the top. The window contains [[deeptip.term|highlighted terms]]: hover shows them, a click [[deeptip.pin|pins]] them. A loop to try: [[demo.stability]] → [[demo.unrest]] → [[demo.revolt]] → [[demo.stability]]. The corner buttons test placement at the screen edge.",
+          controls: "Controls: [[deeptip.mouse|mouse]] · [[deeptip.touch|touch]] (long-press) · [[deeptip.keyboard|keyboard]] (`F1`, `Esc`, `F6`) · [[deeptip.gamepad|gamepad]] (Y, A, B, LB/RB). *Prestige* and *Gold* exist only in German – in English they show the fallback language.",
+        },
+      };
+
+      const state = { stability: 1, tax: 1, gold: 1250 };
+      const $ = (id) => document.getElementById(id);
+      const log = (msg) => ($("log").textContent = `${new Date().toLocaleTimeString()}  ${msg}\n` + $("log").textContent);
+      const lang = (localStorage.getItem("dt-demo-lang") || navigator.language || "de").slice(0, 2) === "en" ? "en" : "de";
+
+      const dt = DeepTip.init({
+        locale: lang,
+        fallback: ["de", "en"],
+        sources: ["../glossary/core/{locale}.json", "glossary/{locale}.json"],
+        delay: 1000,
+        vars: {
+          stability: () => (state.stability > 0 ? "+" : "") + state.stability,
+          gold: () => state.gold.toLocaleString(dt.locale),
+        },
+        onOpen: (k) => log(`open  ${k}`),
+        onPin: (k) => log(`pin   ${k}`),
+        onClose: (k) => log(`close ${k}`),
+      });
+
+      function paint() {
+        const t = T[dt.locale];
+        document.documentElement.lang = dt.locale;
+        for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t[el.dataset.i18n];
+        $("stab").textContent = t.stab(state.stability);
+        $("tax").textContent = t.tax(t.taxLevels[state.tax]);
+        $("gold").textContent = t.gold(state.gold.toLocaleString(dt.locale));
+        dt.renderText($("intro"), t.intro);
+        dt.renderText($("controls"), t.controls);
+        $("delayOut").textContent = `${(+$("delay").value / 1000).toLocaleString(dt.locale)} s`;
+      }
+
+      // the controls keep their own click action — DeepTip only adds the explanation
+      $("stab").addEventListener("click", () => {
+        state.stability = state.stability >= 3 ? -3 : state.stability + 1;
+        paint();
+        dt.refresh();
+      });
+      $("tax").addEventListener("click", () => {
+        state.tax = (state.tax + 1) % 3;
+        state.gold += [50, 120, 260][state.tax];
+        paint();
+        dt.refresh();
+      });
+
+      $("lang").value = lang;
+      $("lang").addEventListener("change", async (e) => {
+        localStorage.setItem("dt-demo-lang", e.target.value);
+        await dt.setLocale(e.target.value);
+        paint();
+      });
+      $("theme").addEventListener("change", (e) => {
+        if (e.target.value) document.documentElement.dataset.theme = e.target.value;
+        else delete document.documentElement.dataset.theme;
+      });
+      $("delay").addEventListener("input", (e) => {
+        dt.configure({ delay: +e.target.value });
+        paint();
+      });
+      $("lock").addEventListener("change", (e) => dt.configure({ lockAfter: +e.target.value }));
+      $("engine").addEventListener("change", (e) => dt.configure({ engine: e.target.value }));
+      $("outside").addEventListener("change", (e) => dt.configure({ outsideClickCloses: e.target.value }));
+      for (const id of ["closeButtons", "pinButton", "hints"]) {
+        $(id).addEventListener("change", (e) => dt.configure({ [id]: e.target.checked }));
+      }
+
+      await dt.ready;
+      paint();
+      dt.renderIndex($("index"));
+      log(`DeepTip ${VERSION} · placement: ${dt.css ? "CSS anchor positioning" : "JS"}`);
+      window.dt = dt; // for experiments in the console
+    </script>
+  </body>
+</html>

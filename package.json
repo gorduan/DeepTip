@@ -1,0 +1,31 @@
+{
+  "name": "deeptip",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Explanation windows with depth (Paradox-style tooltips in tooltips) — spec, web runtime, glossary tools",
+  "license": "MIT",
+  "author": "Gorduan",
+  "homepage": "https://github.com/gorduan/DeepTip",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gorduan/DeepTip.git"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./web/deeptip.js",
+    "./css": "./web/deeptip.css",
+    "./core/*": "./glossary/core/*"
+  },
+  "bin": {
+    "deeptip-check": "tools/deeptip-check.mjs",
+    "deeptip-sync": "tools/deeptip-sync.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/deeptip.test.mjs",
+    "check": "node tools/deeptip-check.mjs glossary/core && node tools/deeptip-check.mjs --base de glossary/core/de.json demo/glossary/de.json glossary/core/en.json demo/glossary/en.json",
+    "demo": "python -m http.server 5560"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
