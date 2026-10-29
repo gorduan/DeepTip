@@ -1,0 +1,10 @@
+{
+  "name": "vue",
+  "title": "Vue",
+  "language": "JavaScript/TypeScript",
+  "tier": 1,
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": ["web"]
+}

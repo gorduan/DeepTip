@@ -1,0 +1,10 @@
+{
+  "name": "rpgmaker-mz",
+  "title": "RPG Maker MZ (plugin)",
+  "language": "JavaScript",
+  "tier": 1,
+  "version": "1.0.0",
+  "status": "tested",
+  "kind": "adapter",
+  "uses": ["web"]
+}

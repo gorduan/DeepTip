@@ -1,0 +1,10 @@
+{
+  "name": "typescript",
+  "title": "TypeScript",
+  "language": "TypeScript",
+  "tier": 1,
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": ["web"]
+}
