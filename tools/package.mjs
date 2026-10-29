@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // One download per framework: dist/DeepTip-<name>-<version>.zip for every frameworks/<name>/deeptip.json.
 // The zip mirrors the repository layout, so relative paths in the examples keep working:
-//   frameworks/<name>/ (+ frameworks it builds on, "uses"), glossary/core, glossary/example, schema/, SPEC.md, LICENSE,
-//   and the framework's README.md at the top.
+//   frameworks/<name>/ (+ frameworks it builds on, "uses"), glossary/core, glossary/example, schema/, test/cases,
+//   SPEC.md, docs/algorithms.md, LICENSE, and the framework's README.md at the top.
 //   node tools/package.mjs            all frameworks
 //   node tools/package.mjs web svelte only these
 //   node tools/package.mjs --list     table of frameworks, nothing written
@@ -15,7 +15,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
 const list = args.includes("--list");
 const only = args.filter((a) => !a.startsWith("--"));
-const SHARED = ["glossary/core", "glossary/example", "schema", "SPEC.md", "LICENSE"];
+const SHARED = ["glossary/core", "glossary/example", "schema", "test/cases", "SPEC.md", "docs/algorithms.md", "LICENSE"];
 const SKIP = new Set(["node_modules", "bin", "obj", "build", "dist", "target", ".godot", ".gradle", "Library", "Temp", "Binaries", "Intermediate", ".vs", ".idea", "__pycache__", ".venv", "build-output"]);
 
 const frameworks = readdirSync(join(root, "frameworks"))
@@ -24,9 +24,9 @@ const frameworks = readdirSync(join(root, "frameworks"))
   .sort((a, b) => a.tier - b.tier || a.name.localeCompare(b.name));
 
 if (list) {
-  console.log("| Framework | Language | Tier | Status | Version | Folder |");
-  console.log("|---|---|---|---|---|---|");
-  for (const f of frameworks) console.log(`| ${f.title} | ${f.language} | ${f.tier} | ${f.status} | ${f.version} | frameworks/${f.dir} |`);
+  console.log("| Framework | Language | Tier | Kind | Status | Version | Folder |");
+  console.log("|---|---|---|---|---|---|---|");
+  for (const f of frameworks) console.log(`| ${f.title} | ${f.language} | ${f.tier} | ${f.kind} | ${f.status} | ${f.version} | frameworks/${f.dir} |`);
   process.exit(0);
 }
 

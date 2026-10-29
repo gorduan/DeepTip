@@ -1,0 +1,11 @@
+{
+  "name": "valheim",
+  "title": "Valheim (BepInEx mod)",
+  "language": "C#",
+  "tier": 1,
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": [],
+  "implementation": "https://github.com/gorduan/Valheim_DeepTip"
+}

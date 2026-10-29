@@ -6,7 +6,7 @@ English: [README.md](README.md)
 
 Andere Namen für dasselbe: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox-Tooltips, Tooltips in Tooltips, Erklärfenster.
 
-Dieses Repo ist die Heimat des Musters: Spezifikation, Datenformat mit Schema und Prüfer, gemeinsame Testfälle und je Framework eine Umsetzung, jede in einem eigenen Ordner mit eigenem Download.
+Dieses Repo ist die Heimat des Musters: Spezifikation, Datenformat mit Schema und Prüfer, gemeinsame Testfälle, der Code in HTML, CSS, JavaScript und Rust und für jedes andere Framework eine genaue Bauanleitung, jedes in einem eigenen Ordner mit eigenem Download.
 
 ## Die Regeln
 
@@ -20,10 +20,13 @@ Dieses Repo ist die Heimat des Musters: Spezifikation, Datenformat mit Schema un
 
 ## Frameworks: ein Ordner, ein Download
 
-Stufe 1: Web (HTML + JS, Referenz), TypeScript, Svelte, React, Vue, RPG Maker MZ, Blazor, Avalonia, Unity, Valheim, Godot, Python (PySide6).
-Stufe 2: Java (Swing), Kotlin (Compose), C++ (Dear ImGui), C++ (Unreal), Rust (egui), Swift (SwiftUI), Go (Gio).
+Code gibt es nur in **HTML, CSS und JavaScript** (Referenz) und in **Rust**. Jedes andere Framework bekommt statt Code eine genaue Bauanleitung: welcher Baustein des Toolkits welchen Teil der Spezifikation umsetzt, in welcher Reihenfolge, mit den Fallen. Die gemeinsamen Algorithmen stehen einmal Schritt für Schritt in [docs/algorithms.md](docs/algorithms.md).
 
-Jedes liegt in `frameworks/<name>/` mit README, Beispiel (gemeinsames Beispiel-Glossar `glossary/example/`) und Tests gegen `test/cases/`. Downloads: `DeepTip-<framework>-<version>.zip` (`npm run package`).
+- **Code:** Web (HTML + CSS + JS, Referenz), RPG Maker MZ (JS-Plugin), Rust (egui).
+- **Anleitung, Stufe 1:** TypeScript, Svelte, React, Vue, Blazor (alle auf der Web-Laufzeit), Avalonia, Unity, Valheim (die Mod selbst: [gorduan/Valheim_DeepTip](https://github.com/gorduan/Valheim_DeepTip)), Godot, Python (PySide6).
+- **Anleitung, Stufe 2:** Java (Swing), Kotlin (Compose), C++ (Dear ImGui), C++ (Unreal), Swift (SwiftUI), Go (Gio).
+
+Jedes liegt in `frameworks/<name>/` mit README und `deeptip.json`; Code-Ordner haben ein Beispiel (gemeinsames Beispiel-Glossar `glossary/example/`) und Tests gegen `test/cases/`, jede Anleitung sagt, wie man diese Fälle in ihrer Sprache prüft. Downloads: `DeepTip-<framework>-<version>.zip` (`npm run package`), jeweils mit SPEC, Algorithmen, Schema, Glossaren und Testfällen.
 
 ## Für Sprachmodelle und Agenten
 

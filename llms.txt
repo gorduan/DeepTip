@@ -1,13 +1,14 @@
 # DeepTip
 
-> DeepTip is a UI design pattern: explanation windows with depth (nested, pinnable tooltips like in Paradox Interactive's games). Rest on an element and a window explains it; highlighted terms open further windows; a click pins them; pinned windows contain terms again. Content is data: one JSON glossary per language with [[key]] links. This repository holds the specification, the glossary schema and validator, shared test cases and one implementation per framework.
+> DeepTip is a UI design pattern: explanation windows with depth (nested, pinnable tooltips like in Paradox Interactive's games). Rest on an element and a window explains it; highlighted terms open further windows; a click pins them; pinned windows contain terms again. Content is data: one JSON glossary per language with [[key]] links. This repository holds the specification, the glossary schema and validator, shared test cases, the code in HTML/CSS/JavaScript and Rust, and an exact guide for every other framework.
 
-Synonyms: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, tooltips in tooltips, Erklärfenster. The specification is the contract; the web runtime is the reference implementation.
+Synonyms: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, tooltips in tooltips, Erklärfenster. The specification is the contract; the web runtime is the reference implementation; docs/algorithms.md describes its algorithms step by step so DeepTip can be rebuilt in any language.
 
 ## Docs
 
 - [Briefing for any language model](https://raw.githubusercontent.com/gorduan/DeepTip/main/docs/prompt.md): what DeepTip means and how to build it, in one page
 - [Specification](https://raw.githubusercontent.com/gorduan/DeepTip/main/SPEC.md): data format, behaviour, placement, input, accessibility, options, porting checklist
+- [Algorithms](https://raw.githubusercontent.com/gorduan/DeepTip/main/docs/algorithms.md): the exact algorithms of the reference as language-neutral pseudo-code (glossary layers, markup parser, window tree, grace and tendency, arming, timer lock, placement, input, auto-linking, encyclopedia)
 - [README](https://raw.githubusercontent.com/gorduan/DeepTip/main/README.md): the pattern, the frameworks, the tools
 - [Agent instructions](https://raw.githubusercontent.com/gorduan/DeepTip/main/AGENTS.md): how to add DeepTip to a project or port it to a new framework
 
@@ -20,8 +21,9 @@ Synonyms: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, too
 
 ## Frameworks
 
-- [Web (HTML + JavaScript), reference](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/web/README.md)
-- Other frameworks: `frameworks/<name>/README.md` in the repository (TypeScript, Svelte, React, Vue, RPG Maker MZ, Blazor, Avalonia, Unity, Valheim, Godot, Python/PySide6, Java/Swing, Kotlin/Compose, C++/Dear ImGui, C++/Unreal, Rust/egui, Swift/SwiftUI, Go/Gio)
+- [Web (HTML + CSS + JavaScript), reference](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/web/README.md)
+- Code: `frameworks/<name>/README.md` for RPG Maker MZ (`rpgmaker-mz`, JavaScript plugin) and Rust/egui (`rust-egui`)
+- Exact guides, no code: `frameworks/<name>/README.md` for TypeScript, Svelte, React, Vue, Blazor (on the web runtime), Avalonia, Unity, Valheim, Godot, Python/PySide6 (`python-pyside6`), Java/Swing (`java-swing`), Kotlin/Compose (`kotlin-compose`), C++/Dear ImGui (`cpp-imgui`), C++/Unreal (`cpp-unreal`), Swift/SwiftUI (`swift-swiftui`), Go/Gio (`go-gio`)
 
 ## Optional
 

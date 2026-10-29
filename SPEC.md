@@ -8,9 +8,11 @@
 > Synonyms that mean this spec: DeepTip, DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips,
 > tooltips in tooltips, verschachtelte Tooltips, Erklärfenster.
 
-This document is runtime-neutral. The web reference implementation is `frameworks/web/deeptip.js` + `deeptip.css`;
-any other runtime (Svelte, React, Godot, WPF/Avalonia, Unity, ImGui, TUI …) implements the same data format,
-behaviour and input mapping. Section numbers are referenced from code.
+This document is runtime-neutral. Code exists in HTML, CSS, JavaScript and Rust: the web reference implementation
+`frameworks/web/deeptip.js` + `deeptip.css`, and `frameworks/rust-egui`. Every other runtime (Svelte, React, Godot,
+WPF/Avalonia, Unity, ImGui, TUI …) is built from this document, the exact algorithms in `docs/algorithms.md` and its
+guide in `frameworks/<name>/README.md`, and implements the same data format, behaviour and input mapping. Section
+numbers are referenced from code and guides.
 
 ---
 
@@ -211,6 +213,9 @@ Focus returns to the closed window's anchor when focus was inside it.
   `data-dt-pinned`, `data-dt-locking` (+`--dt-lock`), `data-dt-depth`, `data-dt-engine`.
 
 ## 9. Porting checklist (other runtimes)
+Follow `docs/algorithms.md` step by step (it has the exact order of operations for every point below) and the
+framework's guide in `frameworks/<name>/README.md` if there is one.
+
 1. Parse the glossary format (§2) incl. nested form, layers and fallback chain; port `parseText` → your rich text.
 2. Window tree with the invariants of §3.2; previews vs pinned; subtree close.
 3. Hot set + grace + tendency + suppression (§3.4); optional timer lock.
@@ -218,12 +223,14 @@ Focus returns to the closed window's anchor when focus was inside it.
    covering it, first side with room".
 5. Input table (§5) incl. long-press, Esc-hold, gamepad B-hold.
 6. Accessibility (§6), theming, `$ui` labels.
-7. Run the shared validator on the same JSON files.
+7. Run the shared validator on the same JSON files, and pass the parity cases in `test/cases/`.
 
-Runtimes live in `frameworks/<name>/`, one folder and one download each, all using the same glossary files, the
-validator and the shared parity cases in `test/cases/`: **web** (`frameworks/web/`, the reference, framework-free;
-Svelte/React/Vue/Tauri/Electron adapters build on it), **Valheim** (`frameworks/valheim/`, BepInEx plugin, Thunderstore
-"DeepTip": TextMeshPro `<link>` terms, Valheim's own tooltip adopted as the root window, auto-linking via `aliases`,
-the encyclopedia as a Compendium page), and further frameworks (TypeScript, RPG Maker MZ, Blazor, Avalonia, Unity,
-Godot, Python/PySide6, Java/Swing, Kotlin/Compose, C++/Dear ImGui, C++/Unreal, Rust/egui, Swift/SwiftUI, Go/Gio),
-each listed with its state in the README.
+Frameworks live in `frameworks/<name>/`, one folder and one download each, all using the same glossary files, the
+validator and the shared parity cases. Code exists only in HTML, CSS, JavaScript and Rust: **web**
+(`frameworks/web/`, the reference, framework-free), **RPG Maker MZ** (`frameworks/rpgmaker-mz/`, a JavaScript
+plugin) and **Rust/egui** (`frameworks/rust-egui/`). Every other framework has an exact guide instead (`"kind":
+"guide"` in its `deeptip.json`): TypeScript, Svelte, React, Vue and Blazor on top of the web runtime; Avalonia, Unity,
+Godot, Python/PySide6, Java/Swing, Kotlin/Compose, C++/Dear ImGui, C++/Unreal, Swift/SwiftUI and Go/Gio as native
+builds. **Valheim** (`frameworks/valheim/`) documents a real C# build in a game with its own tooltips: the BepInEx
+plugin "DeepTip" on Thunderstore, source in https://github.com/gorduan/Valheim_DeepTip (TextMeshPro `<link>` terms,
+Valheim's own tooltip adopted as the root window, auto-linking via `aliases`, the encyclopedia as a Compendium page).

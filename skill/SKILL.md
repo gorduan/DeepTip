@@ -55,13 +55,17 @@ Mouse tendency + grace keep previews open on the way in; optional timer lock pin
    `refresh()` (after live values change), `add(locale, json)`, `destroy()`.
 
 ## Other runtimes
-Follow SPEC §9: port the glossary loader + `parseText` AST (map to RichTextLabel/BBCode in Godot, Inlines in
-WPF/Avalonia, TMP rich text in Unity), the window tree invariants (§3.2), hot/grace/tendency (§3.4),
-`computePlacement` (§4, pure function in `frameworks/web/deeptip.js`), the input table (§5). Reuse the SAME JSON files and
-the validator. Every framework has its own folder `frameworks/<name>/` (README, manifest `deeptip.json`, example, tests against `test/cases/`); read its README first.
+Code exists only in HTML/CSS/JS (`frameworks/web`, `frameworks/rpgmaker-mz`) and Rust (`frameworks/rust-egui`).
+Every other framework has an exact guide in `frameworks/<name>/README.md`; read it first, then build from
+`docs/algorithms.md` (language-neutral pseudo-code of every algorithm) and SPEC §9: the glossary loader + `parseText`
+AST (map to RichTextLabel/BBCode in Godot, Inlines in WPF/Avalonia, TMP rich text in Unity), the window tree invariants
+(§3.2), hot/grace/tendency (§3.4), `computePlacement` (§4), the input table (§5). Reuse the SAME JSON files and the
+validator, and pass `test/cases/`.
 
 ## Known runtimes
 - Web (`frameworks/web/`): the reference implementation.
-- Valheim (`frameworks/valheim/`, BepInEx plugin GC_Valheim_DeepTip, Thunderstore "DeepTip"): Valheim's UITooltip becomes the
-  root window, terms as TMP `<link="dt:key">`, auto-linking via `aliases`, lexicon page in the Compendium,
-  glossaries from any plugin's `deeptip/` folder, C# API `DeepTip.Api`.
+- Rust/egui (`frameworks/rust-egui/`): the second implementation in code.
+- Valheim (guide `frameworks/valheim/`; source https://github.com/gorduan/Valheim_DeepTip, BepInEx plugin
+  GC_Valheim_DeepTip, Thunderstore "DeepTip"): Valheim's UITooltip becomes the root window, terms as TMP
+  `<link="dt:key">`, auto-linking via `aliases`, lexicon page in the Compendium, glossaries from any plugin's
+  `deeptip/` folder, C# API `DeepTip.Api`.
