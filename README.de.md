@@ -1,53 +1,90 @@
 # DeepTip (Deutsch)
 
-English: [README.md](README.md)
+![Drei DeepTip-Fenster nebeneinander: „Stability“ erklärt einen Wert und verweist auf „unrest“, „Unrest“ öffnet daneben und verweist auf „revolt“, „Revolt“ ist noch eine Vorschau](docs/images/deeptip-windows.png)
 
-> **DeepTip** ist ein Gestaltungsmuster für Bedienoberflächen: Erklärfenster mit Tiefe. Maus auf einem Element ruhen lassen → ein Fenster erklärt es. Markierte Begriffe darin öffnen weitere Fenster, ein Klick hält sie fest, und in festgehaltenen Fenstern geht es beliebig tief weiter, so wie die Paradox-Spiele (Crusader Kings III, Victoria 3, Europa Universalis V) ihre Regeln erklären. Der Inhalt sind Daten: ein JSON-Glossar je Sprache.
+**DeepTip beantwortet „Was heißt das?“ genau dort, wo man gerade hinschaut.** Maus auf einem Knopf, einem Wert oder einem Wort ruhen lassen, und ein kleines Fenster erklärt es. Markierte Wörter in diesem Fenster haben eigene Erklärungen: Maus darauf, und das nächste Fenster öffnet sich daneben; ein Klick hält es fest. Man liest so tief, wie man will, und kein Fenster verdeckt das, aus dem es kam. So erklären die Strategiespiele von Paradox Interactive (Crusader Kings III, Victoria 3, Europa Universalis V) ihre Regeln; DeepTip bringt dieses Muster in jedes Programm, jedes Spiel und jedes Werkzeug, in jeder Sprache.
+
+English: [README.md](README.md) · Downloads: [Release v1.0.0](https://github.com/gorduan/DeepTip/releases/tag/v1.0.0)
+
+## Was es ist
+
+| Normaler Tooltip | DeepTip |
+|---|---|
+| eine Zeile Text, weg, sobald sich die Maus bewegt | ein Fenster, in das man hineinfahren, lesen, festhalten und schließen kann |
+| jeder Tooltip steht für sich | Begriffe darin öffnen weitere Fenster, beliebig tief |
+| der Text steht im Programmcode | die Texte stehen in einer JSON-Datei je Sprache, wie Übersetzungen |
+| nur Maus | Maus, Touch, Tastatur, Controller und Bildschirmleser |
+
+- **Für Nutzer:** kein Handbuch, kein Wiki-Tab, kein Tutorial. Die Erklärung eines Begriffs ist eine Mausbewegung entfernt, und die Erklärung jedes Begriffs darin auch.
+- **Für Entwickler:** ein Element mit einem Schlüssel markieren. DeepTip öffnet, platziert, verkettet, hält fest und schließt die Fenster.
+- **Für Autoren und Übersetzer:** alle Texte stehen in JSON-Glossaren. Ein Eintrag hat `title`, eine Zeile `short` und einen `body` mit `[[Verweisen]]` auf andere Einträge. Ein Prüfer findet kaputte Verweise und fehlende Übersetzungen.
+
+Passt überall, wo Nutzer vielen Begriffen begegnen, die voneinander abhängen: Spiele und Simulationen, Fachprogramme, Dashboards, Einstellungsseiten, Einstieg ohne Tutorial.
 
 Andere Namen für dasselbe: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox-Tooltips, Tooltips in Tooltips, Erklärfenster.
 
-Dieses Repo ist die Heimat des Musters: Spezifikation, Datenformat mit Schema und Prüfer, gemeinsame Testfälle, der Code in HTML, CSS, JavaScript und Rust und für jedes andere Framework eine genaue Bauanleitung, jedes in einem eigenen Ordner mit eigenem Download.
+## In das eigene Projekt einbauen
 
-## Die Regeln
+### Am einfachsten: den KI-Coding-Agenten machen lassen
 
-- **Ein Eintrag, drei Tiefen:** `title` (Name), `short` (eine Zeile), `body` (2–5 Sätze mit Verweisen).
-- **Begriffe sind Verweise:** Jeder Begriff kann ein eigener Eintrag sein, nichts wird doppelt erklärt.
-- **Nichts geht aus Versehen verloren:** Ein Fenster bleibt, solange die Maus darauf zufährt; Begriffe auf dem Weg dorthin ersetzen es nicht; festgehaltene Fenster schließen nur auf Wunsch.
-- **Den Rückweg nie verdecken:** Ein weiteres Fenster öffnet neben dem, aus dem es kam.
-- **Inhalt sind Daten:** eine JSON-Datei je Sprache, nie Erklärtext im Code.
-- **Jedes Eingabegerät zählt:** Maus, Touch, Tastatur, Controller, Bildschirmleser.
-- **Erst das, was die Plattform kann:** Popups, Rich Text, Fokus, dann eigener Code.
+Das geht für jede Sprache und jedes Framework.
 
-## Frameworks: ein Ordner, ein Download
+1. Den DeepTip-Skill einmal installieren. Er bringt dem Agenten das ganze Muster bei und enthält jede Anleitung:
 
-Code gibt es nur in **HTML, CSS und JavaScript** (Referenz) und in **Rust**. Jedes andere Framework bekommt statt Code eine genaue Bauanleitung: welcher Baustein des Toolkits welchen Teil der Spezifikation umsetzt, in welcher Reihenfolge, mit den Fallen. Die gemeinsamen Algorithmen stehen einmal Schritt für Schritt in [docs/algorithms.md](docs/algorithms.md).
+   ```bash
+   git clone --depth 1 https://github.com/gorduan/DeepTip
+   mkdir -p ~/.claude/skills ~/.agents/skills
+   cp -r DeepTip/skill/deeptip ~/.claude/skills/   # Claude Code
+   cp -r DeepTip/skill/deeptip ~/.agents/skills/   # OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI
+   ```
 
-- **Code:** Web (HTML + CSS + JS, Referenz), RPG Maker MZ (JS-Plugin), Rust (egui).
+   Für claude.ai `DeepTip-skill-1.0.0.zip` aus dem Release unter *Customize → Skills* hochladen. Alle Agenten und Pfade: [skill/README.md](skill/README.md).
+2. Im Projekt den Agenten bitten: *„Bau DeepTip in dieses Projekt ein und erkläre den Hauptbildschirm.“* Er erkennt das Framework, folgt dessen Anleitung, schreibt das Glossar in deiner Sprache, markiert die Elemente und prüft alles mit dem Prüfer.
+
+### Webseite oder Web-App: drei Schritte, ohne Build
+
+Das Beispiel in der [englischen README](README.md#a-website-or-web-app-three-steps-no-build) als Datei speichern und im Browser öffnen. Kurz:
+
+1. `deeptip.css` und `deeptip.js` laden (vom CDN `https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/frameworks/web/` oder die zwei Dateien aus [frameworks/web](frameworks/web) kopieren).
+2. Die Erklärungen schreiben: im echten Projekt eine Datei je Sprache, `deeptip/de.json`, geladen mit `DeepTip.init({ locale: "de", sources: ["deeptip/{locale}.json"] })`.
+3. Elemente mit `data-deeptip="schlüssel"` markieren. Begriffe in normalem Seitentext gehen auch (`renderText`), ein Aufruf zeigt ein Lexikon aller Einträge (`renderIndex`).
+
+Alle Optionen: [frameworks/web/README.md](frameworks/web/README.md). React, Vue, Svelte, TypeScript, Blazor, Tauri und Electron nutzen dieselben zwei Dateien; ihre Anleitungen zeigen, wo die Aufrufe hingehören.
+
+### Jedes andere Framework oder jede Engine
+
+1. Das Framework in der [Tabelle](#frameworks) suchen und `DeepTip-<framework>-1.0.0.zip` aus dem [Release](https://github.com/gorduan/DeepTip/releases/tag/v1.0.0) laden oder den Ordner öffnen.
+2. Web, RPG Maker MZ und Rust (egui) bringen fertigen Code mit. Für alle anderen ordnet die Anleitung jeden Teil von DeepTip Schritt für Schritt dem eigenen Toolkit zu. Mit [docs/algorithms.md](docs/algorithms.md) und den gemeinsamen Testfällen lässt sich prüfen, dass der eigene Bau sich genau wie die Referenz verhält.
+3. Nicht dabei? [docs/algorithms.md](docs/algorithms.md) beschreibt jeden Ablauf ohne Programmiersprache, und der dritte Ablauf im Skill führt einen Agenten durch ein neues System.
+
+## Erklärungen schreiben
+
+Eine JSON-Datei je Sprache, Schlüssel mit Punkten und in jeder Sprache gleich, Text mit kleinem Markup, nie HTML: `[[schlüssel]]` und `[[schlüssel|eigener Text]]` für Verweise, `**fett**`, `*kursiv*`, `` `code` ``, `{wert}` für Live-Werte, `- ` für Listen, Leerzeile für einen Absatz. `short` bleibt eine Zeile (höchstens 140 Zeichen), `body` 2–5 Sätze. Vor jedem Release prüfen:
+
+```bash
+node tools/deeptip-check.mjs --base de deeptip/de.json deeptip/en.json --scan src
+```
+
+Das ganze Format: [SPEC.md §2](SPEC.md).
+
+## Frameworks
+
+Code gibt es nur in **HTML, CSS und JavaScript** (Referenz) und in **Rust**. Jedes andere Framework hat eine genaue Bauanleitung.
+
+- **Code:** Web (Referenz), RPG Maker MZ (Plugin auf der Web-Laufzeit), Rust (egui, zweite vollständige Umsetzung).
 - **Anleitung, Stufe 1:** TypeScript, Svelte, React, Vue, Blazor (alle auf der Web-Laufzeit), Avalonia, Unity, Valheim (die Mod selbst: [gorduan/Valheim_DeepTip](https://github.com/gorduan/Valheim_DeepTip)), Godot, Python (PySide6).
-- **Anleitung, Stufe 2:** Java (Swing), Kotlin (Compose), C++ (Dear ImGui), C++ (Unreal), Swift (SwiftUI), Go (Gio).
+- **Anleitung, Stufe 2:** Java (Swing), Kotlin (Compose), C++ (Dear ImGui), C++ (Unreal Engine 5), Swift (SwiftUI), Go (Gio).
 
-Jedes liegt in `frameworks/<name>/` mit README und `deeptip.json`; Code-Ordner haben ein Beispiel (gemeinsames Beispiel-Glossar `glossary/example/`) und Tests gegen `test/cases/`, jede Anleitung sagt, wie man diese Fälle in ihrer Sprache prüft. Downloads: `DeepTip-<framework>-<version>.zip` (`npm run package`), jeweils mit SPEC, Algorithmen, Schema, Glossaren und Testfällen.
+Die Tabelle mit allen Ordnern steht in der [englischen README](README.md#frameworks).
 
-## Skill für KI-Agenten
+## Für KI-Agenten und Sprachmodelle
 
-[skill/deeptip](skill/deeptip) ist ein [Agent Skill](https://agentskills.io/specification) im offenen Format, das Claude Code, Claude, OpenAI Codex, GitHub Copilot, Cursor und Gemini CLI lesen. Einmal installiert, bringt er dem Agenten DeepTip bei, für jedes Programm und jede Sprache:
-- die Regeln und das Verhalten;
-- das Glossar-Format;
-- drei Abläufe: DeepTip in ein Projekt einbauen, Glossare schreiben und prüfen, DeepTip dort bauen, wo es noch keine Anleitung gibt;
-- alle 19 Framework-Anleitungen und eine Abnahme-Liste.
-
-Der Ordner `references/` enthält Spezifikation, Algorithmen, Anleitungen, Web-Laufzeit, Glossare, Testfälle und Prüfer. Der Skill funktioniert also auch ohne Internet.
-
-Installieren: den Ordner `skill/deeptip` nach `~/.claude/skills/` (Claude Code) und `~/.agents/skills/` (Codex, Copilot, Cursor, Gemini CLI) kopieren. Für claude.ai `DeepTip-skill-<version>.zip` aus den Releases hochladen. Alle Wege: [skill/README.md](skill/README.md).
-
-## Für Sprachmodelle und Agenten
-
-`skill/deeptip/SKILL.md` (der Skill oben), `llms.txt` (Einstieg für Sprachmodelle), `AGENTS.md` (Anweisungen für Coding-Agenten), `docs/prompt.md` (Briefing zum Einfügen in jeden Chat).
+`skill/` (der Agent Skill mit Installationshinweisen für jeden Agenten), `llms.txt` (Einstieg für Sprachmodelle), `AGENTS.md` (Anweisungen für Coding-Agenten am Repo), `docs/prompt.md` (Briefing zum Einfügen in jeden Chat).
 
 ## Werkzeuge
 
 ```bash
-npm test          # Referenz gegen test/cases
+npm test          # Referenz gegen test/cases, Skill-Kopie aktuell
 npm run check     # Glossare prüfen
 npm run demo      # dann http://localhost:5560/frameworks/web/example/
 npm run package   # ein Zip je Framework und den Skill nach dist/
