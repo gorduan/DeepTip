@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DeepTip for Phaser</title>
+    <link rel="stylesheet" href="../../web/deeptip.css" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --dt-bg: rgb(16 22 40 / 0.95);
+        --dt-fg: #f2f4f8;
+        --dt-border: rgb(255 255 255 / 0.35);
+        --dt-accent: #ffd966;
+        --dt-link: #7fd0ff;
+      }
+      body {
+        margin: 0;
+        font: 15px/1.5 system-ui, "Segoe UI", sans-serif;
+        color: #e6e8ec;
+        background: #0d1117;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 16px;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 17px;
+      }
+      #game {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      #intro {
+        width: 520px;
+        padding: 6px 10px;
+        font-size: 14px;
+        color: #f2f4f8;
+        background: rgb(0 0 0 / 0.55);
+        border-radius: 6px;
+      }
+      #intro p {
+        margin: 0;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 12px 16px 80px;
+      }
+      .muted {
+        color: #9aa3b0;
+      }
+    </style>
+    <!-- the repository keeps deeptip.js in frameworks/web; in your game copy it next to deeptip-phaser.js and leave this map out -->
+    <script type="importmap">
+      { "imports": { "../deeptip.js": "../../web/deeptip.js" } }
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>DeepTip + Phaser</h1>
+      <select id="lang" aria-label="Language">
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+      </select>
+      <span class="muted" id="version"></span>
+    </header>
+    <div id="game"></div>
+    <main>
+      <p class="muted">Rest the pointer on the bar, a province or the rebel; hover the words in the message; F1 explains what is under the pointer; arrow keys move the map, Z zooms.</p>
+      <h2>Encyclopedia</h2>
+      <div id="index"></div>
+    </main>
+
+    <script type="module">
+      // Phaser 4.2.1 by default, ?phaser=3 for 3.90.0 (the tests run both)
+      const PHASER = new URLSearchParams(location.search).get("phaser") === "3" ? "3.90.0" : "4.2.1";
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = `https://cdn.jsdelivr.net/npm/phaser@${PHASER}/dist/phaser.min.js`;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.append(s);
+      });
+      const { DeepTipPhaser } = await import("../deeptip-phaser.js");
+      const Phaser = window.Phaser;
+      document.getElementById("version").textContent = `Phaser ${Phaser.VERSION}`;
+
+      const LABELS = { en: { stability: "Stability", taxes: "Taxes", levels: ["low", "normal", "high"] }, de: { stability: "Stabilität", taxes: "Steuern", levels: ["niedrig", "normal", "hoch"] } };
+      const INTRO = {
+        en: "Rebels threaten a [[demo.province|province]] when [[demo.unrest|unrest]] grows.",
+        de: "Rebellen bedrohen eine [[demo.province|Provinz]], wenn die [[demo.unrest|Unruhe]] wächst.",
+      };
+      const state = { stability: 1, tax: 1, gold: 1250 };
+      const flags = { hoverStab: 0, downStab: 0, sceneDown: 0, sceneDownOutside: 0, space: 0, esc: 0, provinceDown: 0 };
+      const signed = () => (state.stability > 0 ? "+" : "") + state.stability;
+
+      class Realm extends Phaser.Scene {
+        constructor() {
+          super("realm");
+        }
+
+        create() {
+          const tips = this.game.registry.get("tips");
+          const title = (key) => tips.dt.entry(key)?.e.title ?? key;
+          this.cameras.main.setBounds(0, 0, 1600, 900).setBackgroundColor("#1b2a1f");
+
+          // the map: four provinces and a rebel that wanders between them
+          this.provinces = [
+            [120, 140, 520, 300, 0x3d6b45],
+            [700, 120, 560, 340, 0x4f7a3a],
+            [140, 500, 640, 320, 0x6b6a3d],
+            [860, 520, 600, 300, 0x3d5e6b],
+          ].map(([x, y, w, h, color], i) => {
+            const r = this.add.rectangle(x + w / 2, y + h / 2, w, h, color).setStrokeStyle(3, 0xd8d0a0).setInteractive();
+            r.on("pointerdown", () => flags.provinceDown++);
+            this.add.text(x + 14, y + 10, `Province ${i + 1}`, { fontSize: "18px", color: "#f0ead0" });
+            tips.explain(r, "demo.province");
+            return r;
+          });
+          this.rebel = this.add.circle(320, 470, 26, 0xc0392b).setStrokeStyle(3, 0xffffff);
+          this.rebelTween = this.tweens.add({ targets: this.rebel, x: 1180, duration: 9000, yoyo: true, repeat: -1 });
+          tips.explain(this.rebel, "demo.revolt");
+
+          // the bar at the top: fixed to the screen (scroll factor 0), every button explains itself
+          const button = (x, w, key, onClick) => {
+            const bg = this.add.rectangle(0, 0, w, 34, 0x0d1117, 0.85).setStrokeStyle(1, 0xffffff, 0.4);
+            const text = this.add.text(0, 0, "", { fontSize: "16px", color: "#ffffff" }).setOrigin(0.5);
+            const c = this.add.container(x, 26, [bg, text]).setSize(w, 34).setScrollFactor(0).setDepth(10);
+            bg.setInteractive({ useHandCursor: true });
+            if (onClick) bg.on("pointerdown", onClick);
+            tips.explain(c, key, key === "deeptip.about" ? { delay: 0 } : {});
+            c.label = text;
+            return c;
+          };
+          this.hud = {
+            realm: button(70, 120, "demo.realm"),
+            stability: button(210, 150, "demo.stability", () => {
+              flags.downStab++;
+              state.stability = state.stability >= 3 ? -3 : state.stability + 1;
+              this.paint();
+              tips.dt.refresh(); // open windows read {stability} again
+            }),
+            taxes: button(375, 170, "demo.taxes", () => {
+              state.tax = (state.tax + 1) % 3;
+              state.gold += [50, 120, 260][state.tax];
+              this.paint();
+              tips.dt.refresh();
+            }),
+            nobles: button(530, 120, "demo.nobles"),
+            gold: button(670, 150, "demo.gold"),
+            help: button(920, 40, "deeptip.about"),
+          };
+          this.hud.stability.list[0].on("pointerover", () => flags.hoverStab++);
+
+          // terms drawn by Phaser: one Text object per word, explained as a term (hover opens, click pins)
+          this.terms = ["demo.stability", "demo.unrest", "demo.revolt"].map((key, i) => {
+            const t = this.add.text(70 + i * 150, 500, "", { fontSize: "18px", color: "#7fd0ff", backgroundColor: "#000000aa", padding: { x: 6, y: 3 } });
+            t.setScrollFactor(0).setDepth(10);
+            tips.explain(t, key, { term: true });
+            return t;
+          });
+
+          // text with many terms: a DOM element over the canvas, rendered by DeepTip itself
+          const intro = document.createElement("div");
+          intro.id = "intro";
+          this.introDom = this.add.dom(480, 440, intro).setScrollFactor(0);
+          this.intro = intro;
+
+          // corner objects: placement at the edges of the game
+          this.corners = [
+            [12, 60, "demo.province"],
+            [948, 60, "demo.prestige"],
+            [12, 528, "demo.revolt"],
+            [948, 528, "demo.unrest"],
+          ].map(([x, y, key]) => {
+            const r = this.add.rectangle(x, y, 24, 24, 0xffd966).setScrollFactor(0).setDepth(10);
+            tips.explain(r, key, { place: x < 100 ? ["right", "top", "bottom"] : ["left", "top", "bottom"] });
+            return r;
+          });
+
+          this.input.on("pointerdown", () => flags.sceneDown++);
+          this.input.on("pointerdownoutside", () => flags.sceneDownOutside++);
+          this.input.keyboard.on("keydown-SPACE", () => flags.space++);
+          this.input.keyboard.on("keydown-ESC", () => flags.esc++);
+          this.input.keyboard.on("keydown-Z", () => this.cameras.main.setZoom(this.cameras.main.zoom === 1 ? 1.5 : 1));
+          this.cursors = this.input.keyboard.createCursorKeys();
+          this.title = title;
+          this.paint();
+        }
+
+        paint() {
+          const tips = this.game.registry.get("tips");
+          const L = LABELS[tips.dt.locale] ?? LABELS.en;
+          const h = this.hud;
+          h.realm.label.setText(this.title("demo.realm"));
+          h.stability.label.setText(`${L.stability} ${signed()}`);
+          h.taxes.label.setText(`${L.taxes}: ${L.levels[state.tax]}`);
+          h.nobles.label.setText(this.title("demo.nobles"));
+          h.gold.label.setText(`Gold ${state.gold.toLocaleString(tips.dt.locale)}`);
+          h.help.label.setText("?");
+          this.terms.forEach((t, i) => t.setText(this.title(["demo.stability", "demo.unrest", "demo.revolt"][i])));
+          tips.dt.renderText(this.intro, INTRO[tips.dt.locale] ?? INTRO.en);
+        }
+
+        update(_, delta) {
+          const cam = this.cameras.main;
+          const v = (delta / 1000) * 400;
+          if (this.cursors.left.isDown) cam.scrollX -= v;
+          if (this.cursors.right.isDown) cam.scrollX += v;
+          if (this.cursors.up.isDown) cam.scrollY -= v;
+          if (this.cursors.down.isDown) cam.scrollY += v;
+        }
+      }
+
+      const game = new Phaser.Game({
+        type: Phaser.AUTO,
+        width: 960,
+        height: 540,
+        parent: "game",
+        backgroundColor: "#0d1117",
+        dom: { createContainer: true },
+        scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_HORIZONTALLY },
+        scene: [],
+      });
+
+      const tips = DeepTipPhaser.attach(game, {
+        locale: "en",
+        fallback: ["de", "en"],
+        sources: ["../../../glossary/core/{locale}.json", "../../../glossary/example/{locale}.json"],
+        delay: 600,
+        vars: { stability: signed, gold: () => state.gold.toLocaleString(tips.dt.locale) },
+      });
+      game.registry.set("tips", tips);
+      await tips.dt.ready; // titles of the HUD come from the glossary
+      game.scene.add("realm", Realm, true);
+      tips.dt.renderIndex(document.getElementById("index"));
+
+      document.getElementById("lang").addEventListener("change", async (e) => {
+        await tips.dt.setLocale(e.target.value);
+        game.scene.getScene("realm").paint();
+      });
+
+      window.demo = { game, tips, state, flags, Phaser };
+      if (/[?&]test\b/.test(location.search)) import("../test/checks.js");
+    </script>
+  </body>
+</html>

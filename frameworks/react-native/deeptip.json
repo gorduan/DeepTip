@@ -1,0 +1,11 @@
+{
+  "name": "react-native",
+  "title": "React Native",
+  "language": "JavaScript/TypeScript",
+  "tier": 2,
+  "area": "mobile",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": ["web", "typescript"]
+}

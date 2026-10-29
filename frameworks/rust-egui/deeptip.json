@@ -3,6 +3,7 @@
   "title": "Rust (egui)",
   "language": "Rust",
   "tier": 2,
+  "area": "desktop",
   "version": "1.0.0",
   "status": "tested",
   "kind": "runtime",

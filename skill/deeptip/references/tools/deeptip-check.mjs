@@ -138,29 +138,186 @@ if (baseMap) {
 }
 
 /* ---------------------------------------------------------------- source scan */
+// Files: markup, templates and data (TEXT), the languages of the first guides (OLD) and those of the later guides (CODE).
+// [[key]] counts anywhere in TEXT and OLD files (as it always did) but only inside a one-line string literal in CODE
+// files, where [[x]] is also a nested array, a C++ attribute ([[nodiscard]]), a Swift type or a Lua string.
+const TEXT = [".html", ".htm", ".svelte", ".vue", ".cshtml", ".razor", ".json", ".php", ".erb", ".twig", ".jinja", ".j2", ".astro", ".xaml", ".axaml", ".uxml", ".fxml", ".ui"];
+const OLD = [".js", ".mjs", ".ts", ".tsx", ".jsx", ".gd", ".cs", ".py"];
+const CODE = [".dart", ".kt", ".kts", ".swift", ".java", ".go", ".rs", ".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".hh", ".lua", ".luau", ".gml", ".rpy", ".qml", ".tscn"];
+const JS = [".js", ".mjs", ".ts", ".tsx", ".jsx"];
+const CPP = [".cpp", ".cc", ".cxx", ".h", ".hpp", ".hh"];
+// Build output, dependencies and engine caches never hold the project's own keys.
+const SKIP_DIRS = new Set(["node_modules", "bower_components", "dist", "build", "out", "target", "bin", "obj", "vendor", "Library", "Temp", "Logs", "Binaries", "Intermediate", "Saved", "DerivedDataCache", "Pods", "DerivedData", "__pycache__", "venv"]);
+// DeepTip's own code files (runtime, type declarations, RPG Maker plugin, jQuery plugin, Phaser adapter) mention keys
+// in their comments; a folder with a DeepTip manifest (deeptip.json with "kind") is a copy of a framework folder.
+const OWN_FILES = /^(?:deeptip(?:\.min)?\.(?:js|d\.ts)|DeepTip\.js|jquery\.deeptip(?:\.min)?\.js|deeptip-phaser(?:\.min)?\.js)$/;
+const LINK = /\[\[([A-Za-z0-9_.-]+)(?:\|[^\]]*)?\]\]/g;
+const STRING = /"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`/g;
+// Marks whose key is the first group. "weak": a generic name that other code uses too (how it is reported: see the scan).
+const MARKS = [
+  { re: /(?:data-deeptip|data-dt-key)\s*=\s*\{?\s*["'`]([^"'`{}$]+)["'`]/g }, // web; JSX data-deeptip={"key"}
+  { re: /data-deeptip\s*=\s*"\s*'([A-Za-z0-9_.-]+)'\s*"/g }, // Vue :data-deeptip="'key'"
+  { re: /<[A-Za-z][\w-]*\b[^<>;{}]*?\sdeeptip\s*=\s*"([A-Za-z0-9_.-]+)"/g, in: [".html", ".htm", ".ts"] }, // Angular directive deeptip="key"
+  { re: /\[(?:deeptip|attr\.data-deeptip)\]\s*=\s*"\s*'([A-Za-z0-9_.-]+)'\s*"/g }, // Angular [deeptip]="'key'", [attr.data-deeptip]="'key'"
+  { re: /\.deeptip\(\s*\{[^{}]*?\bkey\s*:\s*["'`]([A-Za-z0-9_.-]+)["'`]/g }, // jQuery .deeptip({ key: "key" })
+  { re: /\\{1,2}DT\[([A-Za-z0-9_.-]+)(?:\|[^\]]*)?\]/g }, // RPG Maker MZ \DT[key] in texts (\\DT[…] in its JSON data)
+  { re: /<DeepTip:\s*([A-Za-z0-9_.-]+)\s*>/g }, // RPG Maker MZ note tag
+  { re: /\bDeepTip\.Key\s*=\s*"([^"{}]+)"/g }, // XAML (WPF, Avalonia, .NET MAUI) dt:DeepTip.Key="key"
+  { re: /\bDeepTip\.key\s*:\s*["']([A-Za-z0-9_.-]+)["']/g }, // QML DeepTip.key: "key"
+  { re: /<property\s+name="deeptip"[^>]*>\s*<string>([^<]+)<\/string>/g }, // Qt Designer dynamic property (.ui)
+  { re: /<properties\b[^>]*?\sdeeptip\s*=\s*"([^"]+)"/g }, // FXML <properties deeptip="key"/>
+  { re: /^[ \t]*metadata\/deeptip\s*=\s*"([^"]+)"/gm }, // Godot scene metadata
+  { re: /\{a=dt:([A-Za-z0-9_.-]+)\}/g }, // Ren'Py {a=dt:key}
+  { re: /<dt\s+key=\\?["']([A-Za-z0-9_.-]+)\\?["']/g, in: CPP }, // Unreal rich text <dt key="key"> in C++ (HTML has <dt> too)
+  { re: /\bDeepTipKey\s*\{\s*key\s*:\s*"([^"]+)"/g, in: [".rs"] }, // Bevy component DeepTipKey { key: "key".into(), … }
+  { re: /(?:\[|\{\{[<%]\s*)deeptip\s+key\s*=\s*["']([^"']+)["']/g }, // WordPress [deeptip key="key"], Hugo {{< deeptip key="key" >}}
+  { re: /<(?:x-)?deeptip-term\b[^>]*?\skey\s*=\s*["']([^"']+)["']/g }, // Blade <x-deeptip-term key="key">, Razor <deeptip-term key="key">
+  { re: /\bdeeptip_term\s*\(?\s*["']([^"']+)["']/g }, // Django, Jinja, Twig, Rails: deeptip_term "key" / deeptip_term('key')
+  { re: /<Term\b[^>]*?\skey\s*=\s*["']([^"']+)["']/g, in: [".astro"], weak: true }, // Astro <Term key="key" />
+  { re: /\b\w*[Aa]nchor\.Key\s*=\s*"([^"]+)"/g, in: [".cs"], weak: true }, // Unity uGUI anchor.Key = "key"
+];
+// Calls whose argument `arg` (0 = first) is the key as a string literal, or whose argument named key (key: / key =) is;
+// `when`: another argument must be this string; `not`: strings that are no keys.
+const JQUERY_METHODS = ["open", "close", "pin", "unpin", "remove", "text", "index", "removeIndex", "destroy", "refresh"];
+const CALLS = [
+  { re: /\bdeeptip\s*\(/g, arg: 0, not: JQUERY_METHODS }, // deeptip("key"), jQuery $(…).deeptip("key"), not its methods
+  { re: /\buseDeepTip\s*\(/g, arg: 0 }, // React Native useDeepTip("key")
+  { re: /\.deepTip\s*\(/g, arg: 0 }, // Compose Modifier.deepTip("key"), SwiftUI .deepTip("key")
+  { re: /\bDeepTip\s*\(/g, arg: 0, in: [".dart"] }, // Flutter DeepTip('key', child: …)
+  { re: /\bdeeptip_mark\s*\(/g, arg: 1 }, // GameMaker deeptip_mark(id, key, …), GTK deeptip_mark (widget, key)
+  { re: /\bdeeptip_mark_instance\s*\(/g, arg: 1 }, // GameMaker
+  { re: /\bdeeptip_open\s*\(/g, arg: 0 }, // GameMaker
+  { re: /\bSetDeepTipKey\s*\(/g, arg: 1 }, // Windows Forms designer
+  { re: /\bputClientProperty\s*\(/g, arg: 1, when: [0, "deeptip"] }, // Swing
+  { re: /\.put\s*\(/g, arg: 1, when: [0, "deeptip"] }, // JavaFX getProperties().put("deeptip", "key")
+  { re: /\bsetProperty\s*\(/g, arg: 1, when: [0, "deeptip"] }, // Qt and PySide6 setProperty("deeptip", "key")
+  { re: /\bset_meta\s*\(/g, arg: 1, when: [0, "deeptip"] }, // Godot
+  { re: /\bg_object_set_data(?:_full)?\s*\(/g, arg: 2, when: [1, "deeptip"] }, // GTK
+  { re: /\bmark\s*\(/g, arg: 1, weak: true, in: [".py", ".gd", ".rs", ".lua", ".luau", ".java", ".swift"] }, // dt.mark(widget, "key"), dt:mark(obj, "key")
+  { re: /\bmark_with\s*\(/g, arg: 1, weak: true, in: [".rs"] }, // Ratatui and egui dt.mark_with(area, "key", options)
+  { re: /\.Mark\s*\(/g, arg: 0, weak: true, in: [".go"] }, // Bubble Tea dt.Mark("key", view)
+  { re: /\.Mark\s*\(/g, arg: 2, weak: true, in: [".go"] }, // Gio dt.Mark(gtx, tag, "key", widget)
+  { re: /(?:\.|->)Mark(?:Slate)?\s*\(/g, arg: 1, weak: true, in: CPP }, // Unreal DeepTip->Mark(Widget, TEXT("key"))
+  { re: /(?:\.|->)Item\s*\(/g, arg: 0, weak: true, in: CPP }, // Dear ImGui dt.Item("key")
+  { re: /\bSetKey\s*\(/g, arg: 1, weak: true, in: [".cs"] }, // Avalonia, WPF, Windows Forms, .NET MAUI, UI Toolkit
+  { re: /\.explain\s*\(/g, arg: 1, weak: true, in: JS }, // Phaser tips.explain(object, "key")
+  { re: /\.explainArea\s*\(/g, arg: 2, weak: true, in: JS }, // Phaser tips.explainArea(scene, rect, "key")
+  { re: /\b(?:Hover|Unhover|Open)\s*\(/g, arg: 0, weak: true, in: [".rpy"] }, // Ren'Py dt.Hover("key")
+];
+
+/** End of the string literal that starts at src[i] (one line, or any length between backticks), or -1. */
+function stringEnd(src, i) {
+  const q = src[i];
+  for (let j = i + 1; j < src.length && j < i + 2000; j++) {
+    if (src[j] === "\\") j++;
+    else if (src[j] === q) return j;
+    else if (src[j] === "\n" && q !== "`") return -1;
+  }
+  return -1;
+}
+
+/** The arguments of the call whose "(" is at src[open], as trimmed source text; null if it does not close nearby. */
+function callArgs(src, open) {
+  const args = [];
+  let depth = 0;
+  let start = open + 1;
+  for (let i = open; i < src.length && i < open + 4000; i++) {
+    const c = src[i];
+    if (c === '"' || c === "'" || c === "`") {
+      const end = stringEnd(src, i);
+      if (end >= 0) i = end;
+      else if (c !== "'") return null; // a lone ' is an apostrophe, a char or a Rust lifetime
+    } else if (c === "/" && src[i + 1] === "*") {
+      const end = src.indexOf("*/", i + 2);
+      if (end < 0) return null;
+      i = end + 1;
+    } else if (c === "(" || c === "[" || c === "{") depth++;
+    else if (c === ")" || c === "]" || c === "}") {
+      if (--depth === 0) {
+        args.push(src.slice(start, i).trim());
+        return args;
+      }
+    } else if (c === "," && depth === 1) {
+      args.push(src.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  return null;
+}
+
+/** The text of a string-literal argument: "k", 'k', `k`, u"k"_s, @"k", TEXT("k"), QStringLiteral("k"), g_strdup ("k"), "k".into() … */
+function literal(arg) {
+  let s = arg?.trim() ?? "";
+  for (let n = 0, w; n < 3 && (w = /^(?:TEXT|_T|QStringLiteral|QLatin1String(?:View)?|g_strdup|String::from)\s*\(([\s\S]*)\)$/.exec(s)); n++) s = w[1].trim();
+  s = s.replace(/\.(?:into|to_string|to_owned)\(\)$/, "").replace(/_(?:s|L1)$/, "");
+  const m = /^(?:u8|[uULr@])?(["'`])((?:(?!\1)[^\\\n]|\\.)*)\1$/.exec(s);
+  return m && !(m[1] === "`" && m[2].includes("${")) ? m[2] : null;
+}
+
+/** The key of one call: its argument named key, else the argument at spec.arg (not when that one is named). */
+function callKey(args, spec) {
+  for (const a of args) {
+    const named = /^key\s*[:=](?!=)\s*([\s\S]+)$/.exec(a);
+    if (named) return literal(named[1]);
+  }
+  const a = args[spec.arg];
+  if (a == null || /^[A-Za-z_]\w*\s*[:=](?![:=])/.test(a)) return null;
+  if (spec.when && literal(args[spec.when[0]]) !== spec.when[1]) return null;
+  const key = literal(a);
+  return key != null && spec.not?.includes(key) ? null : key;
+}
+
+/** Every key used in one file, with its offset and whether a strong (DeepTip-specific) mark found it. */
+function keysInSource(src, ext) {
+  const found = [];
+  const at = (key, index, weak) => key != null && KEY_RE.test(key.trim()) && found.push({ key: key.trim(), index, weak: !!weak });
+  const applies = (spec) => !spec.in || spec.in.includes(ext);
+  if (CODE.includes(ext)) {
+    for (const s of src.matchAll(STRING)) for (const m of s[0].matchAll(LINK)) at(m[1], s.index + m.index);
+  } else for (const m of src.matchAll(LINK)) at(m[1], m.index);
+  for (const spec of MARKS.filter(applies)) for (const m of src.matchAll(spec.re)) at(m[1], m.index, spec.weak);
+  for (const spec of CALLS.filter(applies)) {
+    for (const m of src.matchAll(spec.re)) {
+      const args = callArgs(src, m.index + m[0].length - 1);
+      if (args) at(callKey(args, spec), m.index, spec.weak);
+    }
+  }
+  return found.sort((a, b) => a.index - b.index);
+}
+
 if (opt.scan.length) {
-  const used = new Map(); // key -> first place
-  const exts = new Set([".html", ".htm", ".js", ".mjs", ".ts", ".tsx", ".jsx", ".svelte", ".vue", ".cshtml", ".razor", ".gd", ".cs", ".py", ".json"]);
-  // data-deeptip="key" (also {"key"}), deeptip("key"), [[key]] in texts, Vue :data-deeptip="'key'",
-  // RPG Maker MZ \DT[key] in texts (\\DT[...] inside its JSON data) and <DeepTip: key> note tags
-  const rx = /(?:data-deeptip|data-dt-key)\s*=\s*\{?\s*["'`]([^"'`{}$]+)["'`]|\bdeeptip\s*\(\s*["'`]([^"'`]+)["'`]|\[\[([A-Za-z0-9_.-]+)(?:\|[^\]]*)?\]\]|data-deeptip\s*=\s*"\s*'([A-Za-z0-9_.-]+)'\s*"|\\{1,2}DT\[([A-Za-z0-9_.-]+)(?:\|[^\]]*)?\]|<DeepTip:\s*([A-Za-z0-9_.-]+)\s*>/g;
-  const walk = (dir) => {
+  const used = new Map(); // key -> { where (first place), strong }
+  const exts = new Set([...TEXT, ...OLD, ...CODE]);
+  const isFramework = (dir) => {
+    try {
+      return typeof JSON.parse(readFileSync(join(dir, "deeptip.json"), "utf8")).kind === "string";
+    } catch {
+      return false;
+    }
+  };
+  const walk = (dir, top) => {
+    if (!top && isFramework(dir)) return;
     for (const f of readdirSync(dir)) {
-      if (f === "node_modules" || f.startsWith(".") || f === "dist" || /^deeptip(\.min)?\.js$/.test(f)) continue;
+      if (f.startsWith(".") || SKIP_DIRS.has(f) || OWN_FILES.test(f)) continue;
       const p = join(dir, f);
-      if (statSync(p).isDirectory()) walk(p);
-      else if (exts.has(extname(f))) {
+      if (statSync(p).isDirectory()) walk(p, false);
+      else if (exts.has(extname(f).toLowerCase())) {
         const src = readFileSync(p, "utf8");
-        for (const m of src.matchAll(rx)) {
-          const key = (m[1] ?? m[2] ?? m[3] ?? m[4] ?? m[5] ?? m[6]).trim();
-          if (KEY_RE.test(key) && !used.has(key)) used.set(key, `${p}:${src.slice(0, m.index).split("\n").length}`);
+        for (const { key, index, weak } of keysInSource(src, extname(f).toLowerCase())) {
+          const u = used.get(key);
+          if (!u) used.set(key, { where: `${p}:${src.slice(0, index).split("\n").length}`, strong: !weak });
+          else if (!weak) u.strong = true;
         }
       }
     }
   };
-  opt.scan.forEach(walk);
-  for (const [key, where] of used) {
-    if (baseMap && !baseMap.has(key)) add("error", where, `key "${key}" is used in code but not defined`);
+  opt.scan.forEach((dir) => walk(dir, true));
+  // A key found only by a generic call name (mark, SetKey, explain …) is reported when it is not defined but starts
+  // with a namespace the glossary uses (shop.cartt): other libraries' strings like zone.Mark("button1") stay silent.
+  const namespaces = new Set([...(baseMap?.keys() ?? [])].filter((k) => k.includes(".")).map((k) => k.split(".")[0]));
+  for (const [key, { where, strong }] of used) {
+    if (!baseMap || baseMap.has(key)) continue;
+    if (strong || (key.includes(".") && namespaces.has(key.split(".")[0]))) add("error", where, `key "${key}" is used in code but not defined`);
   }
   if (baseMap) {
     const unused = [...baseMap.keys()].filter((k) => !used.has(k) && !linkedFrom.has(k) && !k.startsWith("deeptip."));

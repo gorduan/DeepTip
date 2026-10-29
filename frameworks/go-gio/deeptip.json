@@ -3,6 +3,7 @@
   "title": "Go (Gio)",
   "language": "Go",
   "tier": 2,
+  "area": "desktop",
   "version": "1.0.0",
   "status": "documented",
   "kind": "guide",

@@ -1,0 +1,11 @@
+{
+  "name": "go-bubbletea",
+  "title": "Go (Bubble Tea, terminal)",
+  "language": "Go",
+  "tier": 2,
+  "area": "terminal",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

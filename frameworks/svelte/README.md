@@ -4,6 +4,34 @@ How to use [DeepTip](../../README.md) (explanation windows with depth) in a Svel
 
 This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. In Svelte you use the web runtime [`frameworks/web/deeptip.js`](../web/README.md) unchanged; this guide is the exact recipe around it. It works by event delegation on `document`, so Svelte needs no action per element: one controller started in the root component, `data-deeptip` attributes, and two attachments for texts and the encyclopedia. The algorithms are in [docs/algorithms.md](../../docs/algorithms.md), the contract is [SPEC.md](../../SPEC.md). The code blocks that start with a file path were compiled with Svelte 5.57, built with Vite 8, and the built app was run in Chromium: page texts after `ready`, encyclopedia, rest opens a window, live value update, language switch (2026-10-29).
 
+## Quick start
+
+**Recognise the project:** `svelte` (version 5) in `package.json` and `.svelte` files; SvelteKit adds `@sveltejs/kit` and `src/routes/`.
+
+1. Copy `frameworks/web/deeptip.js` and `deeptip.css` to `src/lib/deeptip/` (section 1).
+2. Copy `glossary/core/en.json` to `public/deeptip/core/en.json` (SvelteKit: `static/deeptip/core/en.json`); your own entries go to `public/deeptip/en.json`.
+3. Start the one controller in `onMount` of the root component and return its cleanup (below; SvelteKit: the root layout, section 5).
+4. Mark elements with `data-deeptip="key"` (section 3); section 2 adds language switching, page texts and the encyclopedia.
+5. Validate the glossary files: `node <DeepTip>/tools/deeptip-check.mjs --base en public/deeptip/core/en.json public/deeptip/en.json`.
+
+```svelte
+<!-- src/App.svelte -->
+<script>
+  import { onMount } from "svelte";
+  import { DeepTip } from "./lib/deeptip/deeptip.js";
+  import "./lib/deeptip/deeptip.css";
+
+  onMount(() => {
+    const dt = DeepTip.init({ locale: "en", sources: ["/deeptip/core/{locale}.json", "/deeptip/{locale}.json"] });
+    return () => dt.destroy();
+  });
+</script>
+
+<button data-deeptip="deeptip.about" aria-label="Help">?</button>
+```
+
+**Done when:** resting on `?` for 800 ms opens the *DeepTip* window below it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows, `Esc` closes the newest window, the validator reports 0 errors.
+
 ## 1. Files
 
 | File | Where |
@@ -13,6 +41,8 @@ This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. I
 | glossaries `glossary/core/<locale>.json` and yours | Vite: `public/deeptip/…`, SvelteKit: `static/deeptip/…` (`core/<locale>.json`, `<locale>.json`): served as static files, fetched per language |
 
 Download `DeepTip-svelte-1.0.0.zip` from the releases (it contains `frameworks/web/`, the glossaries and this guide) or copy the files from the repository.
+
+Nothing is ported: the parser, the placement and the glossary flattening are the web runtime's, and `npm test` in the DeepTip repository runs them against `test/cases/*.json` ([§11](../../docs/algorithms.md#11-testing-with-testcases)).
 
 ## 2. The controller: started by the root component
 

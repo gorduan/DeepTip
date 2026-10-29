@@ -1,0 +1,11 @@
+{
+  "name": "roblox",
+  "title": "Roblox (Luau)",
+  "language": "Luau",
+  "tier": 2,
+  "area": "games",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

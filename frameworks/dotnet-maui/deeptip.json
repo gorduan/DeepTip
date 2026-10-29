@@ -1,0 +1,11 @@
+{
+  "name": "dotnet-maui",
+  "title": ".NET MAUI",
+  "language": "C#",
+  "tier": 1,
+  "area": "desktop",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

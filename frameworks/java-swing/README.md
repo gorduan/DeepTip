@@ -4,6 +4,32 @@ How to build [DeepTip](../../README.md) (explanation windows with depth) in a Ja
 
 This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. This guide is the exact recipe for Swing. The shared algorithms are in [docs/algorithms.md](../../docs/algorithms.md) and are linked by section (§) instead of repeated; [SPEC.md](../../SPEC.md) is the contract. Statements marked *(checked)* were verified with headless probe programs on JDK 25.0.1 (Windows 11, 2026-10-29); the rest follows the JDK documentation.
 
+## Quick start
+
+**Recognise the project:** `import javax.swing.*` and windows built from `JFrame` and `JComponent`s, Java 17 or newer.
+
+1. Port `Json`, `Glossary`, `Markup` and `Placement` (sections 9 and 10) and pass the parity cases: `java -Djava.awt.headless=true -cp <classes> deeptip.ParityCases <DeepTip>/test/cases` (section 11.1).
+2. Build `Engine` with `Clock` and `Host` and test it headless (sections 3 and 11.2).
+3. Build `TermView`, `TipView`, `TipWindow`, `SwingHost` and the public `DeepTip` (sections 4–8).
+4. Copy `glossary/core/<locale>.json` to `deeptip/core/`; your own entries go to `deeptip/<locale>.json` (section 9).
+5. Install DeepTip once on the event dispatch thread and mark components with the client property `"deeptip"` (below).
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en deeptip/core/en.json deeptip/en.json`.
+
+```java
+SwingUtilities.invokeLater(() -> {
+  // options under their SPEC §7 names; sources: core first, yours after (section 9)
+  DeepTip.install(Map.of("locale", "en", "sources", List.of("deeptip/core/{locale}.json", "deeptip/{locale}.json")));
+  JButton help = new JButton("?");
+  help.putClientProperty("deeptip", "deeptip.about");      // web: data-deeptip="deeptip.about"
+  JFrame frame = new JFrame("My app");
+  frame.add(help);
+  frame.pack();
+  frame.setVisible(true);
+});
+```
+
+**Done when:** the parity run exits with 0, resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## 1. Parts to build
 
 | Part | Does | Swing types |

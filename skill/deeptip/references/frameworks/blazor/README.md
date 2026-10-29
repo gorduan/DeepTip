@@ -4,6 +4,35 @@ How to use [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (ex
 
 Blazor runs in a browser, so it uses the **web runtime** ([frameworks/web](../web/README.md): `deeptip.js` + `deeptip.css`) through JS interop; nothing is ported to C#. This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust, and this guide is the exact recipe for the .NET side. The download `DeepTip-blazor-1.0.0.zip` contains this guide together with `frameworks/web`, the glossaries, the schema, the shared test cases, [SPEC.md](../../SPEC.md) and [docs/algorithms.md](../../docs/algorithms.md). Statements marked *(checked)* were verified on 2026-10-29 with a .NET 8 Blazor Web App (interactive server rendering, global interactivity) driven by headless Chromium 149 through Playwright 1.61: the snippets below are the code of that run, and its 12 checks passed (initialisation with `sources`, live values, terms in page text, encyclopedia, a window on hover, `OnOpen` in .NET, a term preview, click pins the term and its parent, `OnPin` in .NET, Esc closes the newest window, Shift+Esc closes all, the element's own `@onclick` still runs and `setValues` refreshes the open window, `setLocale` switches the language).
 
+## Quick start
+
+**Recognise the project:** `.razor` files, and a `Program.cs` that calls `AddRazorComponents()` (Blazor Web App) or a `.csproj` with `Sdk="Microsoft.NET.Sdk.BlazorWebAssembly"` (standalone WebAssembly).
+
+1. Copy `frameworks/web/deeptip.js` and `deeptip.css` to `wwwroot/deeptip/` and `glossary/core/en.json` to `wwwroot/deeptip/glossary/core/en.json`; your own entries go to `wwwroot/deeptip/en.json` (section 3).
+2. Link `deeptip/deeptip.css` in the `<head>` of `Components/App.razor` (standalone WebAssembly: `wwwroot/index.html`).
+3. Add the glue `wwwroot/deeptip/deeptip-blazor.js` (section 3) and `DeepTipService` (section 4) unchanged; register it with `builder.Services.AddScoped<DeepTipService>();`.
+4. Initialise once in an interactive layout and mark elements with `data-deeptip="key"` (below; other render modes: section 8).
+5. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en wwwroot/deeptip/glossary/core/en.json wwwroot/deeptip/en.json --scan Components`.
+
+```razor
+@* Components/Layout/MainLayout.razor, with <Routes @rendermode="InteractiveServer" /> in App.razor *@
+@inherits LayoutComponentBase
+@inject DeepTipService DeepTip
+
+<button data-deeptip="deeptip.about" aria-label="Help">?</button>
+@Body
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await DeepTip.InitAsync(new { locale = "en", sources = new[] { "deeptip/glossary/core/{locale}.json", "deeptip/{locale}.json" } });
+    }
+}
+```
+
+**Done when:** resting on `?` for 800 ms opens the *DeepTip* window below it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows, `Esc` closes the newest window and no `@onkeydown` handler sees that Esc, the validator reports 0 errors.
+
 ## 1. Parts
 
 | Part | Where | Does |

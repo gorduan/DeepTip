@@ -1,0 +1,11 @@
+{
+  "name": "javafx",
+  "title": "Java (JavaFX)",
+  "language": "Java",
+  "tier": 2,
+  "area": "desktop",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

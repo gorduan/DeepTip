@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DeepTip jQuery plugin: jQuery 4 and noConflict</title>
+    <link rel="stylesheet" href="../../web/deeptip.css" />
+    <script type="importmap">
+      { "imports": { "../deeptip.js": "../../web/deeptip.js" } }
+    </script>
+    <!-- jQuery 4.0.0, given back with noConflict(true); window.jQuery is jQuery 3.7.1 again -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@4.0.0/dist/jquery.min.js"></script>
+    <script>
+      var jq4 = jQuery.noConflict(true);
+    </script>
+    <!-- installs itself into window.jQuery (3.7.1); jq4 gets it with install(jq4) -->
+    <script type="module">
+      import { install } from "../jquery.deeptip.js";
+      install(window.jq4);
+    </script>
+  </head>
+  <body>
+    <p>
+      <button id="realm">Realm</button>
+      <button id="stab">Stability</button>
+      <button id="nobles" data-deeptip="demo.nobles">Nobles</button>
+      <button id="gold">Gold</button>
+      <button id="help" aria-label="Help">?</button>
+    </p>
+    <script>
+      jq4(function () {
+        jq4.deeptip.init({
+          locale: "en",
+          fallback: ["de", "en"],
+          sources: ["../../../glossary/core/{locale}.json", "../../../glossary/example/{locale}.json"],
+          delay: 600,
+          vars: { stability: "+1", gold: "1,250" },
+        });
+        jq4("#realm").deeptip("demo.realm");
+        jq4("#stab").deeptip("demo.stability");
+        jq4("#gold").deeptip("demo.gold");
+        jq4("#help").deeptip("deeptip.about", { delay: 0 });
+        if (/[?&]test\b/.test(location.search)) import("./checks.js");
+      });
+    </script>
+  </body>
+</html>

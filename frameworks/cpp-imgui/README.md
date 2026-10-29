@@ -6,6 +6,38 @@ Every Dear ImGui name below was checked against the **v1.93.0** headers (`imgui.
 
 **Download:** `DeepTip-cpp-imgui-1.0.0.zip` holds this guide together with `SPEC.md`, `docs/algorithms.md`, `schema/`, the shared glossaries and the parity cases `test/cases/`, in the repository layout, so every relative link below works. **Status:** documented, not built in this repository.
 
+## Quick start
+
+**Recognise the project:** `imgui.h` and `ImGui::NewFrame()` in the render loop (Dear ImGui sources in the tree, or `imgui` in `vcpkg.json` or CMake).
+
+1. Build the data core (glossary on `nlohmann::ordered_json`, `parseText`, `computePlacement`; sections 9 and 10) and pass the parity executable on `<DeepTip>/test/cases` (section 14).
+2. Build the controller without ImGui types and test it with a fake clock (sections 3, 4 and 14).
+3. Build the ImGui layer: text layout with terms, windows, placement and input (sections 5–8).
+4. Copy `glossary/core/<locale>.json` to `deeptip/core/`; your own entries go to `deeptip/<locale>.json`.
+5. Wrap your UI in `dt.BeginFrame()` and `dt.EndFrame()` and call `dt.Item(key)` after each widget to explain (below; API: section 11).
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en deeptip/core/en.json deeptip/en.json`.
+
+```cpp
+deeptip::Glossary glossary;
+glossary.addFile("deeptip/core/en.json");   // core first
+glossary.addFile("deeptip/en.json");        // your entries after
+glossary.setLocale("en");
+deeptip::Options options;
+deeptip::ImGuiDeepTip dt(glossary, options);
+
+// every frame
+ImGui::NewFrame();
+dt.BeginFrame();
+ImGui::Begin("HUD");
+ImGui::Button("?");
+dt.Item("deeptip.about");                   // marks the widget just submitted
+ImGui::End();
+dt.EndFrame();
+ImGui::Render();
+```
+
+**Done when:** `ctest` passes the parity cases, resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest without reaching your own `IsKeyPressed(ImGuiKey_Escape)`, the validator reports 0 errors.
+
 ## 1. Architecture
 
 | Layer | Contents | Depends on | Verified by |

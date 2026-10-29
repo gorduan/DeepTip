@@ -1,0 +1,11 @@
+{
+  "name": "rust-ratatui",
+  "title": "Rust (Ratatui, terminal)",
+  "language": "Rust",
+  "tier": 2,
+  "area": "terminal",
+  "version": "1.0.0",
+  "status": "tested",
+  "kind": "adapter",
+  "uses": ["rust-egui"]
+}

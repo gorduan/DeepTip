@@ -1,0 +1,11 @@
+{
+  "name": "phaser",
+  "title": "Phaser 3/4 (adapter)",
+  "language": "JavaScript",
+  "tier": 2,
+  "area": "games",
+  "version": "1.0.0",
+  "status": "tested",
+  "kind": "adapter",
+  "uses": ["web"]
+}

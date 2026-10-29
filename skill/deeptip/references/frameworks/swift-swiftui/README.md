@@ -6,6 +6,42 @@ SwiftUI cannot be built in this repository (no Apple SDK on the build machine), 
 
 **Download:** `DeepTip-swift-swiftui-1.0.0.zip` holds this guide together with `SPEC.md`, `docs/algorithms.md`, `schema/`, the shared glossaries and the parity cases `test/cases/`, in the repository layout, so every relative link works. **Status:** documented, not built in this repository.
 
+## Quick start
+
+**Recognise the project:** `import SwiftUI` and an `@main` struct conforming to `App`, in an Xcode project or a `Package.swift`.
+
+1. Create the package of section 1: targets `DeepTipCore` and `DeepTip`, test target `DeepTipCoreTests`.
+2. Port the ordered JSON reader, the glossary, the parser, the placement and the `Engine` into `DeepTipCore`; `swift test` must pass the parity cases (sections 11, 12 and 17).
+3. Build `DeepTipModel`, the overlay layer, terms, `.deepTip(_:)`, keys and timers in `DeepTip` (sections 3–10).
+4. Add `glossary/core/<locale>.json` to the app's resources; your own entries go to `deeptip/<locale>.json` there (section 11).
+5. Put `.deepTipHost(model)` on the root view and `.deepTip("key")` on each element to explain (below; API: section 14).
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en glossary/core/en.json deeptip/en.json`.
+
+```swift
+import SwiftUI
+import DeepTip
+
+@main
+struct MyApp: App {
+	@State private var dt: DeepTipModel = {
+		let model = DeepTipModel(locale: "en", fallback: ["en"])
+		model.setSources(in: Bundle.main.resourceURL!, ["glossary/core/{locale}.json", "deeptip/{locale}.json"])
+		return model
+	}()
+
+	var body: some Scene {
+		WindowGroup {
+			Button("?") {}
+				.deepTip("deeptip.about")
+				.padding()
+				.deepTipHost(dt)
+		}
+	}
+}
+```
+
+**Done when:** `swift test` passes the parity cases, on a Mac resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## 1. Architecture
 
 | Target | Contents | Depends on | Verified by |

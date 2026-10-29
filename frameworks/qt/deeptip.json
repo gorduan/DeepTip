@@ -1,0 +1,11 @@
+{
+  "name": "qt",
+  "title": "C++ (Qt 6: Widgets and Qt Quick)",
+  "language": "C++",
+  "tier": 1,
+  "area": "desktop",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": ["web"]
+}

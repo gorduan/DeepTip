@@ -4,6 +4,31 @@ The reference implementation of [DeepTip](../../README.md): nested, pinnable exp
 
 Files: `deeptip.js` (ES module), `deeptip.css`. Example: `example/index.html`.
 
+## Quick start
+
+**Recognise the project:** HTML pages with plain JavaScript and no UI framework; TypeScript, React, Vue, Svelte, Angular, Blazor, Electron, Tauri, server-rendered pages, jQuery, Bootstrap and Phaser use these files through their own guides.
+
+1. Load `deeptip.css` and `deeptip.js` from the CDN (below) or copy both files next to your page (section 1).
+2. Give DeepTip the explanations: inline with `add()` (below), or one JSON file per language through `sources` (sections 2 and 3).
+3. Mark each element with `data-deeptip="key"`; terms in page text use `renderText`, the encyclopedia `renderIndex` (section 3).
+4. Validate glossary files: `node <DeepTip>/tools/deeptip-check.mjs --base en deeptip/en.json --scan src`.
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/frameworks/web/deeptip.css" />
+
+<button data-deeptip="shop.cart">Cart</button>
+
+<script type="module">
+  import { DeepTip } from "https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/frameworks/web/deeptip.js";
+  DeepTip.init({ locale: "en" }).add("en", {
+    "shop.cart": { "title": "Cart", "short": "Items you are about to order.", "body": "Kept until you [[shop.checkout|check out]]." },
+    "shop.checkout": { "title": "Checkout", "short": "Where you pay and choose delivery." }
+  });
+</script>
+```
+
+**Done when:** resting the mouse on *Cart* for 800 ms opens the *Cart* window below it, hovering *check out* opens *Checkout* beside that window and never on top of it, a click on *check out* pins both windows, `Esc` closes the newest window.
+
 ## 1. Add the files
 
 Download `DeepTip-web-<version>.zip` from the releases, or copy the two files, or load them from the CDN:

@@ -4,6 +4,33 @@ How to use [DeepTip](../../README.md) (explanation windows with depth) in a Reac
 
 This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. In React you use the web runtime [`frameworks/web/deeptip.js`](../web/README.md) unchanged; this guide is the exact recipe around it. It works by event delegation on `document`, so React needs no wrapper per element: a provider that owns the one controller, `data-deeptip` attributes, and two small components for texts and the encyclopedia. The algorithms are in [docs/algorithms.md](../../docs/algorithms.md), the contract is [SPEC.md](../../SPEC.md). The code blocks that start with a file path were type-checked with React 19.3 and TypeScript 7.0 (`tsc --noEmit`, strict), built with Vite 8, and the built app was run in Chromium: page texts after `ready`, encyclopedia, rest opens a window, one window per anchor under `<StrictMode>`, live value update, language switch (2026-10-29).
 
+## Quick start
+
+**Recognise the project:** `react` and `react-dom` in `package.json`, `.jsx` or `.tsx` files; Next.js adds `next`.
+
+1. Copy `frameworks/web/deeptip.js` and `deeptip.css` to `src/deeptip/`; TypeScript projects also need the declarations (section 1).
+2. Copy `glossary/core/en.json` to `public/deeptip/core/en.json`; your own entries go to `public/deeptip/en.json`.
+3. Create the one controller in an effect of the root component and destroy it in the cleanup (below; Next.js and server rendering: section 5).
+4. Mark elements with `data-deeptip="key"` (section 3); section 2 wraps the controller in `DeepTipProvider` with `useDeepTip`, `DeepTipText` and `DeepTipIndex`.
+5. Validate the glossary files: `node <DeepTip>/tools/deeptip-check.mjs --base en public/deeptip/core/en.json public/deeptip/en.json`.
+
+```tsx
+// src/App.tsx
+import { useEffect } from "react";
+import { DeepTip } from "./deeptip/deeptip.js";
+import "./deeptip/deeptip.css";
+
+export function App() {
+  useEffect(() => {
+    const dt = DeepTip.init({ locale: "en", sources: ["/deeptip/core/{locale}.json", "/deeptip/{locale}.json"] });
+    return () => dt.destroy(); // unmount, StrictMode's test remount, Fast Refresh
+  }, []);
+  return <button data-deeptip="deeptip.about" aria-label="Help">?</button>;
+}
+```
+
+**Done when:** resting on `?` for 800 ms opens the *DeepTip* window below it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows, `Esc` closes the newest window, the validator reports 0 errors.
+
 ## 1. Files
 
 | File | Where |
@@ -13,6 +40,8 @@ This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. I
 | glossaries `glossary/core/<locale>.json` and yours | `public/deeptip/core/<locale>.json`, `public/deeptip/<locale>.json`: served as static files, fetched per language |
 
 Download `DeepTip-react-1.0.0.zip` from the releases (it contains `frameworks/web/`, the glossaries and this guide) or copy the files from the repository. Plain JavaScript projects use the same code without the type annotations.
+
+Nothing is ported: the parser, the placement and the glossary flattening are the web runtime's, and `npm test` in the DeepTip repository runs them against `test/cases/*.json` ([§11](../../docs/algorithms.md#11-testing-with-testcases)).
 
 ## 2. The controller: one provider at the root
 

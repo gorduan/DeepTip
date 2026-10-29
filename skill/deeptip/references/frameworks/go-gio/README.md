@@ -6,6 +6,41 @@ Every Gio name below was checked against the sources of **gioui.org v0.10.3** an
 
 **Download:** `DeepTip-go-gio-1.0.0.zip` holds this guide together with `SPEC.md`, `docs/algorithms.md`, `schema/`, the shared glossaries and the parity cases `test/cases/`, in the repository layout, so every relative link works. **Status:** documented, not built in this repository.
 
+## Quick start
+
+**Recognise the project:** `gioui.org` in `go.mod`.
+
+1. `go get gioui.org@v0.10.3 gioui.org/x@v0.10.3` (section 1).
+2. Write package `deeptip`: ordered JSON, glossary, `ParseText`, `ComputePlacement` and the engine; `go test ./...` must pass the parity cases (sections 3, 11, 12 and 16).
+3. Write package `giodt`: text with terms, windows, input and timers (sections 5–10).
+4. Copy `glossary/core/<locale>.json` to `glossary/core/`; your own entries go to `deeptip/<locale>.json`.
+5. Wrap each frame in `dt.Frame` and each widget to explain in `dt.Mark` (below; `main` as in section 14, API: section 13).
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en glossary/core/en.json deeptip/en.json`.
+
+```go
+func run(w *app.Window) error {
+	th := material.NewTheme()
+	dt := giodt.New(th.Shaper, "en", []string{"en"})
+	dt.SetSources("glossary/core/{locale}.json", "deeptip/{locale}.json")
+	var ops op.Ops
+	var help widget.Clickable
+	for {
+		switch e := w.Event().(type) {
+		case app.DestroyEvent:
+			return e.Err
+		case app.FrameEvent:
+			gtx := app.NewContext(&ops, e)
+			dt.Frame(gtx, func(gtx layout.Context) layout.Dimensions {
+				return dt.Mark(gtx, &help, "deeptip.about", material.Button(th, &help, "?").Layout)
+			})
+			e.Frame(gtx.Ops)
+		}
+	}
+}
+```
+
+**Done when:** `go test ./...` passes the parity cases, resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## 1. Architecture
 
 | Package | Contents | Depends on | Verified by |

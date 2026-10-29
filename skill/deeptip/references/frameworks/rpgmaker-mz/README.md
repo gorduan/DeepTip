@@ -2,6 +2,32 @@
 
 An RPG Maker MZ plugin that brings [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (explanation windows with depth) into your game: rest the mouse on a command, an item or a highlighted term, read its window, follow the terms inside it as deep as you like.
 
+## Quick start
+
+**Recognise the project:** `js/rmmz_core.js` and `js/plugins.js` beside `data/System.json`, the folder of an RPG Maker MZ project.
+
+1. From the DeepTip folder run `node frameworks/rpgmaker-mz/example/install.mjs "C:/path/to/MyGame" --plugin-only`: it copies the plugin, the runtime, the stylesheet and the core glossary and adds the plugin to `js/plugins.js` (by hand: [Install](#install)).
+2. Save your glossary as `data/deeptip/en.json` (below): an entry named `command.` plus a command's symbol explains that command; items, skills and texts are marked as in [What gets a window](#what-gets-a-window).
+3. Check in the Plugin Manager that **DeepTip** is on, then start a playtest.
+4. Validate from the DeepTip folder: `node tools/deeptip-check.mjs --base en "C:/path/to/MyGame/data/deeptip/core/en.json" "C:/path/to/MyGame/data/deeptip/en.json" --scan "C:/path/to/MyGame/data"`.
+
+```json
+{
+  "$locale": "en",
+  "command.item": {
+    "title": "Item",
+    "short": "Use and check what your party carries.",
+    "body": "Potions heal, keys open doors. Weapons and armor are changed under [[command.equip|Equip]]."
+  },
+  "command.equip": {
+    "title": "Equip",
+    "short": "Weapons and armor your heroes wear."
+  }
+}
+```
+
+**Done when:** in the playtest's menu (`Esc`) resting the mouse on *Item* for 800 ms opens its window beside the command, hovering *Equip* in it opens a second window beside the first, a click pins both windows, `Esc` closes the newest DeepTip window before it closes the menu, the validator reports 0 errors.
+
 ## How it works
 
 MZ runs in a browser engine (NW.js on desktop, any browser for web builds), so the plugin uses the reference web runtime `frameworks/web/deeptip.js` unchanged and puts its windows as HTML over the game canvas. Every frame it keeps one invisible element exactly over each explained thing on the canvas: the commands and items of the active list, explained areas of your own windows, and terms drawn with `\DT[...]`. The runtime treats them like elements of a web page, so all of DeepTip's behaviour is the reference behaviour: window tree ([§4](../../docs/algorithms.md#4-window-tree-and-invariants)), grace and mouse tendency ([§5](../../docs/algorithms.md#5-hot-set-grace-tendency-suppression)), delays ([§6](../../docs/algorithms.md#6-arming-and-delays)), placement ([§8](../../docs/algorithms.md#8-placement)), mouse, touch, keyboard and gamepad ([§9](../../docs/algorithms.md#9-input)), locale fallback ([§1](../../docs/algorithms.md#1-data)).
@@ -163,6 +189,8 @@ It copies the plugin, the runtime, `example/js/plugins/DeepTipDemo.js`, the core
 `test/game-checks.js` holds 26 checks that run inside the game: anchors and placement, rest, term hover and click, pinning, Esc and F1, focus muting the game, presses that must or must not reach the game, HUD areas with delay 0, live values, language switch, message terms, gamepad help, note tags, long-press without click, closing on scene change, the plugin command with wait. Run it on a fresh project with the example installed: playtest, `F8`, paste the file into the console; `fail` must be empty.
 
 State on 2026-10-29: all 26 pass in the real MZ 1.10.0 engine on Chromium 152 (web deployment path). The Chromium 85 paths (measured placement, popover fallback, `replaceChildren` polyfill) were checked by switching those features off in the same page. A run in the NW.js 0.48.4 playtest itself is still open.
+
+The parser, the placement and the glossary flattening are the web runtime's, unchanged: `npm test` in the DeepTip repository runs them against `test/cases/*.json` ([§11](../../docs/algorithms.md#11-testing-with-testcases)).
 
 ## Limitations
 

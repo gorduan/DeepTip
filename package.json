@@ -1,6 +1,6 @@
 {
   "name": "deeptip",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Explanation windows with depth (Paradox-style tooltips in tooltips) — spec, web runtime, glossary tools",
   "license": "MIT",
@@ -18,15 +18,21 @@
   },
   "bin": {
     "deeptip-check": "tools/deeptip-check.mjs",
-    "deeptip-sync": "tools/deeptip-sync.mjs"
+    "deeptip-sync": "tools/deeptip-sync.mjs",
+    "deeptip-mcp": "mcp/deeptip-mcp.mjs",
+    "deeptip-install": "tools/install.mjs"
   },
   "scripts": {
-    "test": "node --test test/deeptip.test.mjs test/cases.test.mjs && node tools/skill.mjs --check",
+    "test": "node --test test/deeptip.test.mjs test/cases.test.mjs test/harness.test.mjs mcp/test/mcp.test.mjs && node tools/skill.mjs --check && node tools/harness.mjs --check && node tools/frameworks.mjs --check",
     "check": "node tools/deeptip-check.mjs glossary/core && node tools/deeptip-check.mjs --base de glossary/core/de.json glossary/example/de.json glossary/core/en.json glossary/example/en.json",
     "demo": "python -m http.server 5560",
     "cases": "node test/make-cases.mjs",
     "package": "node tools/package.mjs",
-    "skill": "node tools/skill.mjs"
+    "skill": "node tools/skill.mjs",
+    "frameworks": "node tools/frameworks.mjs",
+    "harness": "node tools/harness.mjs",
+    "mcp": "node mcp/deeptip-mcp.mjs",
+    "install-skill": "node tools/install.mjs"
   },
   "engines": {
     "node": ">=18"

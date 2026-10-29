@@ -4,6 +4,35 @@ How to use [DeepTip](../../README.md) (explanation windows with depth) in a Vue 
 
 This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. In Vue you use the web runtime [`frameworks/web/deeptip.js`](../web/README.md) unchanged; this guide is the exact recipe around it. It works by event delegation on `document`, so Vue needs no component per element: a plugin that owns the one controller, `data-deeptip` attributes, and two directives for texts and the encyclopedia. The algorithms are in [docs/algorithms.md](../../docs/algorithms.md), the contract is [SPEC.md](../../SPEC.md). The code blocks that start with a file path were type-checked with `vue-tsc` (Vue 3.5, TypeScript 5.9, strict), built with Vite 8, and the built app was run in Chromium: page texts after `ready`, encyclopedia, rest opens a window, live value update, language switch (2026-10-29).
 
+## Quick start
+
+**Recognise the project:** `vue` (version 3) in `package.json` and `.vue` files; Nuxt adds `nuxt` and `nuxt.config.ts`.
+
+1. Copy `frameworks/web/deeptip.js` and `deeptip.css` to `src/deeptip/`; TypeScript projects also need the declarations (section 1).
+2. Copy `glossary/core/en.json` to `public/deeptip/core/en.json`; your own entries go to `public/deeptip/en.json`.
+3. Create the one controller when the root component mounts and destroy it when it unmounts (below; Nuxt and server rendering: section 5).
+4. Mark elements with `data-deeptip="key"` (section 3); the plugin of section 2 adds `useDeepTip`, `v-deeptip-text` and `v-deeptip-index`.
+5. Validate the glossary files: `node <DeepTip>/tools/deeptip-check.mjs --base en public/deeptip/core/en.json public/deeptip/en.json`.
+
+```vue
+<!-- src/App.vue -->
+<script setup>
+import { onMounted, onUnmounted } from "vue";
+import { DeepTip } from "./deeptip/deeptip.js";
+import "./deeptip/deeptip.css";
+
+let dt = null;
+onMounted(() => (dt = DeepTip.init({ locale: "en", sources: ["/deeptip/core/{locale}.json", "/deeptip/{locale}.json"] })));
+onUnmounted(() => dt?.destroy());
+</script>
+
+<template>
+  <button data-deeptip="deeptip.about" aria-label="Help">?</button>
+</template>
+```
+
+**Done when:** resting on `?` for 800 ms opens the *DeepTip* window below it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows, `Esc` closes the newest window, the validator reports 0 errors.
+
 ## 1. Files
 
 | File | Where |
@@ -13,6 +42,8 @@ This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. I
 | glossaries `glossary/core/<locale>.json` and yours | `public/deeptip/core/<locale>.json`, `public/deeptip/<locale>.json`: served as static files, fetched per language |
 
 Download `DeepTip-vue-1.0.0.zip` from the releases (it contains `frameworks/web/`, the glossaries and this guide) or copy the files from the repository. Plain JavaScript projects use the same code without the type annotations.
+
+Nothing is ported: the parser, the placement and the glossary flattening are the web runtime's, and `npm test` in the DeepTip repository runs them against `test/cases/*.json` ([§11](../../docs/algorithms.md#11-testing-with-testcases)).
 
 ## 2. The plugin: one controller per app
 

@@ -1,0 +1,11 @@
+{
+  "name": "python-textual",
+  "title": "Python (Textual, terminal)",
+  "language": "Python",
+  "tier": 2,
+  "area": "terminal",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

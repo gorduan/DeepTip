@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DeepTip for Bootstrap</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="../../web/deeptip.css" />
+    <link rel="stylesheet" href="../deeptip-bootstrap.css" />
+    <style>
+      .corner {
+        position: fixed;
+        z-index: 1030;
+      }
+      .tl { left: 12px; top: 72px; }
+      .tr { right: 12px; top: 72px; }
+      .bl { left: 12px; bottom: 12px; }
+      .br { right: 12px; bottom: 12px; }
+      /* the arming hook: a bar fills while the pointer rests on a marked button */
+      .btn[data-deeptip] {
+        background-image: linear-gradient(var(--bs-primary), var(--bs-primary));
+        background-repeat: no-repeat;
+        background-position: left bottom;
+        background-size: 0 2px;
+      }
+      .btn[data-deeptip][data-dt-arming] {
+        background-size: 100% 2px;
+        transition: background-size var(--dt-delay) linear;
+      }
+      #log {
+        max-height: 140px;
+        overflow: auto;
+        font-size: 0.8rem;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand bg-body-tertiary border-bottom sticky-top">
+      <div class="container-fluid gap-2 flex-wrap">
+        <span class="navbar-brand">DeepTip + Bootstrap</span>
+        <button class="btn btn-outline-secondary btn-sm" id="realm" data-deeptip="demo.realm" data-i18n="realm"></button>
+        <button class="btn btn-outline-secondary btn-sm" id="stab" data-deeptip="demo.stability"></button>
+        <button class="btn btn-outline-secondary btn-sm" id="tax" data-deeptip="demo.taxes"></button>
+        <button class="btn btn-outline-secondary btn-sm" id="nobles" data-deeptip="demo.nobles" data-i18n="nobles"></button>
+        <button class="btn btn-outline-secondary btn-sm" id="gold" data-deeptip="demo.gold"></button>
+        <div class="dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" id="menu" data-bs-toggle="dropdown" aria-expanded="false" data-i18n="more"></button>
+          <ul class="dropdown-menu">
+            <li><button class="dropdown-item" id="menu-province" data-deeptip="demo.province" data-deeptip-place="right,left" data-i18n="province"></button></li>
+            <li><button class="dropdown-item" id="menu-prestige" data-deeptip="demo.prestige" data-deeptip-place="right,left" data-i18n="prestige"></button></li>
+          </ul>
+        </div>
+        <span class="flex-grow-1"></span>
+        <button class="btn btn-outline-secondary btn-sm" id="help" data-deeptip="deeptip.about" data-deeptip-delay="0" aria-label="Help">?</button>
+        <select class="form-select form-select-sm w-auto" id="lang" aria-label="Language">
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+        </select>
+        <select class="form-select form-select-sm w-auto" id="theme" aria-label="Colour mode">
+          <option value="light">light</option>
+          <option value="dark">dark</option>
+          <option value="auto">auto</option>
+        </select>
+      </div>
+    </nav>
+
+    <button class="btn btn-warning btn-sm corner tl" data-deeptip="demo.province">↖</button>
+    <button class="btn btn-warning btn-sm corner tr" data-deeptip="demo.prestige">↗</button>
+    <button class="btn btn-warning btn-sm corner bl" data-deeptip="demo.revolt">↙</button>
+    <button class="btn btn-warning btn-sm corner br" data-deeptip="demo.unrest">↘</button>
+
+    <main class="container py-4">
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-i18n="tryTitle"></h2>
+              <p class="card-text" id="intro"></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-i18n="components"></h2>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-primary btn-sm" id="openModal" data-bs-toggle="modal" data-bs-target="#realmModal" data-i18n="modal"></button>
+                <button class="btn btn-primary btn-sm" id="openOffcanvas" data-bs-toggle="offcanvas" data-bs-target="#realmOffcanvas" data-i18n="offcanvas"></button>
+                <button class="btn btn-secondary btn-sm" id="bsTip" data-bs-toggle="tooltip" data-bs-title="An ordinary Bootstrap tooltip">Bootstrap tooltip</button>
+              </div>
+              <div class="form-check form-switch mt-3">
+                <input class="form-check-input" type="checkbox" role="switch" id="icons" />
+                <label class="form-check-label" for="icons" data-i18n="icons"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-i18n="index"></h2>
+              <div id="index"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="h5 card-title" data-i18n="settings"></h2>
+              <label class="form-label small" for="delay" data-i18n="delay"></label>
+              <input class="form-range" id="delay" type="range" min="0" max="3000" step="100" value="800" />
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="hints" checked />
+                <label class="form-check-label" for="hints" data-i18n="hints"></label>
+              </div>
+              <h2 class="h6 mt-3" data-i18n="events"></h2>
+              <pre class="text-body-secondary mb-0" id="log"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal fade" id="realmModal" tabindex="-1" aria-labelledby="realmModalTitle" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-5" id="realmModalTitle" data-i18n="modal"></h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p id="modalText"></p>
+            <button class="btn btn-outline-secondary btn-sm" id="modalProvince" data-deeptip="demo.province" data-i18n="province"></button>
+            <button class="btn btn-outline-secondary btn-sm" id="modalRevolt" data-deeptip="demo.revolt" data-i18n="revolt"></button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="realmOffcanvas" aria-labelledby="realmOffcanvasTitle">
+      <div class="offcanvas-header">
+        <h2 class="offcanvas-title fs-5" id="realmOffcanvasTitle" data-i18n="offcanvas"></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <button class="btn btn-outline-secondary btn-sm" id="offNobles" data-deeptip="demo.nobles" data-i18n="nobles"></button>
+        <button class="btn btn-outline-secondary btn-sm" id="offTaxes" data-deeptip="demo.taxes" data-i18n="taxes"></button>
+      </div>
+    </div>
+
+    <script type="module">
+      import { DeepTip } from "../../web/deeptip.js";
+
+      const T = {
+        en: {
+          realm: "Realm", nobles: "Nobles", province: "Province", prestige: "Prestige", revolt: "Revolt", taxes: "Taxes", more: "More",
+          stab: "Stability", gold: "Gold", levels: ["low", "normal", "high"], tryTitle: "Try it", components: "Bootstrap components",
+          modal: "Open a modal", offcanvas: "Open an offcanvas", icons: "Bootstrap Icons for pin and close", index: "Encyclopedia",
+          settings: "Settings", delay: "Delay of the first window", hints: "Hint line", events: "Events",
+          intro: "**Rest** the pointer on a button in the bar. Loop: [[demo.stability]] → [[demo.unrest]] → [[demo.revolt]] → [[demo.stability]]. *Prestige* and *Gold* exist only in German.",
+          modalText: "Inside a modal: [[demo.stability]] and [[demo.taxes]]. F1 on a focused button opens its window.",
+        },
+        de: {
+          realm: "Reich", nobles: "Adel", province: "Provinz", prestige: "Prestige", revolt: "Aufstand", taxes: "Steuern", more: "Mehr",
+          stab: "Stabilität", gold: "Gold", levels: ["niedrig", "normal", "hoch"], tryTitle: "Ausprobieren", components: "Bootstrap-Komponenten",
+          modal: "Modal öffnen", offcanvas: "Offcanvas öffnen", icons: "Bootstrap Icons für Nadel und Schließen", index: "Enzyklopädie",
+          settings: "Einstellungen", delay: "Verzögerung erstes Fenster", hints: "Hinweiszeile", events: "Ereignisse",
+          intro: "Lass die Maus auf einem Knopf der Leiste **ruhen**. Kreislauf: [[demo.stability]] → [[demo.unrest]] → [[demo.revolt]] → [[demo.stability]]. *Prestige* und *Gold* gibt es nur auf Deutsch.",
+          modalText: "In einem Modal: [[demo.stability]] und [[demo.taxes]]. F1 auf einem fokussierten Knopf öffnet sein Fenster.",
+        },
+      };
+      const state = { stability: 1, tax: 1, gold: 1250 };
+      const signed = () => (state.stability > 0 ? "+" : "") + state.stability;
+      const $ = (id) => document.getElementById(id);
+      const log = (msg) => ($("log").textContent = `${msg}\n${$("log").textContent}`);
+
+      const dt = DeepTip.init({
+        locale: "en",
+        fallback: ["de", "en"],
+        sources: ["../../../glossary/core/{locale}.json", "../../../glossary/example/{locale}.json"],
+        vars: { stability: signed, gold: () => state.gold.toLocaleString(dt.locale) },
+        onOpen: (k) => log(`open  ${k}`),
+        onPin: (k) => log(`pin   ${k}`),
+        onClose: (k) => log(`close ${k}`),
+      });
+
+      // Bootstrap tooltips only on elements without a DeepTip explanation
+      for (const el of document.querySelectorAll('[data-bs-toggle="tooltip"]:not([data-deeptip])')) new bootstrap.Tooltip(el);
+
+      // Modals and offcanvases trap the focus inside themselves: DeepTip's windows go inside the open one
+      const trapFix = {
+        show: (e) => dt.configure({ container: e.target }),
+        hide: () => dt.closeAll(),
+        hidden: (e) => {
+          if (dt.o.container === e.target) dt.configure({ container: null }); // a later modal may have taken over already
+        },
+        on() {
+          for (const type of ["modal", "offcanvas"]) {
+            document.addEventListener(`show.bs.${type}`, this.show);
+            document.addEventListener(`hide.bs.${type}`, this.hide);
+            document.addEventListener(`hidden.bs.${type}`, this.hidden);
+          }
+        },
+        off() {
+          for (const type of ["modal", "offcanvas"]) {
+            document.removeEventListener(`show.bs.${type}`, this.show);
+            document.removeEventListener(`hide.bs.${type}`, this.hide);
+            document.removeEventListener(`hidden.bs.${type}`, this.hidden);
+          }
+        },
+      };
+      trapFix.on();
+
+      // Dropdowns: a click inside a DeepTip window is not a click outside the menu; windows of menu items go with the menu
+      document.body.addEventListener("click", (e) => {
+        if (e.target.closest?.(".dt-win")) e.stopPropagation();
+      });
+      document.addEventListener("hide.bs.dropdown", (e) => {
+        const menu = e.target.closest(".dropdown, .dropup, .dropend, .dropstart, .btn-group")?.querySelector(".dropdown-menu");
+        for (const w of dt.wins.filter((w) => !w.parent && menu?.contains(w.anchor))) dt.close(w);
+      });
+
+      function paint() {
+        const t = T[dt.locale];
+        document.documentElement.lang = dt.locale;
+        for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t[el.dataset.i18n];
+        $("stab").textContent = `${t.stab} ${signed()}`;
+        $("tax").textContent = `${t.taxes}: ${t.levels[state.tax]}`;
+        $("gold").textContent = `${t.gold} ${state.gold.toLocaleString(dt.locale)}`;
+        dt.renderText($("intro"), t.intro);
+        dt.renderText($("modalText"), t.modalText);
+      }
+
+      $("stab").addEventListener("click", () => {
+        state.stability = state.stability >= 3 ? -3 : state.stability + 1;
+        paint();
+        dt.refresh();
+      });
+      $("tax").addEventListener("click", () => {
+        state.tax = (state.tax + 1) % 3;
+        state.gold += [50, 120, 260][state.tax];
+        paint();
+        dt.refresh();
+      });
+      $("lang").addEventListener("change", async (e) => {
+        await dt.setLocale(e.target.value);
+        paint();
+      });
+      const media = matchMedia("(prefers-color-scheme: dark)");
+      const applyTheme = () => {
+        const v = $("theme").value;
+        document.documentElement.dataset.bsTheme = v === "auto" ? (media.matches ? "dark" : "light") : v;
+      };
+      $("theme").addEventListener("change", applyTheme);
+      media.addEventListener("change", applyTheme);
+      $("icons").addEventListener("change", (e) => document.body.classList.toggle("dt-bi", e.target.checked));
+      $("delay").addEventListener("input", (e) => dt.configure({ delay: +e.target.value }));
+      $("hints").addEventListener("change", (e) => dt.configure({ hints: e.target.checked }));
+
+      await dt.ready;
+      paint();
+      dt.renderIndex($("index"));
+      window.demo = { dt, state, trapFix };
+      if (/[?&]test\b/.test(location.search)) import("../test/checks.js");
+    </script>
+  </body>
+</html>

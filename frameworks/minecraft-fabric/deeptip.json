@@ -1,0 +1,11 @@
+{
+  "name": "minecraft-fabric",
+  "title": "Minecraft (Fabric mod)",
+  "language": "Java",
+  "tier": 2,
+  "area": "games",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

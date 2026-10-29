@@ -1,12 +1,34 @@
 # DeepTip for Unity (uGUI + TextMeshPro): build guide
 
-How to build [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (explanation windows with depth: nested, pinnable, Paradox-style tooltips) in a Unity project you own, with uGUI and TextMeshPro, Unity 6 or newer.
+How to build [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (explanation windows with depth: nested, pinnable, Paradox-style tooltips) in a Unity project you own, with uGUI and TextMeshPro, Unity 6 or newer. A runtime UI made with UI Toolkit (`UIDocument`, UXML, USS) has its own guide: [Unity (UI Toolkit)](../unity-uitoolkit/README.md).
 
 This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. This guide is the exact recipe for Unity. The shared algorithms are in [docs/algorithms.md](../../docs/algorithms.md) and are linked by section (§) instead of repeated; [SPEC.md](../../SPEC.md) is the contract, and the web runtime ([frameworks/web](../web/README.md)) is the reference to compare behaviour with.
 
 **Real-world reference:** a complete C# implementation with uGUI and TextMeshPro runs in the Valheim mod **DeepTip** (BepInEx plugin `GC_Valheim_DeepTip`): source in its own repository, https://github.com/gorduan/Valheim_DeepTip, described in the [Valheim guide](../valheim/README.md). It patches a finished game; this guide is for a project whose code you control, so it needs no patches.
 
 Statements marked *(checked)* were verified on 2026-10-29 against **Unity 6000.3.24f1**: API names by decompiling the engine modules and the `UnityEngine.UI` and `Unity.TextMeshPro` assemblies the editor compiled; every snippet compiled as C# 9 against them, for the Input Manager and for the Input System (against a compiled `Unity.InputSystem` 1.x); a C# 9 port of §1, §2 and §8 passed all 24 shared cases. No player was run for this guide; behaviour notes come from the implementations of the APIs and from the Valheim mod.
+
+## Quick start
+
+**Recognise the project:** `Assets/`, `ProjectSettings/ProjectVersion.txt` and `com.unity.ugui` in `Packages/manifest.json` (uGUI with TextMeshPro).
+
+1. Create `DeepTip.Core` (`Glossary`, `Markup.Parse`, `Placement.Compute`, no engine references) and pass the 24 parity cases with `dotnet test` (sections 1 and 10.1).
+2. Build `TipWindowView`, `TmpMarkup`, `DeepTipAnchor` and `DeepTipHost` in the `DeepTip` assembly (sections 4–7).
+3. Copy `glossary/core/<locale>.json` to `Assets/StreamingAssets/deeptip/core/`; your own entries go to `Assets/StreamingAssets/deeptip/<locale>.json` (section 8).
+4. Add one `DeepTipHost` in the first scene and a `DeepTipAnchor` to each element to explain (below).
+5. Let your own Esc handling ask `DeepTipHost.EscapeConsumedThisFrame` first (section 7.3).
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en Assets/StreamingAssets/deeptip/core/en.json Assets/StreamingAssets/deeptip/en.json`.
+
+```csharp
+// once, in the first scene: overlay canvas, window tree and input; it survives scene loads
+new GameObject("DeepTip").AddComponent<DeepTipHost>();
+
+// any uGUI element with a raycast target, e.g. a Button (or add the component in the Inspector)
+var anchor = helpButton.gameObject.AddComponent<DeepTipAnchor>();
+anchor.Key = "deeptip.about";                               // web: data-deeptip="deeptip.about"
+```
+
+**Done when:** `dotnet test` passes 24 of 24 cases, in Play mode resting on the button for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows, `Esc` closes the newest window without opening your pause menu.
 
 ## 1. Parts to build
 

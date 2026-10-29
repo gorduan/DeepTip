@@ -1,9 +1,9 @@
 ---
 name: deeptip
-description: DeepTip, explanation windows with depth - the nested, pinnable tooltips of Paradox games (Crusader Kings III, Victoria 3, Europa Universalis V), with the content as one JSON glossary per language and [[key]] links between entries. Use whenever the user asks for DeepTip, DeepTooltip, 3DTooltip, DimTip, nested tooltips, tooltips in tooltips, Paradox-style tooltips, Erklärfenster or verschachtelte Tooltips, hover explanations, an in-app glossary or encyclopedia, or wants UI elements explained in depth - in any language, framework or engine (web, TypeScript, Svelte, React, Vue, Blazor, Avalonia, Unity, Godot, Python/Qt, Java Swing, Kotlin Compose, C++ Dear ImGui, Unreal, Rust egui, SwiftUI, Go Gio, RPG Maker MZ, game mods). Also for writing, translating or checking DeepTip glossary files.
+description: DeepTip, explanation windows with depth - the nested, pinnable tooltips of Paradox games (Crusader Kings III, Victoria 3, Europa Universalis V), with one JSON glossary per language and [[key]] links between entries. Use whenever the user asks for DeepTip, DeepTooltip, 3DTooltip, DimTip, nested tooltips, tooltips in tooltips, Paradox-style tooltips, Erklärfenster or verschachtelte Tooltips, hover explanations, an in-app glossary or encyclopedia, or wants UI elements explained in depth in any language, framework or engine - web (TypeScript, React, Vue, Svelte, Angular, jQuery, Bootstrap, Blazor, Electron, Tauri, WordPress), desktop (WPF, WinForms, MAUI, Avalonia, Qt, GTK, Swing, JavaFX, Compose, SwiftUI, Tkinter, Kivy, ImGui, egui, Gio), mobile (Flutter, Android, iOS, React Native), games and mods (Unity, Unreal, Godot, Bevy, GameMaker, LÖVE, Ren'Py, Phaser, RPG Maker, Roblox, Minecraft, Valheim) and terminals (Ratatui, Textual, Bubble Tea). Also for writing, translating or checking DeepTip glossary files.
 license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   source: "https://github.com/gorduan/DeepTip"
 ---
 
@@ -15,10 +15,11 @@ Everything this skill refers to is inside its folder; `references/` is a copy of
 
 | File | Read it when |
 |---|---|
-| `references/frameworks/<name>/README.md` | adding DeepTip to that framework: the exact guide (list at the end) |
+| `references/frameworks/<name>/README.md` | adding DeepTip to that framework: the exact guide (list under [Frameworks](#frameworks)) |
 | `references/docs/algorithms.md` | building any part yourself: every algorithm as language-neutral pseudo-code, §1 data … §12 encyclopedia |
 | `references/SPEC.md` | the contract: data §2, behaviour §3, placement §4, input §5, accessibility §6, options §7, styling §8, porting §9 |
 | `references/frameworks/web/deeptip.js`, `deeptip.css` | the reference runtime (HTML, CSS, JavaScript, no dependencies) |
+| `references/frameworks/jquery/jquery.deeptip.js`, `phaser/deeptip-phaser.js`, `bootstrap/deeptip-bootstrap.css`, `rpgmaker-mz/js/plugins/DeepTip.js` | the ready adapters on the web runtime: jQuery plugin, Phaser adapter, Bootstrap theme, RPG Maker MZ plugin |
 | `references/glossary/core/<locale>.json` | the shared core glossary (DeepTip's own help `deeptip.*`, general terms), English and German |
 | `references/glossary/example/<locale>.json` | the example glossary every framework example uses (`demo.*`) |
 | `references/schema/deeptip.schema.json` | JSON Schema of a glossary file |
@@ -104,11 +105,11 @@ One JSON file per language, like translation files (SPEC §2, algorithms §1–�
 
 ## Workflow 1: add DeepTip to a project
 
-1. **Find the framework.** Look at the project (table at the end). If nothing matches, use workflow 3.
+1. **Find the framework.** Look at the project (the table under [Frameworks](#frameworks)). If nothing matches, use workflow 3.
 2. **Read the framework's guide completely** before writing code: `references/frameworks/<name>/README.md`.
 3. **Build it the way the guide's kind says:**
-   - *Code* (web, RPG Maker MZ, Rust/egui): use the code, do not rewrite it. Web: copy `references/frameworks/web/deeptip.js` and `deeptip.css` into the project (or `node references/tools/deeptip-sync.mjs <project>/src/deeptip`, which also copies the core glossary), or load them from `https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/frameworks/web/`. Never edit the copied runtime; update it from the source instead.
-   - *Guide on the web runtime* (TypeScript, Svelte, React, Vue, Blazor, also Tauri and Electron): the web runtime plus the framework integration exactly as its guide says.
+   - *Code* (web, RPG Maker MZ, jQuery, Phaser, Bootstrap theme, Rust egui, Rust Ratatui): use the code, do not rewrite it. Web: copy `references/frameworks/web/deeptip.js` and `deeptip.css` into the project (or `node references/tools/deeptip-sync.mjs <project>/src/deeptip`, which also copies the core glossary), or load them from `https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/frameworks/web/`. The adapters (jQuery, Phaser, Bootstrap, RPG Maker MZ) add their one file from `references/frameworks/<name>/` next to the web runtime; the Rust crates are dependencies from the repository, as their guides say. Never edit the copied code; update it from the source instead.
+   - *Guide on the web runtime* (TypeScript, Svelte, React, Vue, Angular, Blazor, Electron, Tauri, server-rendered pages): the web runtime plus the framework integration exactly as its guide says. React Native and Qt Quick use only the runtime's pure functions (parser, placement, glossary).
    - *Guide for a native build* (all others): implement DeepTip inside the project as the guide maps it, in this order: glossary loading and the markup parser, placement (pure functions first, then pass `references/test/cases/`), window tree, hot set, grace, tendency and suppression, arming and delays, timer lock, input, accessibility, look, encyclopedia.
 4. **Write the glossary** (workflow 2) in the project, e.g. `deeptip/<locale>.json`, keys prefixed with the project's name.
 5. **Mark the UI:** every element that needs an explanation gets its key (web: `data-deeptip="key"`, optional `data-deeptip-delay` and `data-deeptip-place`; other frameworks: see the guide). Texts on normal pages can contain terms (web: `renderText(element, text)`); an encyclopedia page lists every entry with search (web: `renderIndex(container)`). Hide the project's own simple tooltip while a DeepTip window is open (web: `[data-dt-open]`).
@@ -141,7 +142,7 @@ const dt = DeepTip.init({ locale: "en", fallback: ["en"], delay: 800,
 
 Any language, engine, terminal UI or game mod works. Follow `references/docs/algorithms.md` from top to bottom and SPEC §9:
 
-1. **Map the platform's primitives** to the parts of DeepTip: a layer or window above the UI with a z-order; rich text whose term runs you can hit-test under the pointer; pointer move, enter and leave; timers or a frame loop with a clock; screen coordinates (convert to y down, logical pixels, before placing); keyboard events where Esc can be consumed before the host sees it; focus; colours and fonts. The closest existing guide shows how others did it: Unity or Godot for engines, Avalonia or PySide6 for desktop toolkits, Dear ImGui for immediate mode, Valheim for a finished game with its own tooltips.
+1. **Map the platform's primitives** to the parts of DeepTip: a layer or window above the UI with a z-order; rich text whose term runs you can hit-test under the pointer; pointer move, enter and leave; timers or a frame loop with a clock; screen coordinates (convert to y down, logical pixels, before placing); keyboard events where Esc can be consumed before the host sees it; focus; colours and fonts. The closest existing guide shows how others did it: Unity or Godot for engines, LÖVE or GameMaker for a game loop that draws everything itself, Avalonia, WPF or PySide6 for desktop toolkits, Dear ImGui for immediate mode, Flutter or React Native for touch-first apps, Ratatui or Textual for terminals, Phaser for HTML over a canvas, Valheim for a finished game with its own tooltips.
 2. **Port the pure functions first** (glossary flattening, markup parser, placement) and run `references/test/cases/*.json` against them: same input, same output, every case.
 3. **Build the stateful parts** in the order of algorithms §4–§12: window tree, hot set and grace, tendency and suppression, arming and delays, timer lock, placement of real windows, input (mouse, touch, keyboard, gamepad), focus, auto-linking, encyclopedia.
 4. **Read the same JSON files** and run the same validator.
@@ -149,29 +150,68 @@ Any language, engine, terminal UI or game mod works. Follow `references/docs/alg
 
 ## Frameworks
 
+<!-- generated:framework-table -->
 | Framework | Kind | Signals in a project | Guide |
 |---|---|---|---|
-| Web (HTML + CSS + JavaScript) | code, reference | plain HTML/JS, Tauri, Electron | `references/frameworks/web/README.md` |
-| TypeScript | guide, web runtime | `tsconfig.json` | `references/frameworks/typescript/README.md` |
-| Svelte | guide, web runtime | `svelte` in `package.json` | `references/frameworks/svelte/README.md` |
-| React | guide, web runtime | `react` in `package.json` | `references/frameworks/react/README.md` |
-| Vue | guide, web runtime | `vue` in `package.json` | `references/frameworks/vue/README.md` |
-| RPG Maker MZ | code (plugin on the web runtime) | `js/rmmz_core.js`, `data/System.json` | `references/frameworks/rpgmaker-mz/README.md` |
-| Blazor | guide, web runtime via JS interop | `.razor` files | `references/frameworks/blazor/README.md` |
-| Avalonia | guide | `Avalonia` package in a `.csproj` | `references/frameworks/avalonia/README.md` |
-| Unity (uGUI + TextMeshPro) | guide | `Assets/`, `ProjectSettings/ProjectVersion.txt` | `references/frameworks/unity/README.md` |
-| Valheim (BepInEx mod) | guide; source in gorduan/Valheim_DeepTip | BepInEx plugin referencing `assembly_valheim` | `references/frameworks/valheim/README.md` |
-| Godot 4 | guide | `project.godot` | `references/frameworks/godot/README.md` |
-| Python (PySide6 / Qt) | guide | `PySide6` (or PyQt6) imports | `references/frameworks/python-pyside6/README.md` |
-| Java (Swing) | guide | `javax.swing` imports | `references/frameworks/java-swing/README.md` |
-| Kotlin (Compose Desktop) | guide | `org.jetbrains.compose` in Gradle | `references/frameworks/kotlin-compose/README.md` |
-| C++ (Dear ImGui) | guide | `imgui.h` | `references/frameworks/cpp-imgui/README.md` |
-| C++ (Unreal Engine 5) | guide | `*.uproject` | `references/frameworks/cpp-unreal/README.md` |
-| Rust (egui) | code | `egui` or `eframe` in `Cargo.toml` | `references/frameworks/rust-egui/README.md` |
-| Swift (SwiftUI) | guide | `import SwiftUI` | `references/frameworks/swift-swiftui/README.md` |
+| Web (HTML + CSS + JavaScript) | code, the reference | HTML pages with plain JavaScript and no UI framework | `references/frameworks/web/README.md` |
+| Bootstrap 5 | code, adapter on the web runtime | `bootstrap` in `package.json`, or `bootstrap.min.css` / `bootstrap.bundle.min.js` in the pages | `references/frameworks/bootstrap/README.md` |
+| jQuery (plugin) | code, adapter on the web runtime | `jquery` in `package.json`, or a `<script src="…jquery….js">` tag in the pages | `references/frameworks/jquery/README.md` |
+| Angular | guide, on the web runtime | `angular.json` at the project root, `@angular/core` in `package.json` | `references/frameworks/angular/README.md` |
+| Blazor | guide, on the web runtime | `.razor` files | `references/frameworks/blazor/README.md` |
+| Electron | guide, on the web runtime | `electron` in the `devDependencies` of `package.json`, a main script that creates a `BrowserWindow` | `references/frameworks/electron/README.md` |
+| React | guide, on the web runtime | `react` and `react-dom` in `package.json`, `.jsx` or `.tsx` files | `references/frameworks/react/README.md` |
+| Server-rendered HTML (WordPress, Laravel, Django, Rails, ASP.NET, static sites) | guide, on the web runtime | `wp-config.php` or `wp-content/` (WordPress), `artisan` and `resources/views/*.blade.php` (Laravel) | `references/frameworks/server-html/README.md` |
+| Svelte | guide, on the web runtime | `svelte` in `package.json` and `.svelte` files | `references/frameworks/svelte/README.md` |
+| Tauri 2 | guide, on the web runtime | `src-tauri/tauri.conf.json` and `src-tauri/Cargo.toml` with `tauri = "2…"` | `references/frameworks/tauri/README.md` |
+| TypeScript | guide, on the web runtime | `tsconfig.json` and `typescript` in `package.json` | `references/frameworks/typescript/README.md` |
+| Vue | guide, on the web runtime | `vue` in `package.json` and `.vue` files | `references/frameworks/vue/README.md` |
+| Rust (egui) | code, a complete implementation | `egui` or `eframe` in `Cargo.toml` | `references/frameworks/rust-egui/README.md` |
+| .NET MAUI | guide | a `.csproj` with `<UseMaui>true</UseMaui>` and target frameworks such as `net10.0-android;net10.0-ios;net10.0-maccatalyst;net10.0-windows10.0.19041.0` | `references/frameworks/dotnet-maui/README.md` |
+| Avalonia | guide | a `.csproj` that references the `Avalonia` package, `.axaml` files and an `App.axaml` | `references/frameworks/avalonia/README.md` |
+| C++ (Qt 6: Widgets and Qt Quick) | guide, on the web runtime | `find_package(Qt6 … COMPONENTS Widgets)` or `… Quick` with `qt_add_executable` / `qt_add_qml_module` in `CMakeLists.txt` | `references/frameworks/qt/README.md` |
+| Python (PySide6 / Qt) | guide | `PySide6` in `requirements.txt` or `pyproject.toml` and `from PySide6.QtWidgets import …` in the code | `references/frameworks/python-pyside6/README.md` |
+| Windows Forms | guide | a `.csproj` with `<UseWindowsForms>true</UseWindowsForms>` and a Windows target framework | `references/frameworks/winforms/README.md` |
+| WPF | guide | a `.csproj` with `<UseWPF>true</UseWPF>` and a Windows target framework | `references/frameworks/wpf/README.md` |
+| C++ (Dear ImGui) | guide | `imgui.h` and `ImGui::NewFrame()` in the render loop | `references/frameworks/cpp-imgui/README.md` |
 | Go (Gio) | guide | `gioui.org` in `go.mod` | `references/frameworks/go-gio/README.md` |
+| GTK 4 (C, PyGObject, gtk-rs) | guide | `dependency('gtk4')` in `meson.build` or `pkg_check_modules(… gtk4)` in CMake | `references/frameworks/gtk/README.md` |
+| Java (JavaFX) | guide | `org.openjfx` dependencies or the `org.openjfx.javafxplugin` Gradle plugin / `javafx-maven-plugin` | `references/frameworks/javafx/README.md` |
+| Java (Swing) | guide | `import javax.swing.*` and windows built from `JFrame` and `JComponent`s, Java 17 or newer | `references/frameworks/java-swing/README.md` |
+| Kotlin (Compose Desktop) | guide | the `org.jetbrains.compose` plugin and a `compose.desktop` block in `build.gradle.kts` | `references/frameworks/kotlin-compose/README.md` |
+| Python (Kivy) | guide | `kivy` in `requirements.txt` or `pyproject.toml` | `references/frameworks/python-kivy/README.md` |
+| Python (Tkinter) | guide | `import tkinter`, a `tk.Tk()` root and `mainloop()` in the Python sources | `references/frameworks/python-tkinter/README.md` |
+| Swift (SwiftUI) | guide | `import SwiftUI` and an `@main` struct conforming to `App`, in an Xcode project or a `Package.swift` | `references/frameworks/swift-swiftui/README.md` |
+| Android (Jetpack Compose) | guide, on the Kotlin (Compose Desktop) guide | a `build.gradle.kts` applying `com.android.application` and `org.jetbrains.kotlin.plugin.compose` | `references/frameworks/android-compose/README.md` |
+| Flutter | guide | `pubspec.yaml` with `flutter: sdk: flutter` under `dependencies`, `lib/main.dart` calling `runApp` | `references/frameworks/flutter/README.md` |
+| iOS and iPadOS (UIKit) | guide, on the Swift (SwiftUI) guide | an `.xcodeproj` or `.xcworkspace`, Swift files with `import UIKit` | `references/frameworks/ios-uikit/README.md` |
+| React Native | guide, on the web runtime | `react-native` in the `dependencies` of `package.json`, `index.js` calling `AppRegistry.registerComponent` | `references/frameworks/react-native/README.md` |
+| RPG Maker MZ (plugin) | code, adapter on the web runtime | `js/rmmz_core.js` and `js/plugins.js` beside `data/System.json`, the folder of an RPG Maker MZ project | `references/frameworks/rpgmaker-mz/README.md` |
+| Phaser 3/4 (adapter) | code, adapter on the web runtime | `phaser` in `package.json` or a `phaser.min.js` script in the page | `references/frameworks/phaser/README.md` |
+| Godot 4 | guide | `project.godot` with `.gd` scripts and `.tscn` scenes | `references/frameworks/godot/README.md` |
+| Unity (uGUI + TextMeshPro) | guide | `Assets/`, `ProjectSettings/ProjectVersion.txt` and `com.unity.ugui` in `Packages/manifest.json` | `references/frameworks/unity/README.md` |
+| Unity (UI Toolkit) | guide | `Assets/` and `ProjectSettings/ProjectVersion.txt`, `.uxml` and `.uss` files | `references/frameworks/unity-uitoolkit/README.md` |
+| Valheim (BepInEx mod) | guide; source: gorduan/Valheim_DeepTip | a BepInEx plugin whose `.csproj` references `assembly_valheim.dll` | `references/frameworks/valheim/README.md` |
+| Bevy (Rust) | guide, on Rust (egui) | a `Cargo.toml` that depends on `bevy`, a `src/main.rs` that builds an `App::new()` with `DefaultPlugins` | `references/frameworks/bevy/README.md` |
+| C++ (Unreal Engine 5, Slate + UMG) | guide | a `*.uproject` file with C++ modules in `Source/<Module>/` | `references/frameworks/cpp-unreal/README.md` |
+| GameMaker (GML) | guide | a `<name>.yyp` project file with `objects/<name>/<name>.yy`, `scripts/` and `rooms/` folders | `references/frameworks/gamemaker/README.md` |
+| LÖVE (Lua) | guide | a `main.lua` at the game root that defines `love.load`, `love.update` and `love.draw` | `references/frameworks/love2d/README.md` |
+| Minecraft (Fabric mod) | guide | `src/main/resources/fabric.mod.json`, a `build.gradle` with the plugin `net.fabricmc.fabric-loom` | `references/frameworks/minecraft-fabric/README.md` |
+| Ren'Py | guide | a `game/` folder with `*.rpy` scripts and compiled `*.rpyc` | `references/frameworks/renpy/README.md` |
+| Roblox (Luau) | guide | a place file (`*.rbxl`, `*.rbxlx`) or a Rojo project | `references/frameworks/roblox/README.md` |
+| Rust (Ratatui, terminal) | code, adapter on Rust (egui) | `ratatui` in `Cargo.toml`, a loop around `terminal.draw(\|frame\| …)` | `references/frameworks/rust-ratatui/README.md` |
+| Go (Bubble Tea, terminal) | guide | `charm.land/bubbletea/v2` in `go.mod`, a model with `Init`, `Update` and `View` | `references/frameworks/go-bubbletea/README.md` |
+| Python (Textual, terminal) | guide | `textual` in `requirements.txt` or `pyproject.toml`, a class derived from `textual.app.App` | `references/frameworks/python-textual/README.md` |
+<!-- /generated:framework-table -->
 
-Close relatives: WPF and MAUI start from the Avalonia guide, PyQt6 from PySide6, Android Jetpack Compose from Kotlin Compose (check touch and popups), RPG Maker MV from RPG Maker MZ, other game engines and mods from Unity, Godot and Valheim.
+Close relatives: PyQt6 and PyQt5 start from the PySide6 guide, WinUI 3 and Uno Platform from WPF, Xamarin.Forms from .NET MAUI, RPG Maker MV from RPG Maker MZ, Forge and NeoForge mods from Minecraft (Fabric), MonoGame and FNA from LÖVE (a frame loop that draws everything; the C# core as in the Avalonia guide), Defold from LÖVE (the Lua core) and Roblox (GUI nodes), PixiJS and other canvas engines from the Phaser adapter, iced and Slint from the Rust crate without egui (rust-egui section 4), mods of other games from Valheim and the guide of their engine.
+
+## Other agents
+
+This folder is the whole skill. To give DeepTip to the other agents of a project or a team, run the installer from a clone of https://github.com/gorduan/DeepTip: `node tools/install.mjs <project>` copies the skill to `.agents/skills/deeptip/` (read by Codex, Copilot, Cursor, Gemini CLI and most others), `--harness claude-code,cline,kiro …` adds the files of agents with their own format, `--user` installs into the home folder, `--list` names all 45 supported agents and assistants. It keeps every file it would replace as `<file>.bak` and changes only its own block in shared files such as `AGENTS.md`; `--dry-run` shows what it would do. Chat assistants and local models get a knowledge pack instead: `node tools/install.mjs <folder> --harness chatgpt --framework react`. Every agent with its files, trigger and limits: `skill/harnesses/README.md` in the repository.
+
+## MCP server
+
+The repository also has an MCP server, `mcp/deeptip-mcp.mjs` (Node 18+, no dependencies, read-only, stdio): `deeptip_overview`, `list_frameworks`, `get_guide`, `get_spec`, `get_algorithms`, `detect_framework` (the guide for a project folder), `check_glossary` (the validator, with `scan`), `new_glossary_entry` and `get_example_glossary`, the resources `deeptip://spec`, `deeptip://algorithms`, `deeptip://frameworks/<name>` and the prompt `add-deeptip`. Connect it with `claude mcp add --transport stdio --scope user deeptip -- node <DeepTip>/mcp/deeptip-mcp.mjs` (setup for Claude Desktop, Cursor, VS Code, Windsurf, Zed, Continue, Cline, Gemini CLI and Codex: `mcp/README.md` in the repository). When it is connected, its tools serve the same files as this skill's `references/`.
 
 ## Done when
 

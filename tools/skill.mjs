@@ -23,15 +23,24 @@ const files = (dir) => {
   return readdirSync(full).filter((n) => !SKIP.has(n)).flatMap((n) => files(posix.join(dir, n)));
 };
 
-// What the skill carries: the contract, the algorithms, every framework README, the JavaScript code (web runtime and the
-// RPG Maker plugin), the data and the tools. The Rust crate stays on GitHub (its README says how to depend on it).
+// What the skill carries: the contract, the algorithms, every framework README, the JavaScript and CSS code, the data and
+// the tools. Code is every framework folder of kind "runtime" or "adapter" that is not Rust: the files at the top of its
+// folder (runtime, plugin, theme, manifest) and its js/ folder (the RPG Maker plugin), never its examples or tests. The
+// Rust crates stay on GitHub (their READMEs say how to depend on them).
+const manifest = (d) => JSON.parse(readFileSync(join(root, "frameworks", d, "deeptip.json"), "utf8"));
 const frameworks = readdirSync(join(root, "frameworks")).filter((d) => existsSync(join(root, "frameworks", d, "deeptip.json"))).sort();
+const code = frameworks.filter((d) => ["runtime", "adapter"].includes(manifest(d).kind) && manifest(d).language !== "Rust");
+const codeFiles = (d) => [
+  ...readdirSync(join(root, "frameworks", d))
+    .filter((n) => statSync(join(root, "frameworks", d, n)).isFile() && (/\.(m?js|css)$/.test(n) || n === "deeptip.json"))
+    .map((n) => `frameworks/${d}/${n}`),
+  ...files(`frameworks/${d}/js`),
+];
 const wanted = [
   "SPEC.md",
   "docs/algorithms.md",
   ...frameworks.map((d) => `frameworks/${d}/README.md`),
-  ...files("frameworks/web"),
-  ...files("frameworks/rpgmaker-mz/js"),
+  ...code.flatMap(codeFiles),
   ...files("glossary/core"),
   ...files("glossary/example"),
   ...files("schema"),

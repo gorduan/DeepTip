@@ -4,6 +4,31 @@ Guide: how [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (ex
 
 Checked against **Godot 4.2.2**: every class, method, signal, property and constant named here exists in its API (`--dump-extension-api`), the behaviour notes were reproduced in headless runs, and the parity runner below passed all shared cases (24/24) with a GDScript port of [§1](../../docs/algorithms.md#1-data), [§2](../../docs/algorithms.md#2-markup-parser) and [§8](../../docs/algorithms.md#8-placement). Use Godot 4.2 or later: 4.2 changed `mouse_entered` / `mouse_exited` to cover child controls.
 
+## Quick start
+
+**Recognise the project:** `project.godot` (Godot 4: `config_version=5`) with `.gd` scripts and `.tscn` scenes.
+
+1. Create the files of [What you build](#what-you-build) and enable the plugin in Project Settings → Plugins; it registers the autoload `DeepTip`.
+2. Port `deeptip_core.gd` first and run the parity runner until it prints `24/24 parity cases passed` ([Testing](#testing)).
+3. Build `deeptip.gd` and `deeptip_window.gd` in the [Order of operations](#order-of-operations).
+4. Copy `glossary/core/*.json` to `res://deeptip/core/`; your own entries go to `res://deeptip/<locale>.json`.
+5. Mark controls with the metadata `deeptip` = key (Inspector → Add Metadata) or with `DeepTip.mark()` (below).
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en deeptip/core/en.json deeptip/en.json`.
+
+```gdscript
+# main.gd on the root Control of the main scene
+extends Control
+
+func _ready() -> void:
+	DeepTip.configure({"locale": "en", "sources": ["res://deeptip/core/{locale}.json", "res://deeptip/{locale}.json"]})
+	var help := Button.new()
+	help.text = "?"
+	add_child(help)
+	DeepTip.mark(help, "deeptip.about")
+```
+
+**Done when:** the parity runner prints `24/24 parity cases passed`, resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## What you build
 
 | File in your project | Content |

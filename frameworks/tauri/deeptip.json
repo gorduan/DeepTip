@@ -1,0 +1,11 @@
+{
+  "name": "tauri",
+  "title": "Tauri 2",
+  "language": "JavaScript/TypeScript",
+  "tier": 1,
+  "area": "web",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": ["web"]
+}

@@ -4,6 +4,31 @@ How to build [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (
 
 This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. This guide is the exact recipe for Compose. The shared algorithms are in [docs/algorithms.md](../../docs/algorithms.md) and are linked by section (§) instead of repeated; [SPEC.md](../../SPEC.md) is the contract. Statements marked *(checked)* were verified on 2026-10-29 with a throwaway project (Kotlin 2.4.21, Compose Multiplatform 1.12.2, Gradle 9.8.2, JDK 25.0.1, Windows 11): every API named here compiled, and the behaviour marked *(checked)* ran as headless UI tests.
 
+## Quick start
+
+**Recognise the project:** the `org.jetbrains.compose` plugin and a `compose.desktop` block in `build.gradle.kts`, and `application { Window(...) }` in `main`.
+
+1. Set up Gradle as in section 1.
+2. Port `Glossary`, `Markup` and `Placement` (section 11) and pass the parity cases with `gradlew test` (section 12.1).
+3. Build `Engine` with `Clock` and `Host` (sections 4 and 12.2), then `DeepTipState`, `DeepTipHost`, `TipLayer`, `TermText`, `TipWindowContent` and `Modifier.deepTip` (sections 5–8).
+4. Copy `glossary/core/<locale>.json` to `deeptip/core/`; your own entries go to `deeptip/<locale>.json` (section 10).
+5. Wrap the window content in `DeepTipHost` and mark elements with `Modifier.deepTip(key)` (below).
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en deeptip/core/en.json deeptip/en.json`.
+
+```kotlin
+fun main() = application {
+    Window(onCloseRequest = ::exitApplication, title = "My app") {
+        // options under their SPEC §7 names; sources: core first, yours after (section 10)
+        val state = rememberDeepTip(mapOf("locale" to "en", "sources" to listOf("deeptip/core/{locale}.json", "deeptip/{locale}.json")))
+        DeepTipHost(state) {
+            Button(onClick = {}, modifier = Modifier.deepTip("deeptip.about")) { Text("?") }
+        }
+    }
+}
+```
+
+**Done when:** `gradlew test` passes the parity cases, resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## 1. Build setup *(checked)*
 
 ```kotlin

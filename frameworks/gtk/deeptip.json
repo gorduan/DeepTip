@@ -1,0 +1,11 @@
+{
+  "name": "gtk",
+  "title": "GTK 4 (C, PyGObject, gtk-rs)",
+  "language": "C",
+  "tier": 2,
+  "area": "desktop",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

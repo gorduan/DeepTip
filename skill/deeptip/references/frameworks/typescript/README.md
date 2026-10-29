@@ -4,6 +4,26 @@ How to use [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (ex
 
 This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. In TypeScript you use the web runtime [`frameworks/web/deeptip.js`](../web/README.md) as it is and give it the declarations below. The algorithms are in [docs/algorithms.md](../../docs/algorithms.md), the contract is [SPEC.md](../../SPEC.md). The declarations were checked with `tsc --noEmit` under TypeScript 5.9.3 and 7.0.2 (`strict`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, `skipLibCheck: false`) against a file that uses every call below, and their exports against the runtime's exports (2026-10-29).
 
+## Quick start
+
+**Recognise the project:** `tsconfig.json` and `typescript` in `package.json`; with React, Svelte or Vue follow their guide, which builds on this one.
+
+1. Copy `frameworks/web/deeptip.js` and `deeptip.css` to `src/deeptip/` and save the declarations of section 9 next to them as `src/deeptip/deeptip.d.ts`.
+2. Copy `glossary/core/en.json` to `public/deeptip/core/en.json`; your own entries go to `public/deeptip/en.json` ([SPEC §2](../../SPEC.md#2-glossary-format)).
+3. Create the one controller once, in browser code (below; options, bundled glossaries and live values: sections 2 and 5).
+4. Mark elements with `data-deeptip="key"` (section 3).
+5. Validate the glossary files: `node <DeepTip>/tools/deeptip-check.mjs --base en public/deeptip/core/en.json public/deeptip/en.json`.
+
+```ts
+// src/main.ts; index.html contains <button data-deeptip="deeptip.about" aria-label="Help">?</button>
+import { DeepTip } from "./deeptip/deeptip.js";
+import "./deeptip/deeptip.css"; // with a bundler; without one: <link rel="stylesheet" href="deeptip/deeptip.css">
+
+export const dt = DeepTip.init({ locale: "en", sources: ["/deeptip/core/{locale}.json", "/deeptip/{locale}.json"] });
+```
+
+**Done when:** `tsc --noEmit` reports no errors, resting on `?` for 800 ms opens the *DeepTip* window below it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## 1. Files
 
 | File | Where |
@@ -133,6 +153,8 @@ const p = computePlacement({ w: 300, h: 200 }, { left: 500, right: 800, top: 100
 // p.side === "left", p.x === 192, p.y === 150
 const blocks = parseText("Frees [[hw.vram]].");
 ```
+
+`npm test` in the DeepTip repository runs the runtime's `parseText`, `flattenGlossary` and `computePlacement` against every case; nothing needs to be ported for TypeScript.
 
 ## 9. The declarations
 

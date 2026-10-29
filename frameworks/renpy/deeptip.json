@@ -1,0 +1,11 @@
+{
+  "name": "renpy",
+  "title": "Ren'Py",
+  "language": "Python (Ren'Py)",
+  "tier": 2,
+  "area": "games",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

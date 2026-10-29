@@ -1,0 +1,11 @@
+{
+  "name": "bevy",
+  "title": "Bevy (Rust)",
+  "language": "Rust",
+  "tier": 2,
+  "area": "games",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": ["rust-egui"]
+}

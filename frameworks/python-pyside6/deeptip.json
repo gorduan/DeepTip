@@ -3,6 +3,7 @@
   "title": "Python (PySide6 / Qt)",
   "language": "Python",
   "tier": 1,
+  "area": "desktop",
   "version": "1.0.0",
   "status": "documented",
   "kind": "guide",

@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DeepTip jQuery plugin</title>
+    <link rel="stylesheet" href="../../web/deeptip.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.2/dist/themes/base/jquery-ui.min.css" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: light-dark(#f4f5f7, #111318);
+        --panel: light-dark(#ffffff, #1a1d23);
+        --line: light-dark(#d8dce2, #2c313b);
+        --muted: light-dark(#5b6370, #9aa3b0);
+        --accent: light-dark(#0b69d4, #58a6ff);
+      }
+      body {
+        margin: 0;
+        font: 15px/1.55 system-ui, "Segoe UI", sans-serif;
+        background: var(--bg);
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      header h1 {
+        margin: 0 12px 0 0;
+        font-size: 17px;
+      }
+      .spacer {
+        flex: 1;
+      }
+      button.hud {
+        font: inherit;
+        padding: 5px 11px;
+        color: inherit;
+        background: transparent no-repeat left bottom / 0 2px linear-gradient(var(--accent), var(--accent));
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      button.hud[data-dt-arming] {
+        background-size: 100% 2px;
+        transition: background-size var(--dt-delay) linear;
+      }
+      button.hud[data-dt-open] {
+        border-color: var(--accent);
+      }
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 24px 16px 120px;
+      }
+      section {
+        margin: 0 0 20px;
+        padding: 16px 18px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+      h2 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 10px 18px;
+      }
+      label {
+        display: grid;
+        gap: 3px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .corner {
+        position: fixed;
+        z-index: 4;
+      }
+      .tl { left: 12px; top: 64px; }
+      .tr { right: 12px; top: 64px; }
+      .bl { left: 12px; bottom: 12px; }
+      .br { right: 12px; bottom: 12px; }
+      #log {
+        max-height: 120px;
+        overflow: auto;
+        margin: 0;
+        font: 12px ui-monospace, Consolas, monospace;
+        color: var(--muted);
+      }
+    </style>
+    <!-- the repository keeps deeptip.js in frameworks/web; in your project copy it next to jquery.deeptip.js and leave this map out -->
+    <script type="importmap">
+      { "imports": { "../deeptip.js": "../../web/deeptip.js" } }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.14.2/dist/jquery-ui.min.js"></script>
+    <script type="module" src="../jquery.deeptip.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>DeepTip + jQuery</h1>
+      <button class="hud" id="realm"></button>
+      <button class="hud" id="stab"></button>
+      <button class="hud" id="tax"></button>
+      <button class="hud" id="nobles" data-deeptip="demo.nobles"></button>
+      <button class="hud" id="gold"></button>
+      <span class="spacer"></span>
+      <button class="hud" id="help" aria-label="Help">?</button>
+      <select id="lang" aria-label="Language">
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+      </select>
+    </header>
+
+    <button class="hud corner tl" data-deeptip="demo.province" data-i18n="province"></button>
+    <button class="hud corner tr" data-deeptip="demo.prestige" data-i18n="prestige"></button>
+    <button class="hud corner bl" data-deeptip="demo.revolt" data-i18n="revolt"></button>
+    <button class="hud corner br" data-deeptip="demo.unrest" data-i18n="unrest"></button>
+
+    <main>
+      <section>
+        <h2 data-i18n="tryTitle"></h2>
+        <p id="intro"></p>
+      </section>
+
+      <section>
+        <h2 data-i18n="settings"></h2>
+        <div class="grid">
+          <label><span data-i18n="delay"></span>
+            <input id="delay" type="range" min="0" max="3000" step="100" value="1000" />
+          </label>
+          <label><span data-i18n="lock"></span>
+            <select id="lock">
+              <option value="0">0</option>
+              <option value="1500">1.5 s</option>
+              <option value="3000">3 s</option>
+            </select>
+          </label>
+          <label><input id="closeButtons" type="checkbox" checked /> <span data-i18n="closeButtons"></span></label>
+          <label><input id="hints" type="checkbox" checked /> <span data-i18n="hints"></span></label>
+        </div>
+      </section>
+
+      <section>
+        <h2 data-i18n="later"></h2>
+        <p><button class="hud" id="add" data-i18n="add"></button> <span id="later"></span></p>
+        <p class="muted"><button class="hud" id="classic" title="An ordinary jQuery UI tooltip">jQuery UI</button> <span data-i18n="classic"></span></p>
+      </section>
+
+      <section>
+        <h2 data-i18n="index"></h2>
+        <div id="index"></div>
+      </section>
+
+      <section>
+        <h2 data-i18n="events"></h2>
+        <pre id="log"></pre>
+      </section>
+    </main>
+
+    <script>
+      // A classic script, as on most jQuery pages: $(fn) runs after the module scripts above, so $.deeptip exists.
+      $(function () {
+        var T = {
+          en: {
+            realm: "Realm", nobles: "Nobles", province: "↖ Province", prestige: "Prestige ↗", revolt: "↙ Revolt", unrest: "Unrest ↘",
+            stab: "Stability", tax: "Taxes", gold: "Gold", levels: ["low", "normal", "high"],
+            tryTitle: "Try it", settings: "Settings", later: "Added later", index: "Encyclopedia (every term)", events: "jQuery events",
+            delay: "Delay of the first window", lock: "Pin after resting (ms)", closeButtons: "X buttons", hints: "Hint line",
+            add: "Add an element", classic: "keeps its jQuery UI tooltip; marked elements get DeepTip windows.",
+            intro: "**Rest** the pointer on a button at the top. Loop: [[demo.stability]] → [[demo.unrest]] → [[demo.revolt]] → [[demo.stability]]. *Prestige* and *Gold* exist only in German.",
+          },
+          de: {
+            realm: "Reich", nobles: "Adel", province: "↖ Provinz", prestige: "Prestige ↗", revolt: "↙ Aufstand", unrest: "Unruhe ↘",
+            stab: "Stabilität", tax: "Steuern", gold: "Gold", levels: ["niedrig", "normal", "hoch"],
+            tryTitle: "Ausprobieren", settings: "Einstellungen", later: "Später eingefügt", index: "Enzyklopädie (alle Begriffe)", events: "jQuery-Ereignisse",
+            delay: "Verzögerung erstes Fenster", lock: "Einrasten nach Ruhezeit (ms)", closeButtons: "X-Knöpfe", hints: "Hinweiszeile",
+            add: "Element einfügen", classic: "behält seinen jQuery-UI-Tooltip; markierte Elemente bekommen DeepTip-Fenster.",
+            intro: "Lass die Maus auf einem Knopf oben **ruhen**. Kreislauf: [[demo.stability]] → [[demo.unrest]] → [[demo.revolt]] → [[demo.stability]]. *Prestige* und *Gold* gibt es nur auf Deutsch.",
+          },
+        };
+        var state = { stability: 1, tax: 1, gold: 1250, added: 0 };
+        var signed = function () { return (state.stability > 0 ? "+" : "") + state.stability; };
+
+        var dt = $.deeptip.init({
+          locale: "en",
+          fallback: ["de", "en"],
+          sources: ["../../../glossary/core/{locale}.json", "../../../glossary/example/{locale}.json"],
+          delay: 1000,
+          vars: { stability: signed, gold: function () { return state.gold.toLocaleString(dt.locale); } },
+        });
+
+        // mark elements with the plugin (or write data-deeptip in the HTML, like #nobles and the corners)
+        $("#realm").deeptip("demo.realm");
+        $("#stab").deeptip("demo.stability");
+        $("#tax").deeptip({ key: "demo.taxes" });
+        $("#gold").deeptip("demo.gold");
+        $("#help").deeptip("deeptip.about", { delay: 0 });
+
+        function paint() {
+          var t = T[dt.locale];
+          $("[data-i18n]").each(function () { $(this).text(t[$(this).data("i18n")]); });
+          $("#realm").text(t.realm);
+          $("#nobles").text(t.nobles);
+          $("#stab").text(t.stab + " " + signed());
+          $("#tax").text(t.tax + ": " + t.levels[state.tax]);
+          $("#gold").text(t.gold + " " + state.gold.toLocaleString(dt.locale));
+        }
+        paint();
+        $("#intro").deeptip("text", T.en.intro); // rendered after the glossaries arrived
+        $("#index").deeptip("index");
+
+        // the buttons keep their own click action; refresh() shows the new values in open windows
+        $("#stab").on("click", function () {
+          state.stability = state.stability >= 3 ? -3 : state.stability + 1;
+          paint();
+          $.deeptip.refresh();
+        });
+        $("#tax").on("click", function () {
+          state.tax = (state.tax + 1) % 3;
+          state.gold += [50, 120, 260][state.tax];
+          paint();
+          $.deeptip.refresh();
+        });
+
+        $("#lang").on("change", function () {
+          var locale = this.value;
+          $("#intro").deeptip("text", T[locale].intro);
+          $.deeptip.setLocale(locale).then(paint); // also renders every .deeptip("text") element again
+        });
+
+        $("#delay").on("input", function () { dt.configure({ delay: +this.value }); });
+        $("#lock").on("change", function () { dt.configure({ lockAfter: +this.value }); });
+        $("#closeButtons, #hints").on("change", function () {
+          var o = {};
+          o[this.id] = this.checked;
+          dt.configure(o);
+        });
+
+        // content inserted later: the runtime finds data-deeptip by delegation, nothing to register
+        $("#add").on("click", function () {
+          state.added++;
+          $("<button class='hud'>").text(T[dt.locale].nobles + " " + state.added).attr("data-deeptip", "demo.nobles").appendTo("#later");
+        });
+
+        // a jQuery UI tooltip on other elements; never on marked ones (two tooltips)
+        $(document).tooltip({ items: "[title]:not([data-deeptip])" });
+
+        $(document).on("deeptip:open deeptip:pin deeptip:close", function (e, key) {
+          $("#log").prepend(document.createTextNode(e.type.replace("deeptip:", "").padEnd(6) + key + "\n"));
+        });
+
+        if (/[?&]test\b/.test(location.search)) import("../test/checks.js");
+      });
+    </script>
+  </body>
+</html>

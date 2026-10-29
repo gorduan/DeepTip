@@ -4,6 +4,32 @@ Guide: how [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (ex
 
 Checked with **PySide6 / Qt 6.12.0** and Python 3.13 on Windows, on Qt's `offscreen` platform: the Qt behaviour described here was reproduced there, every snippet was run, and the pytest runner below passed all shared cases (24/24) with a Python port of [§1](../../docs/algorithms.md#1-data), [§2](../../docs/algorithms.md#2-markup-parser) and [§8](../../docs/algorithms.md#8-placement).
 
+## Quick start
+
+**Recognise the project:** `PySide6` in `requirements.txt` or `pyproject.toml` and `from PySide6.QtWidgets import …` in the code (PyQt6 projects start here too).
+
+1. `pip install PySide6 pytest` in a virtual environment.
+2. Write `deeptip/core.py` and pass the parity cases: `DEEPTIP_CASES=<DeepTip>/test/cases pytest -q` must report `24 passed` ([Testing](#testing)).
+3. Write `glossary.py`, `render.py` and `qt.py` ([What you build](#what-you-build)) in the [Order of operations](#order-of-operations).
+4. Copy `glossary/core/<locale>.json` to `data/core/`; your own entries go to `data/<locale>.json`.
+5. Create one controller for the application and mark widgets (below).
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en data/core/en.json data/en.json`.
+
+```python
+import sys
+from PySide6.QtWidgets import QApplication, QPushButton
+from deeptip.qt import DeepTip
+
+app = QApplication(sys.argv)
+dt = DeepTip(app, locale="en", sources=["data/core/{locale}.json", "data/{locale}.json"])
+help_button = QPushButton("?")
+dt.mark(help_button, "deeptip.about")  # the same as the dynamic property deeptip in Qt Designer
+help_button.show()
+sys.exit(app.exec())
+```
+
+**Done when:** `pytest -q` reports `24 passed`, resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## What you build
 
 | File | Content |

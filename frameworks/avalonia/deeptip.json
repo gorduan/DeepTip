@@ -3,6 +3,7 @@
   "title": "Avalonia",
   "language": "C#",
   "tier": 1,
+  "area": "desktop",
   "version": "1.0.0",
   "status": "documented",
   "kind": "guide",

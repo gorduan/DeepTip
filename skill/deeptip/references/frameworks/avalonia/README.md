@@ -4,6 +4,33 @@ How to build [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) (
 
 This folder holds no code: DeepTip code exists only as HTML, CSS, JS and Rust. This guide is the exact recipe for Avalonia. The shared algorithms are in [docs/algorithms.md](../../docs/algorithms.md) and are linked by section (§) instead of repeated; [SPEC.md](../../SPEC.md) is the contract, and the web runtime ([frameworks/web](../web/README.md)) is the reference to compare behaviour with. Statements marked *(checked)* were verified on 2026-10-29 with **Avalonia 11.3.8 on .NET 8** (Windows 11): every API name against the assemblies, the behaviour in a headless Avalonia app rendered with Skia, every snippet compiled, and a C# port of §1, §2 and §8 passed all 24 shared cases. Avalonia 12 moved and renamed some APIs; re-check names there.
 
+## Quick start
+
+**Recognise the project:** a `.csproj` that references the `Avalonia` package (usually with `Avalonia.Desktop`), `.axaml` files and an `App.axaml`.
+
+1. Port `Glossary`, `Markup.Parse` and `Placement.Compute` as plain C# (section 9) and pass the 24 parity cases (section 10.1).
+2. Build `TermButton`, `TipWindowView`, `DeepTipHost` on the overlay layer and the attached properties `DeepTip.Key`, `Delay` and `Place` (sections 4–7 and 11).
+3. Load `glossary/core/<locale>.json` into the `Glossary` first, then your own `deeptip/<locale>.json` ([§1.2](../../docs/algorithms.md#12-layers-locales-lookup)).
+4. Create one `DeepTipHost` per `TopLevel` once its window is shown, and mark controls (below).
+5. Validate the same files: `node <DeepTip>/tools/deeptip-check.mjs --base en glossary/core/en.json deeptip/en.json`.
+
+```csharp
+public sealed class MainWindow : Window
+{
+    DeepTipHost? host;                                      // one per TopLevel (sections 4–7)
+
+    public MainWindow(Glossary glossary)                    // core layer first, then yours (step 3)
+    {
+        var help = new Button { Content = "?" };
+        DeepTip.SetKey(help, "deeptip.about");              // XAML: dt:DeepTip.Key="deeptip.about"
+        Content = help;
+        Opened += (_, _) => host = new DeepTipHost(TopLevel.GetTopLevel(this)!, glossary);
+    }
+}
+```
+
+**Done when:** the parity tests pass 24 of 24, resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## 1. Parts to build
 
 | Part | Kind | Does | Algorithms |

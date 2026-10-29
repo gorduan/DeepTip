@@ -6,6 +6,30 @@ Every engine name below was checked against the source of **Unreal Engine 5.8.3*
 
 **Download:** `DeepTip-cpp-unreal-1.0.0.zip` holds this guide together with `SPEC.md`, `docs/algorithms.md`, `schema/`, the shared glossaries and the parity cases `test/cases/`, in the repository layout, so every relative link below works. **Status:** documented, not built in this repository.
 
+## Quick start
+
+**Recognise the project:** a `*.uproject` file with C++ modules in `Source/<Module>/` (each with a `<Module>.Build.cs`).
+
+1. Create the plugin of section 1 in `Plugins/DeepTip/`, with `glossary/core/` copied to `Resources/Glossary/core/` and `test/cases/` to `Resources/TestCases/`.
+2. Build the core (glossary, parser, placement, `FDeepTipController`) without Slate types; the `DeepTip.Parity` automation tests must pass (sections 4, 10, 11 and 14).
+3. Build `UDeepTipSubsystem`, `FDeepTipInputProcessor`, `SDeepTipLayer`, `SDeepTipWindow` and `SDeepTipTerm` (sections 2 and 5–9).
+4. In Project Settings → Plugins → DeepTip set `Sources` to `Resources/Glossary/core/{locale}.json` followed by your own glossary, packaged from `Content/DeepTip/` (sections 10, 12 and 13).
+5. Show the mouse cursor with input mode Game and UI, then mark widgets in C++ (below) or in Blueprint ("Get DeepTip Subsystem" → "Mark").
+6. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en Plugins/DeepTip/Resources/Glossary/core/en.json Content/DeepTip/en.json`.
+
+```cpp
+// a UUserWidget whose button is bound by name: UPROPERTY(meta = (BindWidget)) UButton* HelpButton;
+void UMyHud::NativeConstruct()
+{
+  Super::NativeConstruct();
+  UDeepTipSubsystem* DeepTip = GetGameInstance()->GetSubsystem<UDeepTipSubsystem>();
+  DeepTip->SetLocale(TEXT("en"), { TEXT("en") });
+  DeepTip->Mark(HelpButton, TEXT("deeptip.about"));
+}
+```
+
+**Done when:** `Automation RunTests DeepTip` passes, in PIE resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest without reaching the game, the validator reports 0 errors.
+
 ## 1. Plugin layout
 
 ```

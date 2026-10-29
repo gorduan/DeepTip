@@ -1,0 +1,11 @@
+{
+  "name": "unity-uitoolkit",
+  "title": "Unity (UI Toolkit)",
+  "language": "C#",
+  "tier": 1,
+  "area": "games",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

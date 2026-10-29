@@ -1,0 +1,11 @@
+{
+  "name": "python-kivy",
+  "title": "Python (Kivy)",
+  "language": "Python",
+  "tier": 2,
+  "area": "desktop",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

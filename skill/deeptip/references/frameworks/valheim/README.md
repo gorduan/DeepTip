@@ -4,6 +4,38 @@ Guide: how [DeepTip](https://github.com/gorduan/DeepTip/blob/main/README.md) is 
 
 Read [docs/algorithms.md](../../docs/algorithms.md) for the shared algorithms; this guide covers what is specific to a Unity game with uGUI and TextMeshPro. The [Unity guide](../unity/README.md) covers a Unity project you own; here you only patch a finished game.
 
+## Quick start
+
+**Recognise the project:** a BepInEx plugin (a `[BepInPlugin]` class) whose `.csproj` references `assembly_valheim.dll`; DeepTip runs beside it as its own mod.
+
+1. Install the mod **DeepTip** from Thunderstore (GUID `gorduan.deeptip`) into the profile you test with, and reference its `GC_Valheim_DeepTip.dll`.
+2. Ship your entries as `deeptip/en.json` (and `deeptip/de.json` …) inside your plugin's folder under `BepInEx/plugins`: DeepTip loads every `deeptip/` folder there, no code needed.
+3. Give entries `aliases` with the exact words of the game's texts: DeepTip links their first occurrence in Valheim's tooltips and Compendium pages.
+4. Mark your own UI elements through the soft dependency below; the whole API is in [API for other mods](#api-for-other-mods).
+5. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en deeptip/en.json deeptip/de.json`.
+
+```csharp
+using System.Runtime.CompilerServices;
+using BepInEx;
+using BepInEx.Bootstrap;
+using UnityEngine;
+
+[BepInPlugin("you.mymod", "My Mod", "1.0.0")]
+[BepInDependency("gorduan.deeptip", BepInDependency.DependencyFlags.SoftDependency)]
+public class MyMod : BaseUnityPlugin
+{
+    public static void Explain(GameObject button)           // call once your button exists
+    {
+        if (Chainloader.PluginInfos.ContainsKey("gorduan.deeptip")) Mark(button);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]              // compiled only when DeepTip is installed
+    static void Mark(GameObject button) => DeepTip.Api.Mark(button, "deeptip.about");
+}
+```
+
+**Done when:** with DeepTip installed resting the mouse on your button for 0.5 s opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, your entries appear on the lexicon page of the Compendium, without DeepTip your mod still loads.
+
 ## Architecture
 
 | DeepTip part | In Valheim |
@@ -16,6 +48,8 @@ Read [docs/algorithms.md](../../docs/algorithms.md) for the shared algorithms; t
 | Terms under the pointer | `TMP_TextUtilities.FindIntersectingLink(text, pointer, camera)` every frame over the hovered window's texts; link boxes from `textInfo.characterInfo` for anchors of page terms. |
 | Auto-linking (§10) | Glossary `aliases` (exact words of the game texts in that language) highlighted in Valheim's tooltip texts and Compendium pages: first occurrence per key, longest alias first, whole words, never inside tags or existing links. |
 | Encyclopedia (§12) | A page "DeepTip lexicon" in Valheim's Compendium (`TextsDialog`), grouped by namespace, with a TMP input field for search. |
+
+The pure C# parts (JSON reader, glossary, markup parser, placement) use no Unity types, so a `dotnet` console or test project runs them against `test/cases/*.json` outside the game, as [§11](../../docs/algorithms.md#11-testing-with-testcases) describes; the [Avalonia guide](../avalonia/README.md#101-parity-cases-11) shows such tests in C#.
 
 ## Patches (Harmony)
 

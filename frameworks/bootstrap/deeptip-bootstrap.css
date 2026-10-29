@@ -1,0 +1,81 @@
+/*!
+ * DeepTip 1.0.0 — Bootstrap 5.3 theme.
+ * Load after Bootstrap's CSS and after deeptip.css. Maps DeepTip's --dt-* properties to Bootstrap's --bs-* properties, so
+ * DeepTip windows look like Bootstrap popovers and follow the colour mode (data-bs-theme="light" | "dark") of the element
+ * they are appended to (<body>, or the runtime's `container`, e.g. an open modal).
+ * Override a value with a rule on .dt-win after this file, e.g. .dt-win { --dt-radius: 0; }.
+ */
+
+/* windows, the encyclopedia and terms on the page */
+.dt-win,
+.dt-index,
+.dt-link {
+  --dt-bg: var(--bs-body-bg);
+  --dt-fg: var(--bs-body-color);
+  --dt-border: var(--bs-border-color-translucent);
+  --dt-border-width: var(--bs-border-width);
+  --dt-radius: var(--bs-border-radius-lg);
+  --dt-shadow: var(--bs-box-shadow);
+  --dt-accent: var(--bs-primary);
+  --dt-pinned: var(--bs-primary);
+  --dt-focus: var(--bs-primary);
+  --dt-link: var(--bs-link-color);
+  --dt-link-hover: var(--bs-link-hover-color);
+  --dt-link-open-bg: var(--bs-primary-bg-subtle);
+  --dt-hover-bg: var(--bs-secondary-bg);
+  --dt-title: var(--bs-emphasis-color);
+  --dt-code: var(--bs-code-color);
+  --dt-var: var(--bs-emphasis-color);
+  --dt-missing: var(--bs-danger);
+  --dt-font: var(--bs-body-font-family);
+  --dt-mono: var(--bs-font-monospace);
+  --dt-font-size: 0.875rem; /* the popover's font size */
+}
+
+/* the title bar like a popover header */
+.dt-win .dt-head {
+  margin-bottom: 0.5rem;
+  padding-block: 0.375rem;
+  background-color: var(--bs-secondary-bg);
+  border-bottom: var(--bs-border-width) solid var(--bs-border-color-translucent);
+}
+.dt-win .dt-title {
+  font-weight: 600;
+}
+.dt-win .dt-hint {
+  color: var(--bs-secondary-color);
+  opacity: 1;
+}
+
+/* the encyclopedia's search field like a form control */
+.dt-index .dt-index-search {
+  padding: 0.375rem 0.75rem;
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+}
+.dt-index .dt-index-search:focus {
+  outline: 0;
+  border-color: var(--bs-primary-border-subtle);
+  box-shadow: 0 0 0 0.25rem var(--bs-focus-ring-color);
+}
+
+/* optional: Bootstrap Icons for the pin and close buttons. Load bootstrap-icons.css and add the class dt-bi to <body>. */
+.dt-bi .dt-win .dt-btn svg {
+  display: none;
+}
+.dt-bi .dt-win .dt-btn::before {
+  font-family: "bootstrap-icons";
+  font-size: 0.875rem;
+  line-height: 1;
+}
+.dt-bi .dt-win .dt-pin::before {
+  content: "\f4eb"; /* bi-pin-angle */
+}
+.dt-bi .dt-win .dt-pin[aria-pressed="true"]::before {
+  content: "\f4ea"; /* bi-pin-angle-fill */
+}
+.dt-bi .dt-win .dt-close::before {
+  content: "\f659"; /* bi-x-lg */
+}

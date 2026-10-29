@@ -7,6 +7,8 @@ Synonyms: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, too
 ## Docs
 
 - [Agent Skill](https://raw.githubusercontent.com/gorduan/DeepTip/main/skill/deeptip/SKILL.md): teaches DeepTip to any coding agent (rules, behaviour, glossary format, workflows, all frameworks); install the folder `skill/deeptip` ([install notes](https://raw.githubusercontent.com/gorduan/DeepTip/main/skill/README.md))
+- [Agent harnesses](https://raw.githubusercontent.com/gorduan/DeepTip/main/skill/harnesses/README.md): where 45 coding agents, chat assistants and local front-ends read the skill, and `tools/install.mjs`, which puts it there
+- [MCP server](https://raw.githubusercontent.com/gorduan/DeepTip/main/mcp/README.md): `mcp/deeptip-mcp.mjs` serves the guides, the specification, the algorithms, framework detection and the validator to any MCP client (read-only, Node 18+, no dependencies)
 - [Briefing for any language model](https://raw.githubusercontent.com/gorduan/DeepTip/main/docs/prompt.md): what DeepTip means and how to build it, in one page
 - [Specification](https://raw.githubusercontent.com/gorduan/DeepTip/main/SPEC.md): data format, behaviour, placement, input, accessibility, options, porting checklist
 - [Algorithms](https://raw.githubusercontent.com/gorduan/DeepTip/main/docs/algorithms.md): the exact algorithms of the reference as language-neutral pseudo-code (glossary layers, markup parser, window tree, grace and tendency, arming, timer lock, placement, input, auto-linking, encyclopedia)
@@ -22,9 +24,61 @@ Synonyms: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, too
 
 ## Frameworks
 
-- [Web (HTML + CSS + JavaScript), reference](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/web/README.md)
-- Code: `frameworks/<name>/README.md` for RPG Maker MZ (`rpgmaker-mz`, JavaScript plugin on the web runtime) and Rust/egui (`rust-egui`, the second complete implementation, crate `deeptip`)
-- Exact guides, no code: `frameworks/<name>/README.md` for TypeScript, Svelte, React, Vue, Blazor (on the web runtime), Avalonia, Unity, Valheim, Godot, Python/PySide6 (`python-pyside6`), Java/Swing (`java-swing`), Kotlin/Compose (`kotlin-compose`), C++/Dear ImGui (`cpp-imgui`), C++/Unreal (`cpp-unreal`), Swift/SwiftUI (`swift-swiftui`), Go/Gio (`go-gio`)
+<!-- generated:framework-lists -->
+Ready code (use it as it is, never rewrite it):
+
+- [Web (HTML + CSS + JavaScript)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/web/README.md): web, the reference
+- [Bootstrap 5](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/bootstrap/README.md): web, adapter on the web runtime
+- [jQuery (plugin)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/jquery/README.md): web, adapter on the web runtime
+- [Rust (egui)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/rust-egui/README.md): desktop, a complete implementation
+- [RPG Maker MZ (plugin)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/rpgmaker-mz/README.md): games, adapter on the web runtime
+- [Phaser 3/4 (adapter)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/phaser/README.md): games, adapter on the web runtime
+- [Rust (Ratatui, terminal)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/rust-ratatui/README.md): terminal, adapter on Rust (egui)
+
+Exact guides, no code (build DeepTip inside the project exactly as the guide says):
+
+- [Angular](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/angular/README.md): web, on the web runtime
+- [Blazor](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/blazor/README.md): web, on the web runtime
+- [Electron](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/electron/README.md): web, on the web runtime
+- [React](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/react/README.md): web, on the web runtime
+- [Server-rendered HTML (WordPress, Laravel, Django, Rails, ASP.NET, static sites)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/server-html/README.md): web, on the web runtime
+- [Svelte](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/svelte/README.md): web, on the web runtime
+- [Tauri 2](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/tauri/README.md): web, on the web runtime
+- [TypeScript](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/typescript/README.md): web, on the web runtime
+- [Vue](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/vue/README.md): web, on the web runtime
+- [.NET MAUI](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/dotnet-maui/README.md): desktop
+- [Avalonia](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/avalonia/README.md): desktop
+- [C++ (Qt 6: Widgets and Qt Quick)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/qt/README.md): desktop, on the web runtime
+- [Python (PySide6 / Qt)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/python-pyside6/README.md): desktop
+- [Windows Forms](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/winforms/README.md): desktop
+- [WPF](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/wpf/README.md): desktop
+- [C++ (Dear ImGui)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/cpp-imgui/README.md): desktop
+- [Go (Gio)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/go-gio/README.md): desktop
+- [GTK 4 (C, PyGObject, gtk-rs)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/gtk/README.md): desktop
+- [Java (JavaFX)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/javafx/README.md): desktop
+- [Java (Swing)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/java-swing/README.md): desktop
+- [Kotlin (Compose Desktop)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/kotlin-compose/README.md): desktop
+- [Python (Kivy)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/python-kivy/README.md): desktop
+- [Python (Tkinter)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/python-tkinter/README.md): desktop
+- [Swift (SwiftUI)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/swift-swiftui/README.md): desktop
+- [Android (Jetpack Compose)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/android-compose/README.md): mobile, on the Kotlin (Compose Desktop) guide
+- [Flutter](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/flutter/README.md): mobile
+- [iOS and iPadOS (UIKit)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/ios-uikit/README.md): mobile, on the Swift (SwiftUI) guide
+- [React Native](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/react-native/README.md): mobile, on the web runtime
+- [Godot 4](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/godot/README.md): games
+- [Unity (uGUI + TextMeshPro)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/unity/README.md): games
+- [Unity (UI Toolkit)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/unity-uitoolkit/README.md): games
+- [Valheim (BepInEx mod)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/valheim/README.md): games; source: https://github.com/gorduan/Valheim_DeepTip
+- [Bevy (Rust)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/bevy/README.md): games, on Rust (egui)
+- [C++ (Unreal Engine 5, Slate + UMG)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/cpp-unreal/README.md): games
+- [GameMaker (GML)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/gamemaker/README.md): games
+- [LÖVE (Lua)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/love2d/README.md): games
+- [Minecraft (Fabric mod)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/minecraft-fabric/README.md): games
+- [Ren'Py](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/renpy/README.md): games
+- [Roblox (Luau)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/roblox/README.md): games
+- [Go (Bubble Tea, terminal)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/go-bubbletea/README.md): terminal
+- [Python (Textual, terminal)](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/python-textual/README.md): terminal
+<!-- /generated:framework-lists -->
 
 ## Optional
 

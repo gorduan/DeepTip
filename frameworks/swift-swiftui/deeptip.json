@@ -3,6 +3,7 @@
   "title": "Swift (SwiftUI)",
   "language": "Swift",
   "tier": 2,
+  "area": "desktop",
   "version": "1.0.0",
   "status": "documented",
   "kind": "guide",

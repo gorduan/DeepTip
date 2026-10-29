@@ -3,6 +3,7 @@
   "title": "TypeScript",
   "language": "TypeScript",
   "tier": 1,
+  "area": "web",
   "version": "1.0.0",
   "status": "documented",
   "kind": "guide",

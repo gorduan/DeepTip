@@ -6,6 +6,42 @@ The second complete implementation next to the web reference. It follows [SPEC.m
 
 Requires Rust 1.95 or newer (the minimum of egui 0.37). Crate name: `deeptip`, version 1.0.0.
 
+## Quick start
+
+**Recognise the project:** `egui` or `eframe` in `Cargo.toml`; other Rust toolkits (iced, Slint, Bevy UI) can use the core without egui (section 4).
+
+1. Add `deeptip = { path = "frameworks/rust-egui" }` (or the git tag of section 1) and `eframe = "0.37"` to `[dependencies]`.
+2. Copy `glossary/core/` into your crate as `glossary/core/`; your own entries go to `deeptip/<locale>.json` (section 2).
+3. Every frame call `mark` for each widget to explain and `show` once at the end (below; the whole API: section 4).
+4. Validate: `node <DeepTip>/tools/deeptip-check.mjs --base en glossary/core/en.json deeptip/en.json`.
+
+```rust
+use deeptip::DeepTip;
+use eframe::egui;
+
+struct App {
+    dt: DeepTip,
+}
+
+impl eframe::App for App {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ui, |ui| {
+            let help = ui.button("?");
+            self.dt.mark(&help, "deeptip.about"); // rest on the button → its window
+        });
+        self.dt.show(ui.ctx()); // once per frame, after your UI
+    }
+}
+
+fn main() -> eframe::Result {
+    let mut dt = DeepTip::new("en", &["en"]);
+    dt.set_sources(&["glossary/core/{locale}.json", "deeptip/{locale}.json"]); // core first, project after
+    eframe::run_native("My app", eframe::NativeOptions::default(), Box::new(|_cc| Ok(Box::new(App { dt }))))
+}
+```
+
+**Done when:** `cargo run` opens the app, resting on `?` for 800 ms opens the *DeepTip* window next to it, hovering *terms* in it opens *Highlighted term* beside it and never on top, a click pins both windows and `Esc` closes the newest, the validator reports 0 errors.
+
 ## 1. Install
 
 Download `DeepTip-rust-egui-1.0.0.zip` from the releases, or copy the folder `frameworks/rust-egui/` into your workspace, and add it as a path dependency:

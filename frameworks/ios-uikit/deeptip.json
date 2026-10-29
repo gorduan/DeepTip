@@ -1,0 +1,11 @@
+{
+  "name": "ios-uikit",
+  "title": "iOS and iPadOS (UIKit)",
+  "language": "Swift",
+  "tier": 2,
+  "area": "mobile",
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": ["swift-swiftui"]
+}

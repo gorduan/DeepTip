@@ -1,0 +1,11 @@
+{
+  "name": "bootstrap",
+  "title": "Bootstrap 5",
+  "language": "CSS",
+  "tier": 1,
+  "area": "web",
+  "version": "1.0.0",
+  "status": "tested",
+  "kind": "adapter",
+  "uses": ["web"]
+}

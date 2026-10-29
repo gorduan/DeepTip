@@ -226,11 +226,10 @@ framework's guide in `frameworks/<name>/README.md` if there is one.
 7. Run the shared validator on the same JSON files, and pass the parity cases in `test/cases/`.
 
 Frameworks live in `frameworks/<name>/`, one folder and one download each, all using the same glossary files, the
-validator and the shared parity cases. Code exists only in HTML, CSS, JavaScript and Rust: **web**
-(`frameworks/web/`, the reference, framework-free), **RPG Maker MZ** (`frameworks/rpgmaker-mz/`, a JavaScript
-plugin) and **Rust/egui** (`frameworks/rust-egui/`). Every other framework has an exact guide instead (`"kind":
-"guide"` in its `deeptip.json`): TypeScript, Svelte, React, Vue and Blazor on top of the web runtime; Avalonia, Unity,
-Godot, Python/PySide6, Java/Swing, Kotlin/Compose, C++/Dear ImGui, C++/Unreal, Swift/SwiftUI and Go/Gio as native
-builds. **Valheim** (`frameworks/valheim/`) documents a real C# build in a game with its own tooltips: the BepInEx
+validator and the shared parity cases. Code exists only in HTML, CSS, JavaScript and Rust: the web runtime
+(`frameworks/web/`, the reference) with its adapters, and the Rust crate (`frameworks/rust-egui/`) with its terminal
+adapter. Every other framework has an exact guide instead (`"kind": "guide"` in its `deeptip.json`). The list of all
+frameworks with language, tier and kind: [README, "All frameworks in detail"](https://github.com/gorduan/DeepTip/blob/main/README.md#all-frameworks-in-detail).
+**Valheim** (`frameworks/valheim/`) documents a real C# build in a game with its own tooltips: the BepInEx
 plugin "DeepTip" on Thunderstore, source in https://github.com/gorduan/Valheim_DeepTip (TextMeshPro `<link>` terms,
 Valheim's own tooltip adopted as the root window, auto-linking via `aliases`, the encyclopedia as a Compendium page).

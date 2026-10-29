@@ -3,6 +3,7 @@
   "title": "C++ (Unreal Engine 5, Slate + UMG)",
   "language": "C++",
   "tier": 2,
+  "area": "games",
   "version": "1.0.0",
   "status": "documented",
   "kind": "guide",
