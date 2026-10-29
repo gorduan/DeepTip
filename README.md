@@ -1,12 +1,16 @@
 # DeepTip
 
+[![Release](https://img.shields.io/github/v/release/gorduan/DeepTip)](https://github.com/gorduan/DeepTip/releases) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Agent Skill](https://img.shields.io/badge/AI%20agents-Agent%20Skill-8A2BE2)](skill)
+
 ![Three DeepTip windows side by side: "Stability" explains a value and links "unrest", "Unrest" opened beside it links "revolt", and "Revolt" is still a preview](docs/images/deeptip-windows.png)
 
-**DeepTip answers "what does this mean?" right where the user is looking.** Rest the mouse on a button, a value or a word, and a small window explains it. Highlighted words in that window have explanations of their own: move the mouse onto one and the next window opens beside the first, click and it stays. Users read as deep as they need, and no window ever covers the one it came from. Paradox Interactive's strategy games (Crusader Kings III, Victoria 3, Europa Universalis V) teach their rules this way; DeepTip brings the same pattern to any app, game or tool, in any language.
+**DeepTip makes any user interface explain itself, as deep as the user wants.** Rest the mouse on a button, a value or a word, and a small window explains it. Highlighted words in that window have explanations of their own: move onto one and the next window opens beside the first, click and it stays. It is the "tooltips in tooltips" system that Paradox Interactive's strategy games (Crusader Kings III, Victoria 3, Europa Universalis V) use to teach their rules, turned into an open pattern that works in any program, game or tool, in any language.
 
-Deutsch: [README.de.md](README.de.md) · Releases and downloads: [v1.0.0](https://github.com/gorduan/DeepTip/releases/tag/v1.0.0)
+Deutsch: [README.de.md](README.de.md)
 
-## What it is
+## What this project is for
+
+Modern software and games are full of terms that depend on each other: a value depends on three other values, a rule refers to two other rules. An ordinary tooltip shows one line and disappears; a manual or a wiki is a tab switch away and breaks the flow. DeepTip puts the whole explanation where the user already looks, one hover at a time.
 
 | An ordinary tooltip | A DeepTip |
 |---|---|
@@ -15,31 +19,61 @@ Deutsch: [README.de.md](README.de.md) · Releases and downloads: [v1.0.0](https:
 | the text sits in the program code | the texts sit in one JSON file per language, like translations |
 | mouse only | mouse, touch, keyboard, gamepad and screen readers |
 
-- **For users:** no manual, no wiki tab, no tutorial. The explanation of a term is one hover away, and so is the explanation of every term inside it.
-- **For developers:** mark an element with a key. DeepTip opens, places, chains, pins and closes the windows.
-- **For writers and translators:** every text lives in JSON glossaries. An entry has a `title`, a one-line `short` and a `body` with `[[links]]` to other entries. A validator finds broken links and missing translations.
+It is made for anything where people meet many connected concepts: **games and mods** (stats, rules, items), **professional tools** (settings, units, formulas), **dashboards** (what a number means and where it comes from), **configuration screens** and **onboarding without tutorials**.
 
-A good fit wherever users meet many concepts that depend on each other: games and simulations, professional tools, dashboards, settings screens, onboarding without tutorials.
+This repository contains everything you need to use the pattern:
 
-Other names for the same idea: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, tooltips in tooltips, Erklärfenster.
+1. **The pattern itself**, written down exactly: the [specification](SPEC.md) and every algorithm as language-neutral pseudo-code in [docs/algorithms.md](docs/algorithms.md).
+2. **Ready-made code** in HTML, CSS, JavaScript and Rust.
+3. **An exact build guide for every other framework**, step by step, with the pitfalls already found.
+4. **An AI skill** that teaches your coding agent all of it, so DeepTip can be added to any project, even in a framework that has no guide yet.
+5. **Tools**: a JSON Schema and a validator for the explanation files, and shared test cases that prove an implementation behaves like the reference.
 
-## Use it in your project
+## Works with
 
-### The easiest way: let your AI coding agent do it
+**Bold** = ready-made code you copy into your project. The others have an exact step-by-step guide. Each entry links to its folder; each folder is also a separate download on the [releases page](https://github.com/gorduan/DeepTip/releases).
 
-This works for every language and framework.
+| Area | Frameworks |
+|---|---|
+| **Web** | **[HTML + CSS + JavaScript](frameworks/web)** (the reference) · [TypeScript](frameworks/typescript) · [React](frameworks/react) · [Vue](frameworks/vue) · [Svelte](frameworks/svelte) · [Blazor](frameworks/blazor) |
+| **Desktop** | **[Rust (egui)](frameworks/rust-egui)** · [Avalonia](frameworks/avalonia) · [Python (PySide6 / Qt)](frameworks/python-pyside6) · [Java (Swing)](frameworks/java-swing) · [Kotlin (Compose Desktop)](frameworks/kotlin-compose) · [C++ (Dear ImGui)](frameworks/cpp-imgui) · [Swift (SwiftUI)](frameworks/swift-swiftui) · [Go (Gio)](frameworks/go-gio) |
+| **Games, engines, mods** | **[RPG Maker MZ](frameworks/rpgmaker-mz)** · [Unity](frameworks/unity) · [Unreal Engine 5](frameworks/cpp-unreal) · [Godot 4](frameworks/godot) · [Valheim mod](frameworks/valheim) ([released mod](https://github.com/gorduan/Valheim_DeepTip)) |
+| **Everything else** | any language, engine or toolkit: your AI agent builds it with the skill from [docs/algorithms.md](docs/algorithms.md) and checks it against the shared test cases |
 
-1. Install the DeepTip skill once. It teaches the agent the whole pattern and carries every guide:
+Every implementation reads the same explanation files, so one glossary serves your web app, your desktop tool and your game.
 
-   ```bash
-   git clone --depth 1 https://github.com/gorduan/DeepTip
-   mkdir -p ~/.claude/skills ~/.agents/skills
-   cp -r DeepTip/skill/deeptip ~/.claude/skills/   # Claude Code
-   cp -r DeepTip/skill/deeptip ~/.agents/skills/   # OpenAI Codex, GitHub Copilot, Cursor, Gemini CLI
-   ```
+## Put it anywhere: the DeepTip skill
 
-   For claude.ai, upload `DeepTip-skill-1.0.0.zip` from the releases under *Customize → Skills*. All agents and paths: [skill/README.md](skill/README.md).
-2. Open your project and ask: *"Add DeepTip to this project and explain the main screen."* The agent recognises your framework, follows its guide, writes the glossary in your language, marks the elements and checks everything with the validator.
+The [DeepTip skill](skill) teaches an AI coding agent the whole pattern. Install it once, then ask your agent *"Add DeepTip to this project"* in any project, in any language.
+
+```mermaid
+flowchart LR
+  S["DeepTip skill"] --> A["Your AI agent"]
+  A --> D{"Which framework?"}
+  D -->|"ready code"| C["copies the runtime<br/>(web, Rust, RPG Maker)"]
+  D -->|"guide"| G["follows the exact guide"]
+  D -->|"not listed"| N["builds it from the algorithms<br/>and the shared test cases"]
+  C --> P["DeepTip in your project,<br/>texts written, checked by the validator"]
+  G --> P
+  N --> P
+```
+
+**What the agent learns:** what DeepTip is and how it must behave (timings, placement, keyboard, touch, gamepad, accessibility), the explanation file format, three workflows (add DeepTip to a project, write and check explanations, build it where no guide exists), every framework guide and a checklist for the result. The skill carries all guides, the specification, the algorithms, the web runtime, the test cases and the validator in its own folder, so it also works offline.
+
+**Which agents:** the skill uses the open [Agent Skills](https://agentskills.io/specification) format, read by **Claude Code, Claude (claude.ai and the desktop app), OpenAI Codex, GitHub Copilot, Cursor and Gemini CLI**.
+
+```bash
+git clone --depth 1 https://github.com/gorduan/DeepTip
+mkdir -p ~/.claude/skills ~/.agents/skills
+cp -r DeepTip/skill/deeptip ~/.claude/skills/   # Claude Code
+cp -r DeepTip/skill/deeptip ~/.agents/skills/   # Codex, GitHub Copilot, Cursor, Gemini CLI
+```
+
+For claude.ai, upload `DeepTip-skill-<version>.zip` from the [releases](https://github.com/gorduan/DeepTip/releases) under *Customize → Skills*. Every agent, folder and source: [skill/README.md](skill/README.md).
+
+Then, in your project: *"Add DeepTip to this project and explain the main screen."* The agent recognises the framework, follows its guide, writes the explanation files in your language, marks the elements and checks everything with the validator.
+
+## Use it without an agent
 
 ### A website or web app: three steps, no build
 
@@ -71,13 +105,11 @@ Save this as a page and open it in the browser:
 2. **Write the explanations.** In a real project they go into one file per language, `deeptip/en.json`, `deeptip/de.json`, loaded with `DeepTip.init({ locale: "en", sources: ["deeptip/{locale}.json"] })` (served by any web server).
 3. **Mark the elements** with `data-deeptip="key"`. Terms in normal page text work too (`renderText`), and one call renders an encyclopedia of every entry (`renderIndex`).
 
-Rest the mouse on the button: the cart window opens, "check out" inside it opens the next one. Every option and the API: [frameworks/web/README.md](frameworks/web/README.md). React, Vue, Svelte, TypeScript, Blazor, Tauri and Electron use the same two files; their guides show where the calls go.
+Rest the mouse on the button: the cart window opens, and "check out" inside it opens the next one. Every option and the API: [frameworks/web/README.md](frameworks/web/README.md).
 
-### Any other framework or engine
+### Any other framework
 
-1. Find your framework in the [table below](#frameworks) and download `DeepTip-<framework>-1.0.0.zip` from the [release](https://github.com/gorduan/DeepTip/releases/tag/v1.0.0), or open its folder.
-2. Web, RPG Maker MZ and Rust (egui) come with ready code. For every other framework the guide maps each part of DeepTip to your toolkit, step by step. Together with [docs/algorithms.md](docs/algorithms.md) and the shared test cases you can check that your build behaves exactly like the reference.
-3. Not in the list? [docs/algorithms.md](docs/algorithms.md) describes every algorithm without a programming language, and the skill's third workflow walks an agent through a new system.
+Open its folder from [Works with](#works-with) or download `DeepTip-<framework>-<version>.zip` from the [releases](https://github.com/gorduan/DeepTip/releases). Each guide starts with what to copy or build and ends with a checklist; [docs/algorithms.md](docs/algorithms.md) and the shared test cases let you prove that your build behaves exactly like the reference.
 
 ## Write the explanations
 
@@ -111,9 +143,21 @@ node tools/deeptip-check.mjs --base en deeptip/en.json deeptip/de.json --scan sr
 
 The full format: [SPEC.md §2](SPEC.md). DeepTip also ships a core glossary with its own help texts (`glossary/core/`, English and German).
 
-## Frameworks
+## How DeepTip behaves
 
-DeepTip's code exists in **HTML, CSS and JavaScript** (the reference) and in **Rust**. Every other framework has an exact guide: which part of the toolkit implements which part of DeepTip, in which order, and which pitfalls to avoid.
+| Rule | Why |
+|---|---|
+| **One entry, three depths**: `title` (the name), `short` (one line), `body` (2–5 sentences with links). | The important part is always at the top; background sits one hover deeper. |
+| **Terms are links**: every concept a text mentions can be its own entry. | Explanations nest without limit, nothing is explained twice. |
+| **Nothing is lost by accident**: a window stays while the pointer moves towards it, terms crossed on the way do not replace it, and pinned windows close only on purpose. | Reading must never be a race against the mouse. |
+| **Never cover the way back**: a further window opens next to the one it came from, never on top of it. | The chain stays readable. |
+| **Content is data**: one JSON file per language, like translation files; code never contains explanation text. | Writers and translators work without programmers; every runtime uses the same files. |
+| **Every input device is first-class**: mouse, touch, keyboard, gamepad, screen reader. | Games and tools are used with all of them. |
+| **Native first**: use what the platform offers (popups, rich text, focus) before writing code. | Less code, better accessibility. |
+
+Controls: rest the mouse to open, hover a term to preview it, click to pin; `Esc` closes the newest window, `Shift+Esc` closes all; `F1` or `?` opens the focused element's window; touch opens with a long press; gamepad Y opens, A follows, B closes. The exact behaviour, timings and placement rules: [SPEC.md](SPEC.md).
+
+## All frameworks in detail
 
 | Framework | Language | Tier | Kind | Folder |
 |---|---|---|---|---|
@@ -137,21 +181,7 @@ DeepTip's code exists in **HTML, CSS and JavaScript** (the reference) and in **R
 | Swift (SwiftUI) | Swift | 2 | guide | [frameworks/swift-swiftui](frameworks/swift-swiftui) |
 | Go (Gio) | Go | 2 | guide | [frameworks/go-gio](frameworks/go-gio) |
 
-Tier 1 covers the most used platforms, tier 2 follows. Every folder has a README and a manifest `deeptip.json` (`kind`: `runtime`, `adapter` or `guide`, plus its `status`). Code folders have an example that uses the shared example glossary (`glossary/example/`) and tests against the shared cases (`test/cases/`); every guide says how to run those cases in its language. Each download `DeepTip-<framework>-<version>.zip` contains the framework folder, `SPEC.md`, `docs/algorithms.md`, the schema, the glossaries and the test cases.
-
-## How DeepTip behaves
-
-| Rule | Why |
-|---|---|
-| **One entry, three depths**: `title` (the name), `short` (one line), `body` (2–5 sentences with links). | The important part is always at the top; background sits one hover deeper. |
-| **Terms are links**: every concept a text mentions can be its own entry. | Explanations nest without limit, nothing is explained twice. |
-| **Nothing is lost by accident**: a window stays while the pointer moves towards it, terms crossed on the way do not replace it, and pinned windows close only on purpose. | Reading must never be a race against the mouse. |
-| **Never cover the way back**: a further window opens next to the one it came from, never on top of it. | The chain stays readable. |
-| **Content is data**: one JSON file per language, like translation files; code never contains explanation text. | Writers and translators work without programmers; every runtime uses the same files. |
-| **Every input device is first-class**: mouse, touch, keyboard, gamepad, screen reader. | Games and tools are used with all of them. |
-| **Native first**: use what the platform offers (popups, rich text, focus) before writing code. | Less code, better accessibility. |
-
-Controls: rest the mouse to open, hover a term to preview it, click to pin; `Esc` closes the newest window, `Shift+Esc` closes all; `F1` or `?` opens the focused element's window; touch opens with a long press; gamepad Y opens, A follows, B closes. The exact behaviour, timings and placement rules: [SPEC.md](SPEC.md).
+Every folder has a README and a manifest `deeptip.json` (`kind`: `runtime`, `adapter` or `guide`, plus its `status`). Code folders have an example that uses the shared example glossary (`glossary/example/`) and tests against the shared cases (`test/cases/`); every guide says how to run those cases in its language. Each download `DeepTip-<framework>-<version>.zip` contains the framework folder, `SPEC.md`, `docs/algorithms.md`, the schema, the glossaries and the test cases.
 
 ## Reference
 
