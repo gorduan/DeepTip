@@ -140,8 +140,10 @@ if (baseMap) {
 /* ---------------------------------------------------------------- source scan */
 if (opt.scan.length) {
   const used = new Map(); // key -> first place
-  const exts = new Set([".html", ".htm", ".js", ".mjs", ".ts", ".tsx", ".jsx", ".svelte", ".vue", ".cshtml", ".razor", ".gd", ".cs", ".py"]);
-  const rx = /(?:data-deeptip|data-dt-key)\s*=\s*\{?\s*["'`]([^"'`{}$]+)["'`]|\bdeeptip\s*\(\s*["'`]([^"'`]+)["'`]|\[\[([A-Za-z0-9_.-]+)(?:\|[^\]]*)?\]\]/g;
+  const exts = new Set([".html", ".htm", ".js", ".mjs", ".ts", ".tsx", ".jsx", ".svelte", ".vue", ".cshtml", ".razor", ".gd", ".cs", ".py", ".json"]);
+  // data-deeptip="key" (also {"key"}), deeptip("key"), [[key]] in texts, Vue :data-deeptip="'key'",
+  // RPG Maker MZ \DT[key] in texts (\\DT[...] inside its JSON data) and <DeepTip: key> note tags
+  const rx = /(?:data-deeptip|data-dt-key)\s*=\s*\{?\s*["'`]([^"'`{}$]+)["'`]|\bdeeptip\s*\(\s*["'`]([^"'`]+)["'`]|\[\[([A-Za-z0-9_.-]+)(?:\|[^\]]*)?\]\]|data-deeptip\s*=\s*"\s*'([A-Za-z0-9_.-]+)'\s*"|\\{1,2}DT\[([A-Za-z0-9_.-]+)(?:\|[^\]]*)?\]|<DeepTip:\s*([A-Za-z0-9_.-]+)\s*>/g;
   const walk = (dir) => {
     for (const f of readdirSync(dir)) {
       if (f === "node_modules" || f.startsWith(".") || f === "dist" || /^deeptip(\.min)?\.js$/.test(f)) continue;
@@ -150,7 +152,7 @@ if (opt.scan.length) {
       else if (exts.has(extname(f))) {
         const src = readFileSync(p, "utf8");
         for (const m of src.matchAll(rx)) {
-          const key = (m[1] ?? m[2] ?? m[3]).trim();
+          const key = (m[1] ?? m[2] ?? m[3] ?? m[4] ?? m[5] ?? m[6]).trim();
           if (KEY_RE.test(key) && !used.has(key)) used.set(key, `${p}:${src.slice(0, m.index).split("\n").length}`);
         }
       }
