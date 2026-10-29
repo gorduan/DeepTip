@@ -1,0 +1,10 @@
+{
+  "name": "cpp-imgui",
+  "title": "C++ (Dear ImGui)",
+  "language": "C++",
+  "tier": 2,
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

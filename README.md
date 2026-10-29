@@ -44,7 +44,7 @@ DeepTip's code exists in **HTML, CSS and JavaScript** (the reference) and in **R
 | Java (Swing) | Java | 2 | guide | `frameworks/java-swing` |
 | Kotlin (Compose Desktop) | Kotlin | 2 | guide | `frameworks/kotlin-compose` |
 | C++ (Dear ImGui) | C++ | 2 | guide | `frameworks/cpp-imgui` |
-| C++ (Unreal Engine) | C++ | 2 | guide | `frameworks/cpp-unreal` |
+| C++ (Unreal Engine 5, Slate + UMG) | C++ | 2 | guide | `frameworks/cpp-unreal` |
 | Swift (SwiftUI) | Swift | 2 | guide | `frameworks/swift-swiftui` |
 | Go (Gio) | Go | 2 | guide | `frameworks/go-gio` |
 
