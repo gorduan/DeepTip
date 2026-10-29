@@ -1,35 +1,63 @@
 # DeepTip
 
-**Explanation windows with depth**: nested, pinnable tooltips like in Paradox Interactive's games (Crusader Kings III, Victoria 3, Europa Universalis V). Rest the pointer on a UI element and, after a delay, a window explains it. Highlighted terms inside open further windows on hover, a click pins a window open, and pinned windows contain terms again, so explanations nest without limit. Mouse, touch (long-press), keyboard (F1, Esc, F6) and gamepad (Y, A, B, LB/RB).
+> **DeepTip** is a UI design pattern: explanation windows with depth. Rest on an element and a window explains it. Highlighted terms inside open further windows, a click pins them, and pinned windows contain terms again, so you can read as deep as you like, the way Paradox Interactive's games (Crusader Kings III, Victoria 3, Europa Universalis V) explain their mechanics. The content is data: one JSON glossary per language.
 
-The heart of this repository is the **web runtime** (plain HTML + JavaScript, no dependencies). Around it sits the **schema for every runtime**: one data format, one behaviour specification and one validator, so the same glossary files drive a web page, a desktop app or a game.
+Other names for the same thing: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, tooltips in tooltips, Erklärfenster. Deutsch: [README.de.md](README.de.md).
 
-Other names for the same thing: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, tooltips in tooltips. Deutsch: [README.de.md](README.de.md).
+This repository is the home of the pattern: the specification, the data format with its schema and validator, shared test cases, and one implementation per framework, each in its own folder with its own download.
 
-## Web: HTML + JavaScript
+## The pattern
 
-### Quick start
+A DeepTip is the answer to "what does this mean?" without leaving the screen and without a manual.
+
+| Rule | Why |
+|---|---|
+| **One entry, three depths**: `title` (the name), `short` (one line), `body` (2–5 sentences with links). | The important part is always at the top; background sits one hover deeper. |
+| **Terms are links**: every concept a text mentions can be its own entry. | Explanations nest without limit, nothing is explained twice. |
+| **Nothing is lost by accident**: a window stays while the pointer moves towards it, terms crossed on the way do not replace it, and pinned windows close only on purpose. | Reading must never be a race against the mouse. |
+| **Never cover the way back**: a further window opens next to the one it came from, never on top of it. | The chain stays readable. |
+| **Content is data**: one JSON file per language, like translation files; code never contains explanation text. | Writers and translators work without programmers; every runtime uses the same files. |
+| **Every input device is first-class**: mouse, touch, keyboard, gamepad, screen reader. | Games and tools are used with all of them. |
+| **Native first**: use what the platform offers (popups, rich text, focus) before writing code. | Less code, better accessibility. |
+
+Use it where users meet many interlocking concepts: games, simulations, professional tools, dashboards, configuration screens, onboarding without tutorials.
+
+## Frameworks: one folder, one download each
+
+| Framework | Language | Tier | Folder |
+|---|---|---|---|
+| Web (HTML + JavaScript), reference | JavaScript | 1 | [frameworks/web](frameworks/web) |
+| TypeScript | TypeScript | 1 | `frameworks/typescript` |
+| Svelte | JavaScript/TypeScript | 1 | `frameworks/svelte` |
+| React | JavaScript/TypeScript | 1 | `frameworks/react` |
+| Vue | JavaScript/TypeScript | 1 | `frameworks/vue` |
+| RPG Maker MZ (plugin) | JavaScript | 1 | `frameworks/rpgmaker-mz` |
+| Blazor | C# | 1 | `frameworks/blazor` |
+| Avalonia | C# | 1 | `frameworks/avalonia` |
+| Unity (uGUI + TextMeshPro) | C# | 1 | `frameworks/unity` |
+| Valheim (BepInEx mod, Thunderstore "DeepTip") | C# | 1 | `frameworks/valheim` |
+| Godot 4 | GDScript | 1 | `frameworks/godot` |
+| Python (PySide6 / Qt) | Python | 1 | `frameworks/python-pyside6` |
+| Java (Swing) | Java | 2 | `frameworks/java-swing` |
+| Kotlin (Compose Desktop) | Kotlin | 2 | `frameworks/kotlin-compose` |
+| C++ (Dear ImGui) | C++ | 2 | `frameworks/cpp-imgui` |
+| C++ (Unreal Engine, UMG) | C++ | 2 | `frameworks/cpp-unreal` |
+| Rust (egui) | Rust | 2 | `frameworks/rust-egui` |
+| Swift (SwiftUI) | Swift | 2 | `frameworks/swift-swiftui` |
+| Go (Gio) | Go | 2 | `frameworks/go-gio` |
+
+Tier 1 frameworks are built and tested here; tier 2 follow, each marked with its state in its `deeptip.json`. Every framework has a README (install, minimal code, API), an example that uses the same example glossary (`glossary/example/`), and passes the shared test cases where it has its own parser or placement. Downloads: `DeepTip-<framework>-<version>.zip` on the releases page, built by `npm run package`.
+
+### Quick start on the web
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/web/deeptip.css" />
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/frameworks/web/deeptip.css" />
 <button data-deeptip="shop.cart">Cart</button>
-
 <script type="module">
-  import { DeepTip } from "https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/web/deeptip.js";
-
-  DeepTip.init({
-    locale: "en",
-    fallback: ["en"],
-    delay: 800, // ms the pointer rests on an element before its window opens (0 = at once)
-    sources: ["/deeptip/{locale}.json"], // glossary files, "{locale}" is replaced
-  });
+  import { DeepTip } from "https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/frameworks/web/deeptip.js";
+  DeepTip.init({ locale: "en", sources: ["/deeptip/{locale}.json"] });
 </script>
 ```
-
-Or copy `web/deeptip.js` and `web/deeptip.css` into your project (`node tools/deeptip-sync.mjs <target folder>` does it and can check for drift). It works with any framework (Svelte, React, Vue, Tauri, Electron) through event delegation: mark elements with `data-deeptip="key"`, nothing else to wire up.
-
-### The glossary: one JSON file per language
 
 ```json
 {
@@ -38,103 +66,43 @@ Or copy `web/deeptip.js` and `web/deeptip.css` into your project (`node tools/de
   "shop.cart": {
     "title": "Cart",
     "short": "Items you are about to order.",
-    "body": "Holds your items until you [[shop.checkout|check out]]. Prices include **VAT**; shipping is added at [[shop.checkout]].",
-    "see": ["shop.wishlist"]
+    "body": "Holds your items until you [[shop.checkout|check out]]. Prices include **VAT**."
   }
 }
 ```
 
-- `title` names the term, `short` is one line (lists, simple tooltips, the encyclopedia), `body` is the explanation (2–5 sentences).
-- Markup, never HTML: `[[key]]` (link, text = the target's title), `[[key|text]]`, `**bold**`, `*italic*`, `` `code` ``, `{live_value}`, lines starting with `- ` for lists, a blank line for a new paragraph.
-- Layers: load a shared core glossary first and your project's file after it; a later layer overrides an entry with the same key. Locales fall back along a chain (`locale`, then `fallback`), and a window shows a small badge when its entry came from a fallback language.
-- `glossary/core/` ships English and German entries for DeepTip's own help (`deeptip.*`) plus general hardware, system and AI terms.
+More in [frameworks/web/README.md](frameworks/web/README.md).
 
-### Options (selection)
+## For language models and coding agents
 
-| Option | Default | Meaning |
-|---|---|---|
-| `delay` | 800 ms | rest time on a UI element (per element: `data-deeptip-delay`) |
-| `linkDelay` | 80 ms | hover time on a term |
-| `closeDelay` | 300 ms | grace before an unpinned window closes |
-| `lockAfter` | 0 (off) | timer lock: resting inside a preview pins it |
-| `root` / `child` | bottom, top, right, left / left, right, top, bottom | side order for first and further windows (per element: `data-deeptip-place`) |
-| `closeButtons`, `pinButton`, `hints`, `clickInsidePins` | true | window chrome |
-| `vars` | – | live values for `{name}`: an object of values or functions, or `(name, key) => value` |
-| `openKeys` | F1, ? | keyboard opening |
+DeepTip is meant to be known and used by every assistant:
 
-All options and their exact behaviour: [SPEC.md](SPEC.md) §7.
-
-### API
-
-```js
-const dt = DeepTip.init({ locale: "en" });
-dt.add("en", glossaryObject);          // add or override entries of one locale
-await dt.setLocale("de");               // switch language
-dt.open("shop.cart", { anchor: button, pinned: true });
-dt.closeAll();
-dt.refresh();                           // after live values changed
-dt.renderText(element, "Text with [[shop.cart]]."); // terms on a normal page
-dt.renderIndex(container);              // searchable encyclopedia of every entry
-dt.configure({ delay: 0 });
-dt.destroy();
-```
-
-Theme through CSS custom properties (`--dt-bg`, `--dt-fg`, `--dt-link`, `--dt-pinned` …, light and dark defaults). State attributes: `data-dt-open` on anchors (hide your own simple tooltip while a window is open), `data-dt-arming` with `--dt-delay` (show rest progress), `data-dt-pinned` on windows. Full list in SPEC §8.
-
-### Controls
-
-| Action | Mouse | Touch | Keyboard | Gamepad |
-|---|---|---|---|---|
-| Open first window | rest | long-press | `F1` / `?` | Y |
-| Preview a term | hover | – | – | – |
-| Follow / pin a term | click | tap | `Tab` + `Enter` | d-pad + A |
-| Close newest | leave / X | X | `Esc` | B |
-| Close all | – | tap outside, swipe title bar down | hold `Esc`, `Shift+Esc` | hold B |
-| Switch window | – | tap it | `F6` / `Shift+F6` | RB / LB |
-
-Previews stay open while the pointer moves towards them (mouse tendency), and terms crossed on the way do not replace them.
-
-### Demo
-
-```bash
-npm run demo
-```
-
-Then open `http://localhost:5560/demo/`: a Paradox-style screen in English and German with every setting to try, and the encyclopedia.
+| File | For |
+|---|---|
+| [llms.txt](llms.txt) | the compact entry point for language models ([llms.txt proposal](https://llmstxt.org/)) |
+| [AGENTS.md](AGENTS.md) | instructions for coding agents ([AGENTS.md format](https://agents.md/)): add DeepTip to a project, port it to a framework |
+| [docs/prompt.md](docs/prompt.md) | a one-page briefing to paste into any chat or system prompt |
+| [skill/SKILL.md](skill/SKILL.md) | a skill for Claude Code |
 
 ## The schema for every runtime
 
 | File | Purpose |
 |---|---|
 | [SPEC.md](SPEC.md) | the contract, runtime-neutral: data format (§2), behaviour (§3), placement (§4), input (§5), accessibility (§6), options (§7), styling hooks (§8), porting checklist (§9) |
-| [schema/deeptip.schema.json](schema/deeptip.schema.json) | JSON Schema for glossary files (editor completion and validation; reference it with `$schema`) |
-| [tools/deeptip-check.mjs](tools/deeptip-check.mjs) | validator (Node 18+): invalid keys, broken links, missing translations, too long `short` lines, unused entries, keys used in code but not defined (`--scan`); exit code 1 on errors, for CI |
-| `glossary/core/` | shared core glossary (English, German) |
+| [schema/deeptip.schema.json](schema/deeptip.schema.json) | JSON Schema for glossary files; reference it with `$schema` |
+| [tools/deeptip-check.mjs](tools/deeptip-check.mjs) | validator (Node 18+): broken links, missing translations, too long `short` lines, unused entries, keys used in code but not defined; exit code 1 on errors |
+| [test/cases/](test/cases) | parity cases for the markup parser, placement and glossary flattening, shared by every runtime |
+| `glossary/core/`, `glossary/example/` | shared core glossary and the example glossary, English and German |
 | [CONCEPT.md](CONCEPT.md) | research on the Paradox games and the decisions behind DeepTip (German) |
-
-```bash
-node tools/deeptip-check.mjs --base en glossary/core/en.json my-app/deeptip/en.json --scan my-app/src
-```
-
-### Runtimes
-
-| Runtime | Folder | State |
-|---|---|---|
-| Web (HTML + JS, any framework) | `web/` | 1.0, reference implementation |
-| Valheim (BepInEx mod, Thunderstore "DeepTip") | `valheim/` | in development, published with its first release |
-| Godot 4 | `godot/` | planned |
-| .NET (Avalonia/WPF) | `dotnet/` | planned |
-
-A new runtime follows SPEC §9: port the glossary loader and the markup parser, the window tree invariants, grace and mouse tendency, the placement function (`computePlacement`, a pure function with unit tests in `test/`) and the input table, then run the same validator on the same JSON files.
 
 ## Development
 
 ```bash
-npm test        # pure functions: parser, glossary, placement
-npm run check   # validate the core and demo glossaries
+npm test          # reference runtime against test/cases
+npm run check     # validate the core and example glossaries
+npm run demo      # then http://localhost:5560/frameworks/web/example/
+npm run package   # one download per framework into dist/
 ```
-
-`skill/SKILL.md` is a skill for Claude Code, so an assistant knows how to add DeepTip to a project.
 
 ## License
 

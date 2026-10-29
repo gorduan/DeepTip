@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DeepTip Demo</title>
-    <link rel="stylesheet" href="../web/deeptip.css" />
+    <link rel="stylesheet" href="../deeptip.css" />
     <style>
       :root {
         color-scheme: light dark;
@@ -229,7 +229,7 @@
     </main>
 
     <script type="module">
-      import { DeepTip, VERSION } from "../web/deeptip.js";
+      import { DeepTip, VERSION } from "../deeptip.js";
 
       const T = {
         de: {
@@ -262,7 +262,7 @@
       const dt = DeepTip.init({
         locale: lang,
         fallback: ["de", "en"],
-        sources: ["../glossary/core/{locale}.json", "glossary/{locale}.json"],
+        sources: ["../../../glossary/core/{locale}.json", "../../../glossary/example/{locale}.json"],
         delay: 1000,
         vars: {
           stability: () => (state.stability > 0 ? "+" : "") + state.stability,

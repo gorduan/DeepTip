@@ -1,0 +1,442 @@
+{
+  "$comment": "Parity cases for SPEC §2.4 (parseText). blocks: {type:'p',c:[inline]} | {type:'ul',items:[[inline]]}; inline: {t:'text',v} {t:'br'} {t:'b',c} {t:'i',c} {t:'code',v} {t:'link',key,text} {t:'var',name}.",
+  "cases": [
+    {
+      "name": "links with and without custom text",
+      "src": "Frees [[hw.vram]] and [[ai.comfyui|the image server]].",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "Frees "
+            },
+            {
+              "t": "link",
+              "key": "hw.vram",
+              "text": null
+            },
+            {
+              "t": "text",
+              "v": " and "
+            },
+            {
+              "t": "link",
+              "key": "ai.comfyui",
+              "text": "the image server"
+            },
+            {
+              "t": "text",
+              "v": "."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "invalid link keys stay text",
+      "src": "[[not a key]] and [[]]",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "[[not a key]] and [[]]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bold, italic, nested, code, vars, escapes",
+      "src": "**bold [[a.b]]** *it **x** ok* `c*d` {vram_free} \\*lit\\* 3 * 4 * 5",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "b",
+              "c": [
+                {
+                  "t": "text",
+                  "v": "bold "
+                },
+                {
+                  "t": "link",
+                  "key": "a.b",
+                  "text": null
+                }
+              ]
+            },
+            {
+              "t": "text",
+              "v": " "
+            },
+            {
+              "t": "i",
+              "c": [
+                {
+                  "t": "text",
+                  "v": "it "
+                },
+                {
+                  "t": "b",
+                  "c": [
+                    {
+                      "t": "text",
+                      "v": "x"
+                    }
+                  ]
+                },
+                {
+                  "t": "text",
+                  "v": " ok"
+                }
+              ]
+            },
+            {
+              "t": "text",
+              "v": " "
+            },
+            {
+              "t": "code",
+              "v": "c*d"
+            },
+            {
+              "t": "text",
+              "v": " "
+            },
+            {
+              "t": "var",
+              "name": "vram_free"
+            },
+            {
+              "t": "text",
+              "v": " *lit* 3 * 4 * 5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "paragraphs, line breaks and lists",
+      "src": "one\ntwo\n\n- a [[x]]\n- b\ntail\n\n\nlast",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "one"
+            },
+            {
+              "t": "br"
+            },
+            {
+              "t": "text",
+              "v": "two"
+            }
+          ]
+        },
+        {
+          "type": "ul",
+          "items": [
+            [
+              {
+                "t": "text",
+                "v": "a "
+              },
+              {
+                "t": "link",
+                "key": "x",
+                "text": null
+              }
+            ],
+            [
+              {
+                "t": "text",
+                "v": "b"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "tail"
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "last"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "empty custom text means the title",
+      "src": "[[a.b|]] and [[a.b| ]]",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "link",
+              "key": "a.b",
+              "text": null
+            },
+            {
+              "t": "text",
+              "v": " and "
+            },
+            {
+              "t": "link",
+              "key": "a.b",
+              "text": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "escaped brackets are text",
+      "src": "\\[[x]] and \\[\\[y\\]\\]",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "[[x]] and [[y]]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unclosed marks stay text",
+      "src": "**open and *half and `tick",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "**open and *half and `tick"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "star with spaces is text",
+      "src": "a * b * c and 2*3*4",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "a * b * c and 2"
+            },
+            {
+              "t": "i",
+              "c": [
+                {
+                  "t": "text",
+                  "v": "3"
+                }
+              ]
+            },
+            {
+              "t": "text",
+              "v": "4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vars: valid and invalid names",
+      "src": "{v1} {_x} {9no} {not-var} {}",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "var",
+              "name": "v1"
+            },
+            {
+              "t": "text",
+              "v": " "
+            },
+            {
+              "t": "var",
+              "name": "_x"
+            },
+            {
+              "t": "text",
+              "v": " {9no} {not-var} {}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bullet with the dot sign",
+      "src": "• first\n• second [[k.y|Y]]",
+      "blocks": [
+        {
+          "type": "ul",
+          "items": [
+            [
+              {
+                "t": "text",
+                "v": "first"
+              }
+            ],
+            [
+              {
+                "t": "text",
+                "v": "second "
+              },
+              {
+                "t": "link",
+                "key": "k.y",
+                "text": "Y"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "windows line endings",
+      "src": "a\r\nb\r\n\r\n- c",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "a"
+            },
+            {
+              "t": "br"
+            },
+            {
+              "t": "text",
+              "v": "b"
+            }
+          ]
+        },
+        {
+          "type": "ul",
+          "items": [
+            [
+              {
+                "t": "text",
+                "v": "c"
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "name": "code keeps markup characters",
+      "src": "`[[x]] **y** {z}` after",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "code",
+              "v": "[[x]] **y** {z}"
+            },
+            {
+              "t": "text",
+              "v": " after"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "link inside italic inside bold",
+      "src": "**a *b [[c.d]] e* f**",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "b",
+              "c": [
+                {
+                  "t": "text",
+                  "v": "a "
+                },
+                {
+                  "t": "i",
+                  "c": [
+                    {
+                      "t": "text",
+                      "v": "b "
+                    },
+                    {
+                      "t": "link",
+                      "key": "c.d",
+                      "text": null
+                    },
+                    {
+                      "t": "text",
+                      "v": " e"
+                    }
+                  ]
+                },
+                {
+                  "t": "text",
+                  "v": " f"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "blank lines with spaces separate paragraphs",
+      "src": "p1\n  \t \np2",
+      "blocks": [
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "p1"
+            }
+          ]
+        },
+        {
+          "type": "p",
+          "c": [
+            {
+              "t": "text",
+              "v": "p2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

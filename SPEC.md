@@ -8,7 +8,7 @@
 > Synonyms that mean this spec: DeepTip, DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips,
 > tooltips in tooltips, verschachtelte Tooltips, Erklärfenster.
 
-This document is runtime-neutral. The web reference implementation is `web/deeptip.js` + `web/deeptip.css`;
+This document is runtime-neutral. The web reference implementation is `frameworks/web/deeptip.js` + `deeptip.css`;
 any other runtime (Svelte, React, Godot, WPF/Avalonia, Unity, ImGui, TUI …) implements the same data format,
 behaviour and input mapping. Section numbers are referenced from code.
 
@@ -159,7 +159,7 @@ Focus returns to the closed window's anchor when focus was inside it.
   edge). On the other axis the window is **centred on the anchor and pushed back inside the viewport**.
 - Nothing fits: the side with the most room relative to the window's size; the window shrinks to that room
   (≥ 120 px, else it is only kept on screen).
-- Reference algorithm: `computePlacement(size, anchorRect, sides, viewport, gap)` in `web/deeptip.js`
+- Reference algorithm: `computePlacement(size, anchorRect, sides, viewport, gap)` in `frameworks/web/deeptip.js`
   (pure function, unit-tested).
 - Web: CSS anchor positioning does it natively — `position-anchor`, `position-area: <side> span-all`,
   `position-try-fallbacks` with four `@position-try` rules. JS measures only when the CSS result leaves the
@@ -220,8 +220,10 @@ Focus returns to the closed window's anchor when focus was inside it.
 6. Accessibility (§6), theming, `$ui` labels.
 7. Run the shared validator on the same JSON files.
 
-Known runtimes: **web** (`web/`, framework-free — Svelte/React/Vue/Tauri/Electron use it as is with
-`data-deeptip` attributes); **Valheim** (`valheim/`, published with its first release; BepInEx plugin GC_Valheim_DeepTip, on Thunderstore "DeepTip":
-TextMeshPro `<link>` terms, Valheim's own tooltip adopted as the root window, auto-linking via `aliases`, the
-encyclopedia as a Compendium page, glossary folders `deeptip/` in any plugin, C# API). Planned: Godot 4 (`godot/`,
-RichTextLabel `meta_clicked`/`meta_hover_started`), .NET/Avalonia.
+Runtimes live in `frameworks/<name>/`, one folder and one download each, all using the same glossary files, the
+validator and the shared parity cases in `test/cases/`: **web** (`frameworks/web/`, the reference, framework-free;
+Svelte/React/Vue/Tauri/Electron adapters build on it), **Valheim** (`frameworks/valheim/`, BepInEx plugin, Thunderstore
+"DeepTip": TextMeshPro `<link>` terms, Valheim's own tooltip adopted as the root window, auto-linking via `aliases`,
+the encyclopedia as a Compendium page), and further frameworks (TypeScript, RPG Maker MZ, Blazor, Avalonia, Unity,
+Godot, Python/PySide6, Java/Swing, Kotlin/Compose, C++/Dear ImGui, C++/Unreal, Rust/egui, Swift/SwiftUI, Go/Gio),
+each listed with its state in the README.

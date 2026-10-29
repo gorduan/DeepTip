@@ -2,74 +2,40 @@
 
 English: [README.md](README.md)
 
-**Erklärfenster mit Tiefe** – Tooltips in Tooltips wie in den Paradox-Spielen (Crusader Kings III, Victoria 3,
-Europa Universalis V). Maus auf einem Bedienelement ruhen lassen → nach einstellbarer Zeit erklärt ein Fenster
-das Element. Markierte Begriffe darin öffnen beim Drüberfahren weitere Fenster, ein Klick hält sie fest, und in
-festgehaltenen Fenstern geht es beliebig tief weiter. Mit Touch (lange drücken), Tastatur (F1, Esc, F6) und
-Controller (Y, A, B, LB/RB).
+> **DeepTip** ist ein Gestaltungsmuster für Bedienoberflächen: Erklärfenster mit Tiefe. Maus auf einem Element ruhen lassen → ein Fenster erklärt es. Markierte Begriffe darin öffnen weitere Fenster, ein Klick hält sie fest, und in festgehaltenen Fenstern geht es beliebig tief weiter, so wie die Paradox-Spiele (Crusader Kings III, Victoria 3, Europa Universalis V) ihre Regeln erklären. Der Inhalt sind Daten: ein JSON-Glossar je Sprache.
 
-Andere Namen, die dasselbe meinen: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox-Tooltips.
+Andere Namen für dasselbe: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox-Tooltips, Tooltips in Tooltips, Erklärfenster.
 
-| Datei | Inhalt |
-|---|---|
-| [SPEC.md](SPEC.md) | verbindliche, laufzeitneutrale Beschreibung: Datenformat, Verhalten, Platzierung, Steuerung |
-| [CONCEPT.md](CONCEPT.md) | Recherche (Paradox) und die Entscheidungen dahinter |
-| `web/deeptip.js`, `web/deeptip.css` | Web-Umsetzung ohne Abhängigkeiten (jede Webseite, Svelte, React, Tauri, Electron) |
-| `glossary/core/de.json`, `en.json` | gemeinsames Kern-Glossar (Hardware, System, KI-Grundbegriffe, DeepTip-Hilfe) |
-| `schema/deeptip.schema.json` | JSON-Schema für Glossar-Dateien (Vervollständigung in VS Code) |
-| `tools/deeptip-check.mjs` | Prüfwerkzeug: kaputte Links, fehlende Übersetzungen, zu lange Texte, unbenutzte Einträge |
-| `tools/deeptip-sync.mjs` | kopiert Laufzeit + Kern-Glossar in ein Projekt |
-| `demo/` | Beispielseite (de/en, alle Einstellungen, Enzyklopädie) |
-| `skill/SKILL.md` | Skill für Claude Code, damit ein Assistent DeepTip in ein Projekt einbauen kann |
+Dieses Repo ist die Heimat des Musters: Spezifikation, Datenformat mit Schema und Prüfer, gemeinsame Testfälle und je Framework eine Umsetzung, jede in einem eigenen Ordner mit eigenem Download.
 
-## Schnellstart (Web)
+## Die Regeln
 
-```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/web/deeptip.css" />
-<button data-deeptip="app.gamemode">Spielmodus</button>
-<script type="module">
-  import { DeepTip } from "https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/web/deeptip.js";
-  DeepTip.init({
-    locale: "de",
-    fallback: ["en"],
-    delay: 3000, // Ruhezeit bis zum ersten Fenster (0 = sofort)
-    sources: ["deeptip/core/{locale}.json", "deeptip/{locale}.json"],
-  });
-</script>
-```
+- **Ein Eintrag, drei Tiefen:** `title` (Name), `short` (eine Zeile), `body` (2–5 Sätze mit Verweisen).
+- **Begriffe sind Verweise:** Jeder Begriff kann ein eigener Eintrag sein, nichts wird doppelt erklärt.
+- **Nichts geht aus Versehen verloren:** Ein Fenster bleibt, solange die Maus darauf zufährt; Begriffe auf dem Weg dorthin ersetzen es nicht; festgehaltene Fenster schließen nur auf Wunsch.
+- **Den Rückweg nie verdecken:** Ein weiteres Fenster öffnet neben dem, aus dem es kam.
+- **Inhalt sind Daten:** eine JSON-Datei je Sprache, nie Erklärtext im Code.
+- **Jedes Eingabegerät zählt:** Maus, Touch, Tastatur, Controller, Bildschirmleser.
+- **Erst das, was die Plattform kann:** Popups, Rich Text, Fokus, dann eigener Code.
 
-Glossar-Eintrag (`deeptip/de.json`):
+## Frameworks: ein Ordner, ein Download
 
-```json
-{
-  "app.gamemode": {
-    "title": "Spielmodus",
-    "short": "Gibt den PC fürs Spielen frei.",
-    "body": "Stoppt schwere Dienste wie [[ai.comfyui]] und leert den [[hw.vram|Grafikspeicher]]."
-  }
-}
-```
+Stufe 1: Web (HTML + JS, Referenz), TypeScript, Svelte, React, Vue, RPG Maker MZ, Blazor, Avalonia, Unity, Valheim, Godot, Python (PySide6).
+Stufe 2: Java (Swing), Kotlin (Compose), C++ (Dear ImGui), C++ (Unreal), Rust (egui), Swift (SwiftUI), Go (Gio).
 
-`[[schlüssel]]` verlinkt mit dem Titel des Ziels, `[[schlüssel|eigener Text]]` mit eigenem Text. Außerdem
-`**fett**`, `*kursiv*`, `` `code` ``, `{live_wert}`, Listen mit `- `. Nie HTML.
+Jedes liegt in `frameworks/<name>/` mit README, Beispiel (gemeinsames Beispiel-Glossar `glossary/example/`) und Tests gegen `test/cases/`. Downloads: `DeepTip-<framework>-<version>.zip` (`npm run package`).
+
+## Für Sprachmodelle und Agenten
+
+`llms.txt` (Einstieg für Sprachmodelle), `AGENTS.md` (Anweisungen für Coding-Agenten), `docs/prompt.md` (Briefing zum Einfügen in jeden Chat), `skill/SKILL.md` (Skill für Claude Code).
 
 ## Werkzeuge
 
 ```bash
-npm test
+npm test          # Referenz gegen test/cases
+npm run check     # Glossare prüfen
+npm run demo      # dann http://localhost:5560/frameworks/web/example/
+npm run package   # ein Zip je Framework nach dist/
 ```
 
-```bash
-node tools/deeptip-check.mjs --base de glossary/core/de.json mein-projekt/de.json --scan mein-projekt/src
-```
-
-```bash
-node tools/deeptip-sync.mjs "pfad/zum/projekt/src/deeptip"
-```
-
-Demo: `npm run demo`, dann `http://localhost:5560/demo/`.
-
-## Laufzeiten
-
-Web (`web/`, 1.0), Valheim (`valheim/`, BepInEx-Mod „DeepTip“ auf Thunderstore, in Entwicklung), geplant: Godot 4,
-.NET. Alle nutzen dieselben JSON-Dateien und dasselbe Prüfwerkzeug (SPEC §9).
+Lizenz: MIT. Gorduan Community (GC): frei nutzen, ändern, hochladen.

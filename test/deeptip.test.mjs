@@ -1,7 +1,7 @@
 // Pure-function tests: node --test test/
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseText, collectRefs, flattenGlossary, computePlacement } from "../web/deeptip.js";
+import { parseText, collectRefs, flattenGlossary, computePlacement } from "../frameworks/web/deeptip.js";
 
 test("links with and without custom text", () => {
   const [p] = parseText("Frees [[hw.vram]] and [[ai.comfyui|the image server]].");

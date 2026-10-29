@@ -33,7 +33,7 @@ Mouse tendency + grace keep previews open on the way in; optional timer lock pin
 ## Web / Svelte / React / Tauri (reference runtime, no dependencies)
 1. `node "<DeepTip>/tools/deeptip-sync.mjs" "<project>/src/deeptip"` → copies `deeptip.js`, `deeptip.css`,
    `core/de.json`, `core/en.json` (re-run to update; `--check` reports drift). Or load from the CDN:
-   `https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/web/deeptip.js` (and `deeptip.css`).
+   `https://cdn.jsdelivr.net/gh/gorduan/DeepTip@v1.0.0/frameworks/web/deeptip.js` (and `deeptip.css`).
 2. Create `<project>/src/deeptip/<locale>.json` with the project's entries (prefix = project name).
 3. Init once (e.g. main.js):
    ```js
@@ -57,11 +57,11 @@ Mouse tendency + grace keep previews open on the way in; optional timer lock pin
 ## Other runtimes
 Follow SPEC §9: port the glossary loader + `parseText` AST (map to RichTextLabel/BBCode in Godot, Inlines in
 WPF/Avalonia, TMP rich text in Unity), the window tree invariants (§3.2), hot/grace/tendency (§3.4),
-`computePlacement` (§4, pure function in `web/deeptip.js`), the input table (§5). Reuse the SAME JSON files and
-the validator. Runtime folders live in the DeepTip repo (`valheim/`, `godot/`, `dotnet/` …).
+`computePlacement` (§4, pure function in `frameworks/web/deeptip.js`), the input table (§5). Reuse the SAME JSON files and
+the validator. Every framework has its own folder `frameworks/<name>/` (README, manifest `deeptip.json`, example, tests against `test/cases/`); read its README first.
 
 ## Known runtimes
-- Web (`web/`): the reference implementation.
-- Valheim (`valheim/`, BepInEx plugin GC_Valheim_DeepTip, Thunderstore "DeepTip"): Valheim's UITooltip becomes the
+- Web (`frameworks/web/`): the reference implementation.
+- Valheim (`frameworks/valheim/`, BepInEx plugin GC_Valheim_DeepTip, Thunderstore "DeepTip"): Valheim's UITooltip becomes the
   root window, terms as TMP `<link="dt:key">`, auto-linking via `aliases`, lexicon page in the Compendium,
   glossaries from any plugin's `deeptip/` folder, C# API `DeepTip.Api`.

@@ -17,8 +17,8 @@ if (!target) {
 }
 const check = args.includes("--check");
 const pairs = [
-  [join(root, "web", "deeptip.js"), join(target, "deeptip.js")],
-  [join(root, "web", "deeptip.css"), join(target, "deeptip.css")],
+  [join(root, "frameworks", "web", "deeptip.js"), join(target, "deeptip.js")],
+  [join(root, "frameworks", "web", "deeptip.css"), join(target, "deeptip.css")],
 ];
 if (!args.includes("--no-core")) {
   const core = join(root, "glossary", "core");

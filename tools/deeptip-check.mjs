@@ -14,7 +14,7 @@
 // The locale comes from "$locale" or the file name (de.json, myapp.de.json, en-US.json).
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, basename, extname } from "node:path";
-import { flattenGlossary, parseText, collectRefs, KEY_RE } from "../web/deeptip.js";
+import { flattenGlossary, parseText, collectRefs, KEY_RE } from "../frameworks/web/deeptip.js";
 
 const args = process.argv.slice(2);
 const opt = { base: null, locales: null, scan: [], maxShort: 140, strict: false, json: false, paths: [] };

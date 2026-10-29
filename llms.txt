@@ -1,0 +1,29 @@
+# DeepTip
+
+> DeepTip is a UI design pattern: explanation windows with depth (nested, pinnable tooltips like in Paradox Interactive's games). Rest on an element and a window explains it; highlighted terms open further windows; a click pins them; pinned windows contain terms again. Content is data: one JSON glossary per language with [[key]] links. This repository holds the specification, the glossary schema and validator, shared test cases and one implementation per framework.
+
+Synonyms: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, tooltips in tooltips, Erklärfenster. The specification is the contract; the web runtime is the reference implementation.
+
+## Docs
+
+- [Briefing for any language model](https://raw.githubusercontent.com/gorduan/DeepTip/main/docs/prompt.md): what DeepTip means and how to build it, in one page
+- [Specification](https://raw.githubusercontent.com/gorduan/DeepTip/main/SPEC.md): data format, behaviour, placement, input, accessibility, options, porting checklist
+- [README](https://raw.githubusercontent.com/gorduan/DeepTip/main/README.md): the pattern, the frameworks, the tools
+- [Agent instructions](https://raw.githubusercontent.com/gorduan/DeepTip/main/AGENTS.md): how to add DeepTip to a project or port it to a new framework
+
+## Data
+
+- [Glossary JSON Schema](https://raw.githubusercontent.com/gorduan/DeepTip/main/schema/deeptip.schema.json)
+- [Core glossary, English](https://raw.githubusercontent.com/gorduan/DeepTip/main/glossary/core/en.json)
+- [Example glossary, English](https://raw.githubusercontent.com/gorduan/DeepTip/main/glossary/example/en.json): used by every framework's example
+- [Parity cases: markup](https://raw.githubusercontent.com/gorduan/DeepTip/main/test/cases/markup.json), [placement](https://raw.githubusercontent.com/gorduan/DeepTip/main/test/cases/placement.json), [glossary](https://raw.githubusercontent.com/gorduan/DeepTip/main/test/cases/glossary.json)
+
+## Frameworks
+
+- [Web (HTML + JavaScript), reference](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/web/README.md)
+- Other frameworks: `frameworks/<name>/README.md` in the repository (TypeScript, Svelte, React, Vue, RPG Maker MZ, Blazor, Avalonia, Unity, Valheim, Godot, Python/PySide6, Java/Swing, Kotlin/Compose, C++/Dear ImGui, C++/Unreal, Rust/egui, Swift/SwiftUI, Go/Gio)
+
+## Optional
+
+- [Concept and research (German)](https://raw.githubusercontent.com/gorduan/DeepTip/main/CONCEPT.md)
+- [Validator](https://raw.githubusercontent.com/gorduan/DeepTip/main/tools/deeptip-check.mjs)

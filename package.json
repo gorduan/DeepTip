@@ -12,8 +12,8 @@
   },
   "type": "module",
   "exports": {
-    ".": "./web/deeptip.js",
-    "./css": "./web/deeptip.css",
+    ".": "./frameworks/web/deeptip.js",
+    "./css": "./frameworks/web/deeptip.css",
     "./core/*": "./glossary/core/*"
   },
   "bin": {
@@ -21,9 +21,11 @@
     "deeptip-sync": "tools/deeptip-sync.mjs"
   },
   "scripts": {
-    "test": "node --test test/deeptip.test.mjs",
-    "check": "node tools/deeptip-check.mjs glossary/core && node tools/deeptip-check.mjs --base de glossary/core/de.json demo/glossary/de.json glossary/core/en.json demo/glossary/en.json",
-    "demo": "python -m http.server 5560"
+    "test": "node --test test/deeptip.test.mjs test/cases.test.mjs",
+    "check": "node tools/deeptip-check.mjs glossary/core && node tools/deeptip-check.mjs --base de glossary/core/de.json glossary/example/de.json glossary/core/en.json glossary/example/en.json",
+    "demo": "python -m http.server 5560",
+    "cases": "node test/make-cases.mjs",
+    "package": "node tools/package.mjs"
   },
   "engines": {
     "node": ">=18"
