@@ -50,7 +50,7 @@ const layers = new Map(); // locale -> [{file, entries}]
 for (const file of files) {
   let json;
   try {
-    json = JSON.parse(readFileSync(file, "utf8").replace(/^﻿/, ""));
+    json = JSON.parse(readFileSync(file, "utf8").replace(/^\uFEFF/, ""));
   } catch (e) {
     add("error", file, `invalid JSON: ${e.message}`);
     continue;

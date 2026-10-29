@@ -1,0 +1,10 @@
+{
+  "name": "python-pyside6",
+  "title": "Python (PySide6 / Qt)",
+  "language": "Python",
+  "tier": 1,
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

@@ -1,0 +1,10 @@
+{
+  "name": "godot",
+  "title": "Godot 4",
+  "language": "GDScript",
+  "tier": 1,
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

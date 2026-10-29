@@ -23,6 +23,9 @@ Pseudo-code conventions: `now()` is a monotonic clock in milliseconds; `schedule
 | `FLASH` | 700 ms | a window flashes this long |
 | `GAP` | 8 px | distance between a window and its anchor, and to the viewport edge |
 | `MIN_SHRINK` | 120 px | a window is only shrunk into a side with at least this much room |
+| `MIN_W` | 240 px (15rem) | narrowest window (`--dt-min-width`), never wider than the viewport minus 2·`GAP` |
+| `MAX_W` | 384 px (24rem) | widest window (`--dt-max-width`), never wider than the viewport minus 2·`GAP` |
+| `MAX_H` | 480 px (30rem) | tallest window (`--dt-max-height`), never taller than the viewport minus 2·`GAP`; longer content scrolls |
 
 Options and defaults (SPEC §7): `delay` 800, `linkDelay` 80, `closeDelay` 300, `lockAfter` 0 (off), `longPress` 500, `closeButtons` true, `pinButton` true, `hints` true, `clickInsidePins` true, `outsideClickCloses` "touch" ("never" | "touch" | "always"), `root` [bottom, top, right, left], `child` [left, right, top, bottom], `locale` "en", `fallback` ["en"], `sources` [], `vars` none, `openKeys` [F1, ?], `gamepad` true, `vibrate` true, callbacks `onOpen(key, view)`, `onClose(key)`, `onPin(key, view)`.
 
@@ -48,6 +51,8 @@ flatten(object):
   if object is a JSON object: walk(object, "") else problems.add("(file)", "a glossary file must be a JSON object")
   return entries, meta, problems
 ```
+
+"File order" is the order of the keys in the file, with one exception in the reference: JavaScript objects list keys that are array indices (digits only, "0" to "4294967294") first, in ascending numeric order. Other languages keep the file order. Glossaries should therefore avoid digit-only key parts, so every runtime sees the same order (the validator accepts them, `KEY_RE`).
 
 ### 1.2 Layers, locales, lookup
 
@@ -346,7 +351,7 @@ computePlacement(size {w,h}, a {left,top,right,bottom}, sides, vp {w,h}, gap = G
 Placing a window:
 1. Target box = the parent window's box for children, the anchor's box for roots (all in viewport pixels, y down).
 2. Sides = the element's own order (roots only, e.g. `data-deeptip-place`), else `child` for children, `root` for roots.
-3. Measure the window's natural size, compute; if `maxW` or `maxH` is set, limit the window to it (it scrolls inside), measure again and compute once more with `[side]` only.
+3. Measure the window's natural size within its size limits first: width between min(`MIN_W`, vp.w − 2·`GAP`) and min(`MAX_W`, vp.w − 2·`GAP`), height at most min(`MAX_H`, vp.h − 2·`GAP`) (the reference does this with CSS `min-width`, `max-width`, `max-height`; without it a long entry runs past the viewport edge). Then compute; if `maxW` or `maxH` is set, limit the window to it (it scrolls inside), measure again and compute once more with `[side]` only.
 4. Put the window's top-left corner at `(x, y)`. Remember its box.
 5. Re-place non-frozen windows when the viewport resizes, the page scrolls or a window's content changes size.
 
