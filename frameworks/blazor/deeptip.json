@@ -1,0 +1,10 @@
+{
+  "name": "blazor",
+  "title": "Blazor",
+  "language": "C#",
+  "tier": 1,
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": ["web"]
+}
