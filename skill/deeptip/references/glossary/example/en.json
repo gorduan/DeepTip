@@ -1,0 +1,40 @@
+{
+  "$schema": "../../schema/deeptip.schema.json",
+  "$locale": "en",
+  "demo.realm": {
+    "title": "Realm",
+    "short": "Everything you rule.",
+    "body": "Your realm is made of [[demo.province|provinces]]. Its [[demo.stability|stability]] decides how calm it stays, your [[demo.prestige|prestige]] how much you are feared."
+  },
+  "demo.province": {
+    "title": "Province",
+    "short": "A stretch of land with people in it.",
+    "body": "A province pays [[demo.taxes|taxes]] and provides soldiers. When its people are unhappy, [[demo.unrest|unrest]] grows there."
+  },
+  "demo.stability": {
+    "title": "Stability",
+    "short": "How settled your realm is (−3 to +3).",
+    "body": "High stability lowers [[demo.unrest|unrest]] in every [[demo.province|province]]. High [[demo.taxes|taxes]] and lost wars reduce it; [[demo.prestige|prestige]] raises it again.\n\nCurrently: **{stability}**",
+    "see": ["demo.revolt"]
+  },
+  "demo.unrest": {
+    "title": "Unrest",
+    "short": "How unhappy a province is.",
+    "body": "Once a [[demo.province|province's]] unrest rises above 5, a [[demo.revolt|revolt]] looms. High [[demo.stability|stability]] lowers it, high [[demo.taxes|taxes]] drive it up."
+  },
+  "demo.revolt": {
+    "title": "Revolt",
+    "short": "Rebels rise up.",
+    "body": "Rebels seize a [[demo.province|province]] and lower the [[demo.stability|stability]] of the whole realm – a vicious circle. Only content [[demo.nobles|nobles]] or lower [[demo.taxes|taxes]] break it."
+  },
+  "demo.taxes": {
+    "title": "Taxes",
+    "short": "Fill the treasury, cost contentment.",
+    "body": "Taxes bring in [[demo.gold|gold]] but raise [[demo.unrest|unrest]].\n\n*Rule of thumb:* never high taxes and low [[demo.stability|stability]] at the same time."
+  },
+  "demo.nobles": {
+    "title": "Nobles",
+    "short": "The powerful families of your realm.",
+    "body": "Content nobles support [[demo.stability|stability]]. Angry nobles demand privileges and chip away at your [[demo.prestige|prestige]]."
+  }
+}

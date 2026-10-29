@@ -1,0 +1,60 @@
+{
+  "$comment": "Parity cases for SPEC §2.1 (flattening a glossary file). expect: entry keys in file order, metadata keys, number of problems.",
+  "cases": [
+    {
+      "name": "flat, nested, meta, problems",
+      "input": {
+        "$locale": "de",
+        "$ui": {
+          "close": "X"
+        },
+        "hw.vram": {
+          "title": "VRAM"
+        },
+        "ai": {
+          "lora": {
+            "title": "LoRA"
+          },
+          "model": {
+            "short": "…"
+          }
+        },
+        "bad key!": {
+          "title": "?"
+        },
+        "broken": 5
+      },
+      "expect": {
+        "keys": [
+          "hw.vram",
+          "ai.lora",
+          "ai.model",
+          "bad key!"
+        ],
+        "meta": [
+          "$locale",
+          "$ui"
+        ],
+        "problems": 2
+      }
+    },
+    {
+      "name": "entry needs title, short or body",
+      "input": {
+        "a": {
+          "note": "only a note"
+        },
+        "b": {
+          "body": "text"
+        }
+      },
+      "expect": {
+        "keys": [
+          "b"
+        ],
+        "meta": [],
+        "problems": 1
+      }
+    }
+  ]
+}

@@ -29,24 +29,24 @@ DeepTip's code exists in **HTML, CSS and JavaScript** (the reference) and in **R
 | Framework | Language | Tier | Kind | Folder |
 |---|---|---|---|---|
 | Web (HTML + CSS + JavaScript), reference | JavaScript | 1 | code | [frameworks/web](frameworks/web) |
-| RPG Maker MZ (plugin) | JavaScript | 1 | code | `frameworks/rpgmaker-mz` |
-| Rust (egui) | Rust | 2 | code | `frameworks/rust-egui` |
-| TypeScript | TypeScript | 1 | guide, on the web runtime | `frameworks/typescript` |
-| Svelte | JavaScript/TypeScript | 1 | guide, on the web runtime | `frameworks/svelte` |
-| React | JavaScript/TypeScript | 1 | guide, on the web runtime | `frameworks/react` |
-| Vue | JavaScript/TypeScript | 1 | guide, on the web runtime | `frameworks/vue` |
-| Blazor | C# | 1 | guide, on the web runtime | `frameworks/blazor` |
-| Avalonia | C# | 1 | guide | `frameworks/avalonia` |
-| Unity (uGUI + TextMeshPro) | C# | 1 | guide | `frameworks/unity` |
+| RPG Maker MZ (plugin) | JavaScript | 1 | code, plugin on the web runtime | [frameworks/rpgmaker-mz](frameworks/rpgmaker-mz) |
+| Rust (egui) | Rust | 2 | code, the second complete implementation | [frameworks/rust-egui](frameworks/rust-egui) |
+| TypeScript | TypeScript | 1 | guide, on the web runtime | [frameworks/typescript](frameworks/typescript) |
+| Svelte | JavaScript/TypeScript | 1 | guide, on the web runtime | [frameworks/svelte](frameworks/svelte) |
+| React | JavaScript/TypeScript | 1 | guide, on the web runtime | [frameworks/react](frameworks/react) |
+| Vue | JavaScript/TypeScript | 1 | guide, on the web runtime | [frameworks/vue](frameworks/vue) |
+| Blazor | C# | 1 | guide, on the web runtime | [frameworks/blazor](frameworks/blazor) |
+| Avalonia | C# | 1 | guide | [frameworks/avalonia](frameworks/avalonia) |
+| Unity (uGUI + TextMeshPro) | C# | 1 | guide | [frameworks/unity](frameworks/unity) |
 | Valheim (BepInEx mod "DeepTip") | C# | 1 | guide; the mod's source: [gorduan/Valheim_DeepTip](https://github.com/gorduan/Valheim_DeepTip) | [frameworks/valheim](frameworks/valheim) |
-| Godot 4 | GDScript | 1 | guide | `frameworks/godot` |
-| Python (PySide6 / Qt) | Python | 1 | guide | `frameworks/python-pyside6` |
-| Java (Swing) | Java | 2 | guide | `frameworks/java-swing` |
-| Kotlin (Compose Desktop) | Kotlin | 2 | guide | `frameworks/kotlin-compose` |
-| C++ (Dear ImGui) | C++ | 2 | guide | `frameworks/cpp-imgui` |
-| C++ (Unreal Engine 5, Slate + UMG) | C++ | 2 | guide | `frameworks/cpp-unreal` |
-| Swift (SwiftUI) | Swift | 2 | guide | `frameworks/swift-swiftui` |
-| Go (Gio) | Go | 2 | guide | `frameworks/go-gio` |
+| Godot 4 | GDScript | 1 | guide | [frameworks/godot](frameworks/godot) |
+| Python (PySide6 / Qt) | Python | 1 | guide | [frameworks/python-pyside6](frameworks/python-pyside6) |
+| Java (Swing) | Java | 2 | guide | [frameworks/java-swing](frameworks/java-swing) |
+| Kotlin (Compose Desktop) | Kotlin | 2 | guide | [frameworks/kotlin-compose](frameworks/kotlin-compose) |
+| C++ (Dear ImGui) | C++ | 2 | guide | [frameworks/cpp-imgui](frameworks/cpp-imgui) |
+| C++ (Unreal Engine 5, Slate + UMG) | C++ | 2 | guide | [frameworks/cpp-unreal](frameworks/cpp-unreal) |
+| Swift (SwiftUI) | Swift | 2 | guide | [frameworks/swift-swiftui](frameworks/swift-swiftui) |
+| Go (Gio) | Go | 2 | guide | [frameworks/go-gio](frameworks/go-gio) |
 
 Tier 1 covers the most used platforms, tier 2 follows. Every folder has a README and a manifest `deeptip.json` (`kind`: `runtime`, `adapter` or `guide`, plus its `status`). Code folders have an example that uses the shared example glossary (`glossary/example/`) and tests against the shared cases (`test/cases/`); every guide says how to run those cases in its language. Downloads: `DeepTip-<framework>-<version>.zip` on the releases page, one per framework, built by `npm run package`; each contains the framework folder, `SPEC.md`, `docs/algorithms.md`, the schema, the glossaries and the test cases.
 
@@ -75,16 +75,22 @@ Tier 1 covers the most used platforms, tier 2 follows. Every folder has a README
 
 More in [frameworks/web/README.md](frameworks/web/README.md).
 
+## Skill: teach DeepTip to any AI agent
+
+[skill/deeptip](skill/deeptip) is an [Agent Skill](https://agentskills.io/specification), the open format read by Claude Code, Claude, OpenAI Codex, GitHub Copilot, Cursor and Gemini CLI. Installed once, it teaches the agent what DeepTip is and how to build it in every program and language: the rules and the behaviour, the glossary format, three workflows (add DeepTip to a project, write and check glossaries, build it where no guide exists yet), all 19 framework guides and a checklist. Its `references/` folder carries the specification, the algorithms, the guides, the web runtime, the glossaries, the test cases and the validator, so the skill also works offline.
+
+Install: copy the folder `skill/deeptip` into `~/.claude/skills/` (Claude Code) and `~/.agents/skills/` (Codex, Copilot, Cursor, Gemini CLI); for claude.ai upload `DeepTip-skill-<version>.zip` from the releases. Every path and way: [skill/README.md](skill/README.md).
+
 ## For language models and coding agents
 
 DeepTip is meant to be known and used by every assistant:
 
 | File | For |
 |---|---|
+| [skill/deeptip/SKILL.md](skill/deeptip/SKILL.md) | the Agent Skill (above) |
 | [llms.txt](llms.txt) | the compact entry point for language models ([llms.txt proposal](https://llmstxt.org/)) |
 | [AGENTS.md](AGENTS.md) | instructions for coding agents ([AGENTS.md format](https://agents.md/)): add DeepTip to a project, port it to a framework |
 | [docs/prompt.md](docs/prompt.md) | a one-page briefing to paste into any chat or system prompt |
-| [skill/SKILL.md](skill/SKILL.md) | a skill for Claude Code |
 
 ## The schema for every runtime
 
@@ -104,7 +110,8 @@ DeepTip is meant to be known and used by every assistant:
 npm test          # reference runtime against test/cases
 npm run check     # validate the core and example glossaries
 npm run demo      # then http://localhost:5560/frameworks/web/example/
-npm run package   # one download per framework into dist/
+npm run package   # one download per framework, and the skill, into dist/
+npm run skill     # refresh skill/deeptip/references after changing the originals
 ```
 
 ## License

@@ -1,0 +1,151 @@
+{
+  "$schema": "../../schema/deeptip.schema.json",
+  "$locale": "en",
+  "$ui": {
+    "close": "Close",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "missing": "No explanation for this term yet.",
+    "fallback": "Not translated yet",
+    "hint": "Click to pin · Esc closes",
+    "seeAlso": "See also:",
+    "search": "Search terms …",
+    "mentionedIn": "Mentioned in",
+    "empty": "No matches."
+  },
+
+  "deeptip.about": {
+    "title": "DeepTip",
+    "short": "Explanations with depth: highlighted terms open further explanations.",
+    "body": "A DeepTip explains a control. Highlighted [[deeptip.term|terms]] inside it open another window when you hover them, and a click [[deeptip.pin|pins]] it. Read as deep as you like.\n\nControls: [[deeptip.mouse|mouse]], [[deeptip.touch|touch]], [[deeptip.keyboard|keyboard]], [[deeptip.gamepad|gamepad]]."
+  },
+  "deeptip.term": {
+    "title": "Highlighted term",
+    "short": "Has its own entry – hover to see it.",
+    "body": "A highlighted term has its own entry. Hover it and a preview appears next to the window; move away and it disappears again. A click [[deeptip.pin|pins]] the window.\n\nIf the same term is already open further up the chain, that window flashes instead of opening a second one."
+  },
+  "deeptip.pin": {
+    "title": "Pin",
+    "short": "A pinned window stays open until you close it.",
+    "body": "A pinned window stays open until you close it – with the X, with `Esc` or with **B** on a gamepad. It has a coloured border and a filled pin.\n\nTo pin: click a [[deeptip.term|term]], click inside a preview, or press the pin.\n\nClose all windows: hold `Esc` or press `Shift+Esc`."
+  },
+  "deeptip.mouse": {
+    "title": "Mouse controls",
+    "short": "Rest to open, click to pin.",
+    "body": "- Rest the pointer on a control: the first window opens after a moment.\n- Hover a [[deeptip.term|term]]: its preview appears at once.\n- Click a term: [[deeptip.pin|pin]] it.\n- On the way into a window the pointer may briefly leave it – as long as it moves towards the window, the window stays."
+  },
+  "deeptip.touch": {
+    "title": "Touch controls",
+    "short": "Long-press to open, tap a term to follow it.",
+    "body": "- Long-press a control (about half a second, the device vibrates briefly): its window opens [[deeptip.pin|pinned]].\n- Tap a [[deeptip.term|term]]: its window opens.\n- Tap outside or swipe a title bar down: all windows close."
+  },
+  "deeptip.keyboard": {
+    "title": "Keyboard controls",
+    "short": "F1 or ? opens, Esc closes.",
+    "body": "- `F1` or `?` on the focused element: open its window.\n- `Tab` moves to the [[deeptip.term|terms]], `Enter` opens one.\n- `Esc` closes the current window; hold it or press `Shift+Esc` to close all.\n- `F6` switches between open windows."
+  },
+  "deeptip.gamepad": {
+    "title": "Gamepad controls",
+    "short": "Y opens, A follows, B closes.",
+    "body": "- **Y / △** on the selected element: open its window.\n- **D-pad / left stick**: move from [[deeptip.term|term]] to term.\n- **A / ✕**: open a term.\n- **B / ○**: close a window, hold to close all.\n- **LB / RB**: switch between windows."
+  },
+
+  "hw.gpu": {
+    "title": "Graphics card (GPU)",
+    "short": "Renders graphics and runs AI models – its memory matters most.",
+    "body": "The graphics card runs thousands of small tasks at once, which makes it far faster than the processor for image, video and language AI. How large a [[ai.model|model]] it can handle depends mostly on its [[hw.vram|video memory]].",
+    "aliases": ["GPU", "graphics card"]
+  },
+  "hw.vram": {
+    "title": "Video memory (VRAM)",
+    "short": "Memory on the graphics card – decides which models run fast.",
+    "body": "VRAM is the [[hw.gpu|graphics card's]] own memory. An [[ai.model|AI model]] only runs fast if it fits completely. When it is full, parts move to [[hw.ram|system memory]] ([[ai.offload|offloading]]) – that works, but is often many times slower.\n\nWith 8 GB, smaller or [[ai.quantization|quantized]] models help.",
+    "aliases": ["VRAM", "video memory"]
+  },
+  "hw.ram": {
+    "title": "System memory (RAM)",
+    "short": "The PC's main memory.",
+    "body": "Running programs live here – and the parts of [[ai.model|models]] that do not fit into [[hw.vram|video memory]]. When RAM runs out too, Windows falls back to the [[sys.pagefile|page file]].",
+    "aliases": ["RAM", "memory"]
+  },
+  "sys.pagefile": {
+    "title": "Page file",
+    "short": "Disk space Windows uses as spare RAM.",
+    "body": "An area on the SSD that Windows uses to extend [[hw.ram|system memory]]. Much slower than RAM. RAM plus page file is the limit for [[sys.commit|committed memory]].",
+    "aliases": ["pagefile.sys", "swap"]
+  },
+  "sys.commit": {
+    "title": "Committed memory (commit)",
+    "short": "How much memory Windows has promised to programs.",
+    "body": "Windows promises memory to every program before it is actually used. The limit is [[hw.ram|RAM]] plus [[sys.pagefile|page file]]. When it is reached, programs can crash even though Task Manager still shows free RAM.\n\nLong uptime and [[sys.wsl|WSL]] push it up; a restart resets it.",
+    "aliases": ["commit", "commit charge"]
+  },
+  "sys.wsl": {
+    "title": "WSL",
+    "short": "Windows Subsystem for Linux – a Linux running inside Windows.",
+    "body": "Some AI tools and Docker run in WSL. WSL likes to keep [[hw.ram|memory]] as cache even when it no longer needs it – dropping the cache or shutting WSL down gives it back.",
+    "aliases": ["Windows Subsystem for Linux"]
+  },
+
+  "ai.model": {
+    "title": "AI model",
+    "short": "A file of learned weights, e.g. an image or language model.",
+    "body": "A model is the “brain” of an AI: a large file of learned weights. Its size and [[ai.quantization|quantization]] decide how much [[hw.vram|VRAM]] it needs.\n\nKinds: [[ai.checkpoint|checkpoint]] (images), [[ai.lora|LoRA]] (add-on), [[ai.llm|language model]] (text).",
+    "aliases": ["model"]
+  },
+  "ai.checkpoint": {
+    "title": "Checkpoint",
+    "short": "A complete image model.",
+    "body": "A complete image model such as Flux, Qwen-Image or SDXL. It sets the basic style and quality; [[ai.lora|LoRAs]] adapt it. Usually runs in [[ai.comfyui|ComfyUI]].",
+    "aliases": ["base model"]
+  },
+  "ai.lora": {
+    "title": "LoRA",
+    "short": "A small add-on that tunes a model to a style, character or object.",
+    "body": "A LoRA adapts a [[ai.checkpoint|checkpoint]] – to a drawing style, a character or a product – without replacing the model. It is small (a few MB to a few hundred MB) and can be trained on your own images.",
+    "aliases": ["Low-Rank Adaptation"]
+  },
+  "ai.llm": {
+    "title": "Language model (LLM)",
+    "short": "An AI model for text: chat, translation, better prompts.",
+    "body": "A [[ai.model|model]] for language. It answers questions, summarises, translates or expands [[ai.prompt|prompts]]. Locally, language models run for example through [[ai.ollama|Ollama]].",
+    "aliases": ["LLM", "language model"]
+  },
+  "ai.prompt": {
+    "title": "Prompt",
+    "short": "The text description a model generates from.",
+    "body": "Describes what should be created. Image models usually understand English best; a [[ai.llm|language model]] can expand a short idea into a detailed prompt."
+  },
+  "ai.comfyui": {
+    "title": "ComfyUI",
+    "short": "Runs image, video, 3D and audio models as a node graph.",
+    "body": "ComfyUI runs locally and executes [[ai.workflow|workflows]]: nodes load [[ai.model|models]], process the [[ai.prompt|prompt]] and save the result. Other programs send it workflows through its API."
+  },
+  "ai.workflow": {
+    "title": "Workflow",
+    "short": "A saved node graph in ComfyUI.",
+    "body": "A chain of nodes in [[ai.comfyui|ComfyUI]] – load model, prompt, sampler, save – stored as a JSON file and reusable any number of times."
+  },
+  "ai.ollama": {
+    "title": "Ollama",
+    "short": "A local server for language models.",
+    "body": "Ollama loads [[ai.llm|language models]] into [[hw.vram|video memory]] on demand and frees them after a while without use. Programs talk to it through a local API."
+  },
+  "ai.quantization": {
+    "title": "Quantization",
+    "short": "Model weights with fewer bits – smaller, slightly less precise.",
+    "body": "A [[ai.model|model's]] weights are stored with 8 or 4 instead of 16 bits. The model becomes much smaller and fits into less [[hw.vram|VRAM]], but loses some quality. Common formats: `GGUF`, `FP8`, `NF4`.",
+    "aliases": ["GGUF", "FP8", "Q4"]
+  },
+  "ai.offload": {
+    "title": "Offloading",
+    "short": "Model parts in RAM instead of VRAM – works, but slower.",
+    "body": "When a [[ai.model|model]] does not fit into [[hw.vram|video memory]], parts stay in [[hw.ram|system memory]] and are moved over when needed. Large models run on small cards this way – only slower."
+  },
+  "ai.mcp": {
+    "title": "MCP",
+    "short": "A standard that lets AI assistants use a program's tools.",
+    "body": "The Model Context Protocol connects assistants like Claude to programs. A program announces its tools – such as “generate image” or “free VRAM” – and the assistant can call them.",
+    "aliases": ["Model Context Protocol"]
+  }
+}

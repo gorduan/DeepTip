@@ -1,0 +1,30 @@
+[package]
+name = "deeptip"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.95"
+description = "DeepTip for egui: explanation windows with depth (nested, pinnable, Paradox-style tooltips) driven by JSON glossaries"
+license = "MIT"
+authors = ["Gorduan"]
+keywords = ["egui", "tooltip", "glossary", "gamedev", "gui"]
+categories = ["gui", "game-development"]
+readme = "README.md"
+
+[features]
+default = ["egui"]
+# The egui UI. Without it the crate is only the pure core: glossary, markup parser, placement, window tree.
+egui = ["dep:egui"]
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }
+log = "0.4"
+egui = { version = "0.37", optional = true, default-features = false, features = ["default_fonts"] }
+
+[dev-dependencies]
+# The example: glow renderer (lighter than wgpu), screen-reader support, and system fonts as fallback for glyphs
+# egui's built-in fonts lack (arrows, △ ✕ ○ …).
+eframe = { version = "0.37", default-features = false, features = ["accesskit", "default_fonts", "glow", "system_fonts", "wayland", "x11"] }
+
+[[example]]
+name = "hud"
+required-features = ["egui"]

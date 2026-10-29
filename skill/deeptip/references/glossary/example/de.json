@@ -1,0 +1,50 @@
+{
+  "$schema": "../../schema/deeptip.schema.json",
+  "$locale": "de",
+  "demo.realm": {
+    "title": "Reich",
+    "short": "Alles, was du regierst.",
+    "body": "Dein Reich besteht aus [[demo.province|Provinzen]]. Seine [[demo.stability|Stabilität]] entscheidet, wie ruhig es bleibt, dein [[demo.prestige|Prestige]], wie sehr man dich fürchtet."
+  },
+  "demo.province": {
+    "title": "Provinz",
+    "short": "Ein Landstrich mit Einwohnern.",
+    "body": "Eine Provinz zahlt [[demo.taxes|Steuern]] und stellt Soldaten. Sind ihre Bewohner unzufrieden, wächst dort [[demo.unrest|Unruhe]]."
+  },
+  "demo.stability": {
+    "title": "Stabilität",
+    "short": "Wie gefestigt dein Reich ist (−3 bis +3).",
+    "body": "Hohe Stabilität senkt die [[demo.unrest|Unruhe]] in allen [[demo.province|Provinzen]]. Sie sinkt durch hohe [[demo.taxes|Steuern]] und verlorene Kriege; [[demo.prestige|Prestige]] hebt sie wieder.\n\nAktuell: **{stability}**",
+    "see": ["demo.revolt"]
+  },
+  "demo.unrest": {
+    "title": "Unruhe",
+    "short": "Unzufriedenheit einer Provinz.",
+    "body": "Steigt die Unruhe einer [[demo.province|Provinz]] über 5, droht ein [[demo.revolt|Aufstand]]. Hohe [[demo.stability|Stabilität]] senkt sie, hohe [[demo.taxes|Steuern]] treiben sie hoch."
+  },
+  "demo.revolt": {
+    "title": "Aufstand",
+    "short": "Rebellen erheben sich.",
+    "body": "Rebellen übernehmen eine [[demo.province|Provinz]] und senken die [[demo.stability|Stabilität]] des ganzen Reichs – ein Teufelskreis. Ihn brechen nur ein zufriedener [[demo.nobles|Adel]] oder niedrigere [[demo.taxes|Steuern]]."
+  },
+  "demo.taxes": {
+    "title": "Steuern",
+    "short": "Füllen die Kasse, kosten Zufriedenheit.",
+    "body": "Steuern bringen [[demo.gold|Gold]], erhöhen aber die [[demo.unrest|Unruhe]].\n\n*Faustregel:* nie hohe Steuern und niedrige [[demo.stability|Stabilität]] zugleich."
+  },
+  "demo.nobles": {
+    "title": "Adel",
+    "short": "Die mächtigen Familien deines Reichs.",
+    "body": "Zufriedener Adel stützt die [[demo.stability|Stabilität]]. Verärgerter Adel fordert Privilegien und kratzt an deinem [[demo.prestige|Prestige]]."
+  },
+  "demo.prestige": {
+    "title": "Prestige",
+    "short": "Das Ansehen deiner Dynastie.",
+    "body": "Hohes Prestige macht den [[demo.nobles|Adel]] gefügig und hebt die [[demo.stability|Stabilität]]. Du gewinnst es durch Siege, Feste und prächtige Bauten."
+  },
+  "demo.gold": {
+    "title": "Gold",
+    "short": "Deine Kasse.",
+    "body": "In der Kasse: **{gold} Dukaten**. Nachschub kommt aus [[demo.taxes|Steuern]]."
+  }
+}

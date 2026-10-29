@@ -28,9 +28,21 @@ Code gibt es nur in **HTML, CSS und JavaScript** (Referenz) und in **Rust**. Jed
 
 Jedes liegt in `frameworks/<name>/` mit README und `deeptip.json`; Code-Ordner haben ein Beispiel (gemeinsames Beispiel-Glossar `glossary/example/`) und Tests gegen `test/cases/`, jede Anleitung sagt, wie man diese Fälle in ihrer Sprache prüft. Downloads: `DeepTip-<framework>-<version>.zip` (`npm run package`), jeweils mit SPEC, Algorithmen, Schema, Glossaren und Testfällen.
 
+## Skill für KI-Agenten
+
+[skill/deeptip](skill/deeptip) ist ein [Agent Skill](https://agentskills.io/specification) im offenen Format, das Claude Code, Claude, OpenAI Codex, GitHub Copilot, Cursor und Gemini CLI lesen. Einmal installiert, bringt er dem Agenten DeepTip bei, für jedes Programm und jede Sprache:
+- die Regeln und das Verhalten;
+- das Glossar-Format;
+- drei Abläufe: DeepTip in ein Projekt einbauen, Glossare schreiben und prüfen, DeepTip dort bauen, wo es noch keine Anleitung gibt;
+- alle 19 Framework-Anleitungen und eine Abnahme-Liste.
+
+Der Ordner `references/` enthält Spezifikation, Algorithmen, Anleitungen, Web-Laufzeit, Glossare, Testfälle und Prüfer. Der Skill funktioniert also auch ohne Internet.
+
+Installieren: den Ordner `skill/deeptip` nach `~/.claude/skills/` (Claude Code) und `~/.agents/skills/` (Codex, Copilot, Cursor, Gemini CLI) kopieren. Für claude.ai `DeepTip-skill-<version>.zip` aus den Releases hochladen. Alle Wege: [skill/README.md](skill/README.md).
+
 ## Für Sprachmodelle und Agenten
 
-`llms.txt` (Einstieg für Sprachmodelle), `AGENTS.md` (Anweisungen für Coding-Agenten), `docs/prompt.md` (Briefing zum Einfügen in jeden Chat), `skill/SKILL.md` (Skill für Claude Code).
+`skill/deeptip/SKILL.md` (der Skill oben), `llms.txt` (Einstieg für Sprachmodelle), `AGENTS.md` (Anweisungen für Coding-Agenten), `docs/prompt.md` (Briefing zum Einfügen in jeden Chat).
 
 ## Werkzeuge
 
@@ -38,7 +50,8 @@ Jedes liegt in `frameworks/<name>/` mit README und `deeptip.json`; Code-Ordner h
 npm test          # Referenz gegen test/cases
 npm run check     # Glossare prüfen
 npm run demo      # dann http://localhost:5560/frameworks/web/example/
-npm run package   # ein Zip je Framework nach dist/
+npm run package   # ein Zip je Framework und den Skill nach dist/
+npm run skill     # skill/deeptip/references nach Änderungen an den Originalen auffrischen
 ```
 
 Lizenz: MIT. Gorduan Community (GC): frei nutzen, ändern, hochladen.

@@ -16,9 +16,10 @@ DeepTip is a **UI design pattern** (explanation windows with depth: nested, pinn
 | `glossary/core/` | shared core glossary (DeepTip help `deeptip.*`, general terms), English and German |
 | `glossary/example/` | the example glossary every framework's example uses (`demo.*`) |
 | `test/cases/*.json` | parity cases: markup AST, placement, glossary flattening; every runtime must pass them |
-| `frameworks/<name>/` | one framework each: `README.md`, `deeptip.json` (manifest); code folders (web, rpgmaker-mz, rust-egui) also the runtime, `example/` and tests, guide folders only the exact guide |
+| `frameworks/<name>/` | one framework each: `README.md`, `deeptip.json` (manifest); code folders also the runtime, examples and tests (web: the reference; rpgmaker-mz: a plugin on the web runtime; rust-egui: the second complete implementation, `cargo test`), guide folders only the exact guide |
 | `tools/deeptip-check.mjs` | validator for glossary files (Node 18+) |
-| `tools/package.mjs` | builds `dist/DeepTip-<name>-<version>.zip`, one download per framework |
+| `tools/package.mjs` | builds `dist/DeepTip-<name>-<version>.zip`, one download per framework, and `dist/DeepTip-skill-<version>.zip` |
+| `skill/deeptip/` | the Agent Skill: `SKILL.md` (hand-written) and `references/` (a copy made by `tools/skill.mjs`, never edited by hand); install notes in `skill/README.md` |
 
 ## Using DeepTip in a user's project
 
@@ -43,6 +44,10 @@ DeepTip is a **UI design pattern** (explanation windows with depth: nested, pinn
 npm test                 # reference runtime against test/cases
 npm run check            # validate core and example glossaries
 npm run cases            # regenerate test/cases from the reference (only after a deliberate behaviour change)
-npm run package          # one zip per framework into dist/
+npm run package          # one zip per framework and the skill zip into dist/
+npm run skill            # refresh skill/deeptip/references (npm test fails while it is out of date)
 node tools/package.mjs --list
+cargo test               # in frameworks/rust-egui
 ```
+
+After changing `SPEC.md`, `docs/algorithms.md`, anything in `frameworks/`, `glossary/`, `schema/`, `test/cases/` or the tools, run `npm run skill` and commit the refreshed copy with the change. When the behaviour changes, update `skill/deeptip/SKILL.md` too.

@@ -21,11 +21,12 @@
     "deeptip-sync": "tools/deeptip-sync.mjs"
   },
   "scripts": {
-    "test": "node --test test/deeptip.test.mjs test/cases.test.mjs",
+    "test": "node --test test/deeptip.test.mjs test/cases.test.mjs && node tools/skill.mjs --check",
     "check": "node tools/deeptip-check.mjs glossary/core && node tools/deeptip-check.mjs --base de glossary/core/de.json glossary/example/de.json glossary/core/en.json glossary/example/en.json",
     "demo": "python -m http.server 5560",
     "cases": "node test/make-cases.mjs",
-    "package": "node tools/package.mjs"
+    "package": "node tools/package.mjs",
+    "skill": "node tools/skill.mjs"
   },
   "engines": {
     "node": ">=18"

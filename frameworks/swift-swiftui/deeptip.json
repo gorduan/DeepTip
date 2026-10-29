@@ -1,0 +1,10 @@
+{
+  "name": "swift-swiftui",
+  "title": "Swift (SwiftUI)",
+  "language": "Swift",
+  "tier": 2,
+  "version": "1.0.0",
+  "status": "documented",
+  "kind": "guide",
+  "uses": []
+}

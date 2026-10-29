@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/gorduan/DeepTip/main/schema/deeptip.schema.json",
+  "title": "DeepTip glossary (one locale)",
+  "description": "Entries keyed by dotted keys (hw.vram) or nested objects ({\"hw\": {\"vram\": {...}}}). Text uses DeepTip markup: [[key]] / [[key|text]] links, **bold**, *italic*, `code`, {live_value}, '- ' lists, blank line = paragraph. See SPEC.md §2.",
+  "type": "object",
+  "properties": {
+    "$schema": { "type": "string" },
+    "$comment": { "type": "string", "description": "For authors; ignored." },
+    "$locale": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z]{2,4})?$",
+      "description": "Locale of this file (otherwise taken from the file name, e.g. de.json)."
+    },
+    "$ui": {
+      "type": "object",
+      "description": "Labels of the window itself in this language.",
+      "properties": {
+        "close": { "type": "string" },
+        "pin": { "type": "string" },
+        "unpin": { "type": "string" },
+        "missing": { "type": "string" },
+        "fallback": { "type": "string" },
+        "hint": { "type": "string" },
+        "seeAlso": { "type": "string" },
+        "search": { "type": "string" },
+        "mentionedIn": { "type": "string" },
+        "empty": { "type": "string" }
+      },
+      "additionalProperties": { "type": "string" }
+    }
+  },
+  "patternProperties": {
+    "^[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*$": {
+      "anyOf": [{ "$ref": "#/$defs/entry" }, { "$ref": "#/$defs/group" }]
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "required": ["title"],
+      "anyOf": [{ "required": ["short"] }, { "required": ["body"] }],
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "description": "Name of the term; also the default text of [[links]] to it." },
+        "short": { "type": "string", "maxLength": 140, "description": "One line: simple tooltips, lists, the encyclopedia." },
+        "body": { "type": "string", "description": "The explanation (2–5 sentences) with [[links]] to further entries." },
+        "aliases": { "type": "array", "items": { "type": "string" }, "description": "Other names (search, validator)." },
+        "see": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*$" },
+          "description": "Related entries shown as 'See also'."
+        },
+        "note": { "type": "string", "description": "For authors and translators only; never shown." }
+      },
+      "additionalProperties": false
+    },
+    "group": {
+      "type": "object",
+      "description": "Nested namespace (i18next style); its children are entries or further groups.",
+      "not": { "anyOf": [{ "required": ["title"] }, { "required": ["short"] }, { "required": ["body"] }] },
+      "patternProperties": {
+        "^[A-Za-z0-9_-]+$": { "anyOf": [{ "$ref": "#/$defs/entry" }, { "$ref": "#/$defs/group" }] }
+      },
+      "additionalProperties": false
+    }
+  }
+}

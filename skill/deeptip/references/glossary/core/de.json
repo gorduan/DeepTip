@@ -1,0 +1,151 @@
+{
+  "$schema": "../../schema/deeptip.schema.json",
+  "$locale": "de",
+  "$ui": {
+    "close": "Schließen",
+    "pin": "Festhalten",
+    "unpin": "Loslassen",
+    "missing": "Zu diesem Begriff gibt es noch keine Erklärung.",
+    "fallback": "Noch nicht übersetzt",
+    "hint": "Klick hält fest · Esc schließt",
+    "seeAlso": "Siehe auch:",
+    "search": "Begriffe suchen …",
+    "mentionedIn": "Erwähnt in",
+    "empty": "Keine Treffer."
+  },
+
+  "deeptip.about": {
+    "title": "DeepTip",
+    "short": "Erklärfenster mit Tiefe: markierte Begriffe öffnen weitere Erklärungen.",
+    "body": "Ein DeepTip erklärt ein Bedienelement. Farbig markierte [[deeptip.term|Begriffe]] darin öffnen beim Drüberfahren ein weiteres Fenster, ein Klick [[deeptip.pin|hält es fest]]. So kannst du beliebig tief nachlesen.\n\nBedienung: [[deeptip.mouse|Maus]], [[deeptip.touch|Touch]], [[deeptip.keyboard|Tastatur]], [[deeptip.gamepad|Controller]]."
+  },
+  "deeptip.term": {
+    "title": "Markierter Begriff",
+    "short": "Hat einen eigenen Eintrag – drüberfahren zeigt ihn.",
+    "body": "Ein markierter Begriff hat einen eigenen Eintrag. Fahr mit der Maus darauf, dann erscheint er als Vorschau neben dem Fenster; fährst du weg, verschwindet sie wieder. Ein Klick [[deeptip.pin|hält]] das Fenster fest.\n\nSteht derselbe Begriff schon weiter oben in der Kette offen, blinkt dieses Fenster kurz, statt ein zweites zu öffnen."
+  },
+  "deeptip.pin": {
+    "title": "Festhalten",
+    "short": "Ein festgehaltenes Fenster bleibt offen, bis du es schließt.",
+    "body": "Ein festgehaltenes Fenster bleibt offen, bis du es schließt – mit dem X, mit `Esc` oder mit **B** am Controller. Du erkennst es am farbigen Rahmen und an der gefüllten Nadel.\n\nFesthalten: auf einen [[deeptip.term|Begriff]] klicken, in ein Vorschaufenster klicken oder die Nadel antippen.\n\nAlle Fenster schließen: `Esc` gedrückt halten oder `Umschalt+Esc`."
+  },
+  "deeptip.mouse": {
+    "title": "Bedienung mit der Maus",
+    "short": "Ruhen lassen öffnet, Klick hält fest.",
+    "body": "- Auf einem Bedienelement ruhen lassen: das erste Fenster öffnet sich nach kurzer Zeit.\n- Über einen [[deeptip.term|Begriff]] fahren: seine Vorschau erscheint sofort.\n- Klick auf einen Begriff: [[deeptip.pin|festhalten]].\n- Auf dem Weg ins Fenster darf die Maus kurz daneben sein – solange sie sich darauf zubewegt, bleibt es offen."
+  },
+  "deeptip.touch": {
+    "title": "Bedienung per Touch",
+    "short": "Lange drücken öffnet, antippen folgt einem Begriff.",
+    "body": "- Lange auf ein Bedienelement drücken (etwa eine halbe Sekunde, das Gerät vibriert kurz): das Fenster öffnet sich [[deeptip.pin|festgehalten]].\n- Einen [[deeptip.term|Begriff]] antippen: sein Fenster öffnet sich.\n- Daneben tippen oder die Titelleiste nach unten wischen: alle Fenster schließen."
+  },
+  "deeptip.keyboard": {
+    "title": "Bedienung mit der Tastatur",
+    "short": "F1 oder ? öffnet, Esc schließt.",
+    "body": "- `F1` oder `?` auf dem fokussierten Element: Fenster öffnen.\n- `Tab` springt zu den [[deeptip.term|Begriffen]], `Enter` öffnet einen.\n- `Esc` schließt das aktuelle Fenster; gedrückt halten oder `Umschalt+Esc` schließt alle.\n- `F6` wechselt zwischen offenen Fenstern."
+  },
+  "deeptip.gamepad": {
+    "title": "Bedienung mit dem Controller",
+    "short": "Y öffnet, A folgt, B schließt.",
+    "body": "- **Y / △** auf dem gewählten Element: Fenster öffnen.\n- **Steuerkreuz / linker Stick**: von [[deeptip.term|Begriff]] zu Begriff.\n- **A / ✕**: Begriff öffnen.\n- **B / ○**: Fenster schließen, gedrückt halten schließt alle.\n- **LB / RB**: zwischen Fenstern wechseln."
+  },
+
+  "hw.gpu": {
+    "title": "Grafikkarte (GPU)",
+    "short": "Rechnet Grafik und KI-Modelle – für KI zählt vor allem ihr Speicher.",
+    "body": "Die Grafikkarte rechnet Tausende kleine Aufgaben gleichzeitig und ist deshalb für Bild-, Video- und Sprach-KI viel schneller als der Prozessor. Wie große [[ai.model|Modelle]] sie schafft, entscheidet vor allem ihr [[hw.vram|Grafikspeicher]].",
+    "aliases": ["GPU", "Grafikkarte"]
+  },
+  "hw.vram": {
+    "title": "Grafikspeicher (VRAM)",
+    "short": "Speicher direkt auf der Grafikkarte – bestimmt, welche Modelle schnell laufen.",
+    "body": "Der VRAM ist der eigene Speicher der [[hw.gpu|Grafikkarte]]. Ein [[ai.model|KI-Modell]] läuft nur dann schnell, wenn es ganz hineinpasst. Ist er voll, werden Teile in den [[hw.ram|Arbeitsspeicher]] ausgelagert ([[ai.offload|Offloading]]) – das funktioniert, ist aber oft um ein Vielfaches langsamer.\n\nMit 8 GB helfen kleinere oder [[ai.quantization|quantisierte]] Modelle.",
+    "aliases": ["VRAM", "Videospeicher"]
+  },
+  "hw.ram": {
+    "title": "Arbeitsspeicher (RAM)",
+    "short": "Der Hauptspeicher des PCs.",
+    "body": "Hier liegen laufende Programme – und die Teile von [[ai.model|Modellen]], die nicht in den [[hw.vram|Grafikspeicher]] passen. Reicht auch der RAM nicht, weicht Windows auf die [[sys.pagefile|Auslagerungsdatei]] aus.",
+    "aliases": ["RAM", "Arbeitsspeicher"]
+  },
+  "sys.pagefile": {
+    "title": "Auslagerungsdatei",
+    "short": "Festplattenbereich, den Windows als Reserve-RAM nutzt.",
+    "body": "Ein Bereich auf der SSD, den Windows als Erweiterung des [[hw.ram|Arbeitsspeichers]] verwendet. Viel langsamer als RAM. RAM und Auslagerungsdatei zusammen ergeben das Limit für den [[sys.commit|zugesicherten Speicher]].",
+    "aliases": ["pagefile.sys", "Auslagerung"]
+  },
+  "sys.commit": {
+    "title": "Zugesicherter Speicher (Commit)",
+    "short": "Wie viel Speicher Windows den Programmen versprochen hat.",
+    "body": "Windows sichert jedem Programm Speicher zu, bevor es ihn wirklich benutzt. Das Limit ist [[hw.ram|RAM]] plus [[sys.pagefile|Auslagerungsdatei]]. Ist es erreicht, können Programme abstürzen, obwohl der Task-Manager noch freien RAM zeigt.\n\nLange Laufzeit ohne Neustart und [[sys.wsl|WSL]] treiben ihn gern hoch; ein Neustart setzt ihn zurück.",
+    "aliases": ["Commit", "Commit Charge"]
+  },
+  "sys.wsl": {
+    "title": "WSL",
+    "short": "Windows-Subsystem für Linux – ein Linux, das in Windows mitläuft.",
+    "body": "Manche KI-Werkzeuge und Docker laufen in WSL. WSL behält gern [[hw.ram|Arbeitsspeicher]] als Zwischenspeicher, auch wenn es ihn nicht mehr braucht – dann hilft es, den Cache zu leeren oder WSL zu beenden.",
+    "aliases": ["Windows Subsystem for Linux"]
+  },
+
+  "ai.model": {
+    "title": "KI-Modell",
+    "short": "Datei mit gelernten Gewichten, z. B. ein Bild- oder Sprachmodell.",
+    "body": "Ein Modell ist das „Gehirn“ einer KI: eine große Datei mit gelernten Gewichten. Größe und [[ai.quantization|Quantisierung]] bestimmen, wie viel [[hw.vram|VRAM]] es braucht.\n\nArten: [[ai.checkpoint|Checkpoint]] (Bild), [[ai.lora|LoRA]] (Zusatz), [[ai.llm|Sprachmodell]] (Text).",
+    "aliases": ["Modell", "Model"]
+  },
+  "ai.checkpoint": {
+    "title": "Checkpoint",
+    "short": "Ein vollständiges Bildmodell.",
+    "body": "Ein vollständiges Bildmodell wie Flux, Qwen-Image oder SDXL. Es bestimmt Stil und Qualität grundlegend; [[ai.lora|LoRAs]] passen es an. Läuft meist in [[ai.comfyui|ComfyUI]].",
+    "aliases": ["Basismodell"]
+  },
+  "ai.lora": {
+    "title": "LoRA",
+    "short": "Kleine Zusatzdatei, die ein Modell auf Stil, Figur oder Objekt trimmt.",
+    "body": "Eine LoRA passt ein [[ai.checkpoint|Checkpoint]] an – etwa an einen Zeichenstil, eine Figur oder ein Produkt –, ohne das Modell zu ersetzen. Sie ist klein (wenige MB bis einige hundert MB) und lässt sich mit eigenen Bildern trainieren.",
+    "aliases": ["Low-Rank Adaptation"]
+  },
+  "ai.llm": {
+    "title": "Sprachmodell (LLM)",
+    "short": "KI-Modell für Text: Chat, Übersetzen, Prompts verbessern.",
+    "body": "Ein [[ai.model|Modell]] für Sprache. Es beantwortet Fragen, fasst zusammen, übersetzt oder formuliert [[ai.prompt|Prompts]] aus. Lokal laufen Sprachmodelle z. B. über [[ai.ollama|Ollama]].",
+    "aliases": ["LLM", "Sprachmodell"]
+  },
+  "ai.prompt": {
+    "title": "Prompt",
+    "short": "Die Textbeschreibung, aus der ein Modell erzeugt.",
+    "body": "Beschreibt, was entstehen soll. Bildmodelle verstehen Englisch meist am besten; ein [[ai.llm|Sprachmodell]] kann eine kurze Idee zu einem ausführlichen Prompt ausbauen."
+  },
+  "ai.comfyui": {
+    "title": "ComfyUI",
+    "short": "Führt Bild-, Video-, 3D- und Audio-Modelle als Knoten-Graph aus.",
+    "body": "ComfyUI läuft lokal und führt [[ai.workflow|Workflows]] aus: Knoten laden [[ai.model|Modelle]], verarbeiten den [[ai.prompt|Prompt]] und speichern das Ergebnis. Andere Programme schicken ihm Workflows über seine Schnittstelle."
+  },
+  "ai.workflow": {
+    "title": "Workflow",
+    "short": "Ein gespeicherter Knoten-Graph in ComfyUI.",
+    "body": "Eine Kette von Knoten in [[ai.comfyui|ComfyUI]] – Modell laden, Prompt, Sampler, Speichern –, als JSON-Datei gespeichert und beliebig oft wiederverwendbar."
+  },
+  "ai.ollama": {
+    "title": "Ollama",
+    "short": "Lokaler Server für Sprachmodelle.",
+    "body": "Ollama lädt [[ai.llm|Sprachmodelle]] bei Bedarf in den [[hw.vram|Grafikspeicher]] und gibt sie nach einer Weile ohne Nutzung wieder frei. Programme sprechen es über eine lokale Schnittstelle an."
+  },
+  "ai.quantization": {
+    "title": "Quantisierung",
+    "short": "Modellgewichte mit weniger Bits – kleiner, etwas ungenauer.",
+    "body": "Die Gewichte eines [[ai.model|Modells]] werden mit 8 oder 4 statt 16 Bit gespeichert. Das Modell wird deutlich kleiner und passt in weniger [[hw.vram|VRAM]], verliert aber etwas Qualität. Übliche Formate: `GGUF`, `FP8`, `NF4`.",
+    "aliases": ["GGUF", "FP8", "Q4"]
+  },
+  "ai.offload": {
+    "title": "Offloading",
+    "short": "Modellteile im RAM statt im VRAM – läuft, aber langsamer.",
+    "body": "Passt ein [[ai.model|Modell]] nicht ganz in den [[hw.vram|Grafikspeicher]], bleiben Teile im [[hw.ram|Arbeitsspeicher]] und werden bei Bedarf herübergeschoben. So laufen große Modelle auch auf kleinen Karten – nur langsamer."
+  },
+  "ai.mcp": {
+    "title": "MCP",
+    "short": "Standard, über den KI-Assistenten Werkzeuge eines Programms benutzen.",
+    "body": "Das Model Context Protocol verbindet Assistenten wie Claude mit Programmen. Ein Programm meldet seine Werkzeuge an – etwa „Bild erzeugen“ oder „VRAM freigeben“ –, und der Assistent kann sie aufrufen.",
+    "aliases": ["Model Context Protocol"]
+  }
+}

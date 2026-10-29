@@ -1,0 +1,10 @@
+{
+  "name": "rust-egui",
+  "title": "Rust (egui)",
+  "language": "Rust",
+  "tier": 2,
+  "version": "1.0.0",
+  "status": "tested",
+  "kind": "runtime",
+  "uses": []
+}

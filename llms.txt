@@ -6,6 +6,7 @@ Synonyms: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, too
 
 ## Docs
 
+- [Agent Skill](https://raw.githubusercontent.com/gorduan/DeepTip/main/skill/deeptip/SKILL.md): teaches DeepTip to any coding agent (rules, behaviour, glossary format, workflows, all frameworks); install the folder `skill/deeptip` ([install notes](https://raw.githubusercontent.com/gorduan/DeepTip/main/skill/README.md))
 - [Briefing for any language model](https://raw.githubusercontent.com/gorduan/DeepTip/main/docs/prompt.md): what DeepTip means and how to build it, in one page
 - [Specification](https://raw.githubusercontent.com/gorduan/DeepTip/main/SPEC.md): data format, behaviour, placement, input, accessibility, options, porting checklist
 - [Algorithms](https://raw.githubusercontent.com/gorduan/DeepTip/main/docs/algorithms.md): the exact algorithms of the reference as language-neutral pseudo-code (glossary layers, markup parser, window tree, grace and tendency, arming, timer lock, placement, input, auto-linking, encyclopedia)
@@ -22,7 +23,7 @@ Synonyms: DeepTooltip, 3DTooltip, DimTip, nested tooltips, Paradox tooltips, too
 ## Frameworks
 
 - [Web (HTML + CSS + JavaScript), reference](https://raw.githubusercontent.com/gorduan/DeepTip/main/frameworks/web/README.md)
-- Code: `frameworks/<name>/README.md` for RPG Maker MZ (`rpgmaker-mz`, JavaScript plugin) and Rust/egui (`rust-egui`)
+- Code: `frameworks/<name>/README.md` for RPG Maker MZ (`rpgmaker-mz`, JavaScript plugin on the web runtime) and Rust/egui (`rust-egui`, the second complete implementation, crate `deeptip`)
 - Exact guides, no code: `frameworks/<name>/README.md` for TypeScript, Svelte, React, Vue, Blazor (on the web runtime), Avalonia, Unity, Valheim, Godot, Python/PySide6 (`python-pyside6`), Java/Swing (`java-swing`), Kotlin/Compose (`kotlin-compose`), C++/Dear ImGui (`cpp-imgui`), C++/Unreal (`cpp-unreal`), Swift/SwiftUI (`swift-swiftui`), Go/Gio (`go-gio`)
 
 ## Optional

@@ -4,7 +4,7 @@
 //   frameworks/<name>/ (+ frameworks it builds on, "uses"), glossary/core, glossary/example, schema/, test/cases,
 //   SPEC.md, docs/algorithms.md, LICENSE, and the framework's README.md at the top.
 //   node tools/package.mjs            all frameworks
-//   node tools/package.mjs web svelte only these
+//   node tools/package.mjs web svelte only these ("skill" = only the Agent Skill, dist/DeepTip-skill-<version>.zip)
 //   node tools/package.mjs --list     table of frameworks, nothing written
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname, relative, sep } from "node:path";
@@ -114,6 +114,20 @@ for (const f of frameworks) {
   const entries = [{ name: `${base}/README.md`, data: readFileSync(join(root, "frameworks", f.dir, "README.md")) }];
   for (const [path, full] of [...files].sort(([a], [b]) => a.localeCompare(b))) entries.push({ name: `${base}/${path}`, data: readFileSync(full) });
   const out = join(root, "dist", `${base}.zip`);
+  writeFileSync(out, zip(entries));
+  console.log(`${relative(root, out)}  ${entries.length} files, ${(statSync(out).size / 1024).toFixed(0)} KB`);
+}
+
+// The Agent Skill as its own download: the folder deeptip/ at the top of the zip, as claude.ai and the skill folders expect.
+const skillMd = join(root, "skill", "deeptip", "SKILL.md");
+if (existsSync(skillMd) && (!only.length || only.includes("skill"))) {
+  const version = /^\s*version:\s*"?([^"\s]+)"?/m.exec(readFileSync(skillMd, "utf8"))?.[1] ?? "0.0.0";
+  const files = new Map();
+  collect(join("skill", "deeptip"), files);
+  const entries = [...files]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([path, full]) => ({ name: `deeptip/${path.slice("skill/deeptip/".length)}`, data: readFileSync(full) }));
+  const out = join(root, "dist", `DeepTip-skill-${version}.zip`);
   writeFileSync(out, zip(entries));
   console.log(`${relative(root, out)}  ${entries.length} files, ${(statSync(out).size / 1024).toFixed(0)} KB`);
 }
